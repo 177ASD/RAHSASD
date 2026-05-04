@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Методика формирования цены на услуги агростраховой экспертизы</title>
+  <style>
+    :root {
+      --primary: #2c5f2d;
+      --primary-light: #4a8c4b;
+      --secondary: #97bc62;
+      --bg: #f4f7f6;
+      --card-bg: #ffffff;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --accent: #e8f5e9;
+      --formula-bg: #31584D;
+      --border: #e0e4e8;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; padding: 0; background: var(--bg); color: var(--text); line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .container { 
+      max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; 
+      position: relative; 
+    }
+
+    /* Водяной знак (Общие стили) */
+    .watermark {
+      position: fixed; 
+      font-size: 100px;
+      font-weight: 700;
+      color: #2c5f2d; 
+      opacity: 0.03; /* Прозрачность изменена на 0.03 */
+      transform: rotate(-40deg);
+      pointer-events: none; 
+      user-select: none; 
+      white-space: nowrap;
+      z-index: 999; /* ЗНАКИ НА ПЕРЕДНЕМ ПЛАНЕ (поверх контента) */
+      font-family: inherit;
+      line-height: 1;
+    }
+
+    /* Позиционирование по углам */
+    .wm-tl { top: 5%; left: 2%; }   
+    .wm-tr { top: 5%; right: 2%; }  
+    .wm-bl { bottom: 5%; left: 2%; } 
+    .wm-br { bottom: 5%; right: 2%; } 
+
+    /* Адаптив */
+    @media (max-width: 768px) {
+      .watermark { font-size: 40px; }
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white; padding: 3rem 2rem; border-radius: var(--radius); margin-bottom: 2rem;
+      text-align: center; box-shadow: 0 8px 24px rgba(44, 95, 45, 0.2); position: relative;
+    }
+    header h1 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.2; }
+    header p { margin: 0.8rem auto 0; max-width: 800px; opacity: 0.92; font-size: 1.05rem; }
+
+    /* Sections */
+    section {
+      background: var(--card-bg); padding: 2rem; margin-bottom: 2rem;
+      border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid var(--border);
+      position: relative; 
+    }
+    h2 {
+      color: var(--primary); margin: 0 0 1.2rem; padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--secondary); font-size: 1.4rem;
+    }
+
+    /* Grids & Cards */
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; }
+    .card {
+      background: var(--accent); padding: 1.2rem; border-radius: 8px;
+      border-left: 4px solid var(--secondary); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
+    .card h3 { margin: 0 0 0.4rem; color: var(--primary); font-size: 1.05rem; }
+    .card p { margin: 0; font-size: 0.95rem; color: var(--text-light); }
+
+   
+   /* Formula Block */
+.formula-box {
+  background: #4D7464; /* был var(--formula-bg) */
+  color: #4D7464;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 30px !important;
+   font-weight: bold;
+  margin: 1.5rem 0;
+  letter-spacing: 0.2px;
+  position: relative;
+  overflow: hidden;
+}
+   /* /* Formula Block */
+    .formula-box {
+      background: var(--formula-bg); color: #f1f5f9; padding: 1.5rem; border-radius: 10px;
+      text-align: center; font-family: 'Consolas', 'Courier New', monospace; font-size: 1.15rem;
+      margin: 1.5rem 0; letter-spacing: 0.5px; position: relative; overflow: hidden;
+    }
+	*/
+    .formula-box::before {
+      content: "ФОРМУЛА"; position: absolute; top: -12px; right: 15px; background: #ef4444;
+      color: white; padding: 2px 8px; font-size: 0.7rem; border-radius: 4px; font-family: sans-serif;
+    }
+
+    /* Definitions */
+    .defs { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .def-item { padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); }
+    .def-item strong { color: var(--primary); display: block; margin-bottom: 0.3rem; font-size: 0.95rem; }
+    .def-item span { font-size: 0.9rem; color: var(--text-light); }
+
+    /* Table for Regions */
+    .region-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.95rem; }
+    .region-table th, .region-table td { padding: 0.8rem; border-bottom: 1px solid var(--border); text-align: left; }
+    .region-table th { background: #f1f5f9; color: var(--primary); font-weight: 600; }
+    .region-table tr:last-child td { border-bottom: none; }
+    .tag { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+
+    /* Complexity Levels */
+    .levels { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1rem; }
+    .level { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); }
+    .level-num {
+      background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 0.85rem;
+    }
+    .level-content h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+    .level-content p { margin: 0; font-size: 0.9rem; color: var(--text-light); }
+
+    /* Example & Special Cases */
+    .example {
+      background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1.5rem;
+      margin: 1.5rem 0; border-radius: 0 8px 8px 0;
+    }
+    .example h3 { margin: 0 0 0.8rem; color: #1d4ed8; }
+    .example ul { margin: 0; padding-left: 1.2rem; }
+    .example li { margin-bottom: 0.4rem; font-size: 0.95rem; }
+    .note { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; margin-top: 1.5rem; border-radius: 0 8px 8px 0; font-size: 0.9rem; }
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 2.5rem 1rem; color: var(--text-light); font-size: 1.1rem;
+      margin-top: 1rem; border-top: 2px dashed var(--border); position: relative;
+    }
+    footer strong { color: var(--primary); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      header { padding: 2rem 1rem; }
+      .formula-box { font-size: 1rem; }
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Водяные знаки (На переднем плане) -->
+  <div class="watermark wm-tl">ФГБУ "РосАгрохимслужба"</div>
+  <div class="watermark wm-tr">ФГБУ "РосАгрохимслужба"</div>
+  <div class="watermark wm-bl">ФГБУ "РосАгрохимслужба"</div>
+  <div class="watermark wm-br">ФГБУ "РосАгрохимслужба"</div>
+
+  <div class="container">
+    <header>
+      <h1>Методика формирования цены на услуги агростраховой экспертизы</h1>
+      <p>Прозрачная, многоуровневая модель ценообразования для коммерческих предложений и договоров. Модель учитывает базовый тариф, регион, сложность объекта, сезонные надбавки и логистику.</p>
+    </header>
+
+    <section>
+      <h2>Почему важен многоуровневый подход?</h2>
+      <div class="grid-4">
+        <div class="card">
+          <h3>🌍 География</h3>
+          <p>Региональный коэффициент компенсирует различия в доступности, инфраструктуре и логистике — база ЦФО = 1.0.</p>
+        </div>
+        <div class="card">
+          <h3>📐 Сложность объекта</h3>
+          <p>Коэффициент сложности учитывает фрагментацию, рельеф и дополнительные замеры — реальная трудоёмкость эксперта.</p>
+        </div>
+        <div class="card">
+          <h3>📅 Сезонность</h3>
+          <p>Сезонная премия отражает пиковый спрос и погодные риски (сент–окт: ×1.25, зима: ×1.4).</p>
+        </div>
+        <div class="card">
+          <h3>🚚 Логистика</h3>
+          <p>Фиксированная плата за выезд сверх 50 км (36 ₽/км); добавляется в рублях в конце расчёта.</p>
+        </div>
+      </div>
+      <p style="text-align: center; margin-top: 1.5rem; font-weight: 500; color: var(--text-light);">Модель делает цену справедливой, прозрачной и адаптируемой к любому объекту и региону.</p>
+    </section>
+
+    <section>
+      <h2>Формула расчёта итоговой цены</h2>
+      <p>Базовый алгоритм прост для понимания, но учитывает все корректировки:</p>
+      <div class="formula-box">
+        ИТОГОВАЯ ЦЕНА = (БТ×РК×КС×СП)×Га+ЛН
+      </div>
+      <div class="defs">
+        <div class="def-item"><strong>БТ</strong><span>Базовый тариф (₽/га, ₽/акт, ₽/выезд). Устанавливается по ЦФО.</span></div>
+        <div class="def-item"><strong>РК</strong><span>Региональный коэффициент. Компенсирует логистику и дефицит экспертов.</span></div>
+        <div class="def-item"><strong>КС</strong><span>Коэффициент сложности. Учитывает контуры, рельеф, переезды.</span></div>
+        <div class="def-item"><strong>СП</strong><span>Сезонная премия. Применяется в пиковые периоды.</span></div>
+        <div class="def-item"><strong>ЛН</strong><span>Логистическая надбавка. Плата за выезд сверх 50 км (36 ₽/км).</span></div>
+        <div class="def-item"><strong>Га</strong><span>Обследуемая площадь при расчёте погектарно.</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Региональные коэффициенты (РК)</h2>
+      <p>РК применяется первым шагом к базовому тарифу, чтобы учесть различия в логистике, доступности и инфраструктуре между округами.</p>
+      <table class="region-table">
+        <thead><tr><th>Федеральный округ</th><th>Коэффициент</th><th>Примечания</th></tr></thead>
+        <tbody>
+          <tr><td>ЦФО</td><td><span class="tag">1.00</span></td><td>Базовое значение</td></tr>
+          <tr><td>ЮФО / ПФО</td><td>1.10 – 1.15</td><td>Лёгкое повышение для региональной разницы</td></tr>
+          <tr><td>СКФО / УрФО / СЗФО</td><td>1.20 – 1.25</td><td>Для горных и северных районов (Архангельск 1.45, Мурманск 1.40)</td></tr>
+          <tr><td>СФО / ДФО</td><td>1.35 – 1.50+</td><td>Алтай, Тыва до 1.45. Якутия 1.70, Камчатка 1.65</td></tr>
+        </tbody>
+      </table>
+      <div class="note">📌 <strong>Примечание:</strong> для труднодоступных или удалённых районов действуют повышающие надбавки до <strong>1.70</strong>.</div>
+    </section>
+
+    <section>
+      <h2>Коэффициент сложности объекта (КС)</h2>
+      <p>Отражает реальные трудозатраты эксперта: время осмотра, количество замеров и переездов между контурами.</p>
+      <div class="levels">
+        <div class="level">
+          <div class="level-num">1</div>
+          <div class="level-content">
+            <h4>1.0 — Стандарт</h4>
+            <p>Поле правильной формы, хороший подъезд — стандартная ставка.</p>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-num">2</div>
+          <div class="level-content">
+            <h4>1.1 — Умеренная сложность</h4>
+            <p>Поле разделено на 3–4 части или есть небольшой овраг/ложбина, которые надо обходить.</p>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-num">3</div>
+          <div class="level-content">
+            <h4>1.2–1.25 — Высокая сложность</h4>
+            <p>Много «пятен», мелкие контуры (средний размер < 50 га) — больше переездов и замеров.</p>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-num">4</div>
+          <div class="level-content">
+            <h4>1.3 — Максимальная сложность</h4>
+            <p>Сложный рельеф + фрагментация или судебный спор — максимальная ставка по КС.</p>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light);">💡 <strong>Правило:</strong> чем выше КС, тем дольше и дороже работа эксперта — показатель влияет на прозрачность оценки.</p>
+    </section>
+
+    <section>
+      <h2>Сезонная премия и логистика</h2>
+      <div class="grid-4">
+        <div class="card">
+          <h3>🍂 Сезонная премия (СП)</h3>
+          <p>Применяется после умножения на РК и КС.<br>• Сентябрь–октябрь (уборка): <strong>×1.25</strong><br>• Декабрь–февраль (зима): <strong>×1.4</strong><br><em>Обоснование: рост спроса и сложные погодные условия.</em></p>
+        </div>
+        <div class="card">
+          <h3>🚛 Логистическая надбавка (ЛН)</h3>
+          <p>Добавляется в рублях в конце расчёта, <strong>не умножается</strong> на коэффициенты.<br>Формула: <code>(факт. расстояние − 50 км) × 36 ₽/км</code><br>Если ≤ 50 км, надбавка = 0.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem; color: var(--primary);">⚠️ Особые случаи: Экстренный выезд (ЧС)</h3>
+      <ul>
+        <li>Фиксированный базовый выезд: <strong>5 000 ₽</strong> (в пределах 50 км).</li>
+        <li>Нерабочее время: <strong>+30%</strong> к стоимости выезда.</li>
+        <li>ЛН применяется отдельно (36 ₽/км сверх 50 км).</li>
+        <li>Такая схема даёт понятную цену в стрессовой ситуации.</li>
+      </ul>
+
+      <div class="example">
+        <h3>📊 Пример расчёта (Биоурожайность, Ставропольский край)</h3>
+        <p><strong>Исходные данные:</strong> Площадь 3 200 га | БТ = 12 ₽/га | РК = 1.20 | КС = 1.20 | СП = 1.25 | Выезд 120 км</p>
+        <ul>
+          <li><code>12 ₽/га × 1.20 × 1.20 × 1.25 = 21.60 ₽/га</code></li>
+          <li><code>21.60 × 3 200 = 69 120 ₽</code> (за площадь)</li>
+          <li><code>ЛН = (120 − 50) × 36 = 2 520 ₽</code></li>
+          <li><strong>ИТОГО:</strong> <code>69 120 + 2 520 = 71 640 ₽</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>Заключение</h2>
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
+        <div style="text-align: center; flex: 1; min-width: 200px;">
+          <h4 style="color: var(--primary); margin-bottom: 0.5rem;">⚖️ Справедлива</h4>
+          <p style="margin: 0; color: var(--text-light);">Каждый фактор компенсируется отдельно.</p>
+        </div>
+        <div style="text-align: center; flex: 1; min-width: 200px;">
+          <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔍 Прозрачна</h4>
+          <p style="margin: 0; color: var(--text-light);">Чётко видна структура и итоговая цена.</p>
+        </div>
+        <div style="text-align: center; flex: 1; min-width: 200px;">
+          <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔄 Гибка</h4>
+          <p style="margin: 0; color: var(--text-light);">Подходит для любого масштаба и региона.</p>
+        </div>
+      </div>
+    </section>
+
+   <footer>
+  <span style="font-size: 0.9rem; font-weight: normal; margin-top: 0.5rem; display: block;">
+    Методика формирования цены на услуги агростраховой экспертизы ФГБУ "РосАгрохимслужба"
+  </span>
+  <span style="display: block; margin-top: 4px; font-size: calc(0.9rem - 2pt); color: #E0E8E5;">
+    ASD ©2026.05.04
+  </span>
+</footer>
+  </div>
+</body>
+</html>
