@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тарифы и Коэффициенты | РосАгрохимслужба</title>
+  <style>
+    :root {
+      /* Светлая тема (по умолчанию) */
+      --primary: #2c5f2d;
+      --primary-light: #4a8c4b;
+      --accent-green: #294942; /* Цвет заголовков таблиц по вашему запросу */
+      --bg: #f4f7f6;
+      --card-bg: #ffffff;
+      --text: #2d3436;
+      --text-light: #636e72;
+      --border: #e0e4e8;
+      --table-stripe: #f9fbfb;
+      --hover-row: #eef5ee;
+      --shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    /* Темная тема */
+    [data-theme="dark"] {
+      --primary: #97bc62;
+      --primary-light: #4a8c4b;
+      --accent-green: #1e3630;
+      --bg: #121418;
+      --card-bg: #1e2229;
+      --text: #f1f5f9;
+      --text-light: #a0aab5;
+      --border: #2d3748;
+      --table-stripe: #252a33;
+      --hover-row: #2d3748;
+      --shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    * { box-sizing: border-box; transition: background-color 0.3s ease, color 0.3s ease; }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; padding: 0; background: var(--bg); color: var(--text); line-height: 1.5;
+      font-size: 16px;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+
+    /* Header */
+    header {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent-green) 100%);
+      color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+    header h1 { margin: 0; font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { margin: 0.5rem 0 0; opacity: 0.9; font-size: 1rem; }
+
+    /* Theme Toggle */
+    .theme-switch {
+      position: relative; width: 50px; height: 26px;
+      background: rgba(255,255,255,0.3); border-radius: 13px; cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .theme-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; background: white; border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+    [data-theme="dark"] .theme-switch { background: rgba(0,0,0,0.3); }
+    [data-theme="dark"] .theme-switch::after { transform: translateX(24px); }
+
+    /* Sections & Cards */
+    section {
+      background: var(--card-bg); padding: 1.5rem; margin-bottom: 2rem;
+      border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border);
+    }
+    h2 {
+      color: var(--primary); margin: 0 0 1rem; padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--accent-green); font-size: 1.3rem;
+    }
+
+    /* Tables */
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.9rem;
+      min-width: 800px; /* Чтобы на мобильных была прокрутка */
+    }
+    
+    th {
+      background: var(--accent-green); color: white; padding: 0.8rem;
+      text-align: left; font-weight: 600; border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    
+    td {
+      padding: 0.7rem 0.8rem; border: 1px solid var(--border);
+      vertical-align: middle; color: var(--text);
+    }
+
+    /* Stripes & Hover */
+    tr:nth-child(even) { background: var(--table-stripe); }
+    tr:hover { background: var(--hover-row); }
+
+    /* Sub-headers in table */
+    .sub-header {
+      background: var(--card-bg);
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    [data-theme="dark"] .sub-header { background: var(--table-stripe); }
+
+    /* Specific column styles */
+    .col-cost { text-align: right; font-weight: 500; white-space: nowrap; }
+    .col-code { text-align: center; color: var(--text-light); width: 50px; }
+    .col-desc { line-height: 1.4; font-size: 0.85rem; color: var(--text-light); }
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 2rem 1rem; color: var(--text-light);
+      margin-top: 1rem; border-top: 2px dashed var(--border);
+    }
+    footer strong { color: var(--primary); font-size: 1.1rem; }
+
+    @media (max-width: 768px) {
+      .container { padding: 1rem; }
+      header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .theme-switch { position: absolute; top: 2rem; right: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <h1>Тарифы и Коэффициенты</h1>
+        <p>Стоимость услуг и региональные поправки (актуально на 05.05.2026)</p>
+      </div>
+      <div class="theme-switch" onclick="toggleTheme()" title="Переключить тему"></div>
+    </header>
+
+    <section>
+      <h2>Тарифы на услуги (Руб.)</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:50px;">№</th>
+              <th>Вид услуги</th>
+              <th class="col-cost">До 1000 га</th>
+              <th class="col-cost">1001 – 5000 га</th>
+              <th class="col-cost">5001 – 10000 га</th>
+              <th class="col-cost">От 10000 га</th>
+              <th>Ед. изм.</th>
+              <th>Пояснения</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Раздел 1 -->
+            <tr>
+              <td colspan="8" class="sub-header">1. ПРЕДСТРАХОВОЙ ОСМОТР</td>
+            </tr>
+            <tr>
+              <td class="col-code">1.1</td>
+              <td>Предстраховой агротехнический осмотр</td>
+              <td class="col-cost">16 000</td>
+              <td class="col-cost">11</td>
+              <td class="col-cost">10</td>
+              <td class="col-cost">9</td>
+              <td>₽ / ₽/га</td>
+              <td class="col-desc">Базовый осмотр (визуальный + фото + Акт) без лаборатории и ГИС-анализа.</td>
+            </tr>
+
+            <!-- Раздел 2 -->
+            <tr>
+              <td colspan="8" class="sub-header">2. СТРАХОВОЙ СЛУЧАЙ (ЧС)</td>
+            </tr>
+            <tr>
+              <td class="col-code">2.1</td>
+              <td>Экстренный выезд при ЧС</td>
+              <td class="col-cost">5 000</td>
+              <td class="col-cost">5 000</td>
+              <td class="col-cost">5 000</td>
+              <td class="col-cost">5 000</td>
+              <td>₽/выезд</td>
+              <td class="col-desc">В пределах 50 км. Свыше 50 км — 36 ₽/км. +30% в нерабочее время/выходные.</td>
+            </tr>
+            <tr>
+              <td class="col-code">2.2</td>
+              <td>Диагностика повреждений</td>
+              <td class="col-cost">16 000</td>
+              <td class="col-cost">11</td>
+              <td class="col-cost">10</td>
+              <td class="col-cost">9</td>
+              <td>₽ / ₽/га</td>
+              <td class="col-desc">Фотофиксация, описание, первичный акт. Цена часто договорная (СК-эксперт).</td>
+            </tr>
+            <tr>
+              <td class="col-code">2.3</td>
+              <td>Определение биологической урожайности</td>
+              <td class="col-cost">20 000</td>
+              <td class="col-cost">14</td>
+              <td class="col-cost">13</td>
+              <td class="col-cost">12</td>
+              <td>₽ / ₽/га</td>
+              <td class="col-desc">Не менее 5 проб на 100 га. Для споров и судов. Повышенная квалификация.</td>
+            </tr>
+
+            <!-- Раздел 3 -->
+            <tr>
+              <td colspan="8" class="sub-header">3. ПОСТСТРАХОВЫЕ РАБОТЫ</td>
+            </tr>
+            <tr>
+              <td class="col-code">3.1</td>
+              <td>Экспертное заключение (расчет ущерба)</td>
+              <td class="col-cost" colspan="4">от 10 000</td>
+              <td>₽/закл.</td>
+              <td class="col-desc">Юридически значимый документ. Требуется подпись аттестованного эксперта.</td>
+            </tr>
+
+            <!-- Раздел 4 -->
+            <tr>
+              <td colspan="8" class="sub-header">4. ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ И КОЭФФИЦИЕНТЫ</td>
+            </tr>
+            <tr>
+              <td class="col-code">4.1</td>
+              <td>Логистическая надбавка (выезд > 50 км)</td>
+              <td class="col-cost" colspan="4">36 ₽/км сверх 50 км</td>
+              <td>₽/км</td>
+              <td class="col-desc">Компенсация ГСМ и амортизации согласно прайсу 2025 г.</td>
+            </tr>
+            <tr>
+              <td class="col-code">4.2</td>
+              <td>Коэффициент сложности объекта (КС)</td>
+              <td class="col-cost" colspan="4">1.0 – 1.3</td>
+              <td>коэфф.</td>
+              <td class="col-desc">
+                1.0 — Стандарт. Поле правильной формы.<br>
+                1.1 — Умеренная сложность (овраги, разделение).<br>
+                1.2–1.25 — Высокая (мелкие контуры).<br>
+                1.3 — Максимальная (рельеф + споры).
+              </td>
+            </tr>
+            <tr>
+              <td class="col-code">4.3</td>
+              <td>Сезонная премия (СП)</td>
+              <td class="col-cost" colspan="4">1.25 – 1.4</td>
+              <td>коэфф.</td>
+              <td class="col-desc">1.25 — Сентябрь-Октябрь (уборка).<br>1.4 — Зима (Декабрь-Февраль).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Региональные коэффициенты (РК)</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Федеральный округ</th>
+              <th style="width: 100px; text-align: center;">Рег. коэф.</th>
+              <th>Примечания (сложные субъекты)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Центральный (ЦФО)</td>
+              <td style="text-align: center; font-weight: bold; color: var(--primary);">1.00</td>
+              <td>Базовое значение.</td>
+            </tr>
+            <tr>
+              <td>Южный (ЮФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.10</td>
+              <td>Легкое повышение для региональной разницы.</td>
+            </tr>
+            <tr>
+              <td>Приволжский (ПФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.15</td>
+              <td>Республика Коми: <strong>1.35</strong>.</td>
+            </tr>
+            <tr>
+              <td>Северо-Кавказский (СКФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.20</td>
+              <td>Горные районы Дагестана, Чечни, КБР: <strong>+0.15</strong> дополнительно.</td>
+            </tr>
+            <tr>
+              <td>Уральский (УрФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.20</td>
+              <td>Ямало-Ненецкий АО: <strong>1.50</strong>. Ханты-Мансийский АО: <strong>1.40</strong>.</td>
+            </tr>
+            <tr>
+              <td>Северо-Западный (СЗФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.25</td>
+              <td>Архангельская обл. (вкл. НАО): <strong>1.45</strong>. Мурманская обл.: <strong>1.40</strong>.</td>
+            </tr>
+            <tr>
+              <td>Сибирский (СФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.35</td>
+              <td>Респ. Тыва, Алтай (горный): <strong>1.45</strong>. Иркутская обл. (удаленные): <strong>1.40</strong>.</td>
+            </tr>
+            <tr>
+              <td>Дальневосточный (ДФО)</td>
+              <td style="text-align: center; font-weight: bold;">1.50</td>
+              <td>Респ. Саха (Якутия): <strong>1.70</strong>. Камчатка, Магадан, Чукотка: <strong>1.65</strong>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      <strong>Методика формирования цены на услуги агростраховой экспертизы ФГБУ "РосАгрохимслужба"</strong><br>
+      <span style="font-size: 0.8rem; margin-top: 0.5rem; display: block; color: var(--text-light); color: #D1D8D6;opacity: 0.7;">ASD© 2026.05.04</span>
+    </footer>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Загрузка сохраненной темы
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.body.setAttribute('data-theme', savedTheme);
+    }
+  </script>
+</body>
+</html>
