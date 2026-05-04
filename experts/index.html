@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Навигатор | experts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(145deg, #f5f0eb 0%, #e8e2da 100%);
+            /* будет переопределено через JS / классы темы, но оставим базовый светлый */
+        }
+
+        /* Светлая тема (по умолчанию) */
+        body.light {
+            background: radial-gradient(circle at 10% 20%, rgba(245,240,235,1) 0%, rgba(235,225,215,1) 100%);
+            color: #2c2c2c;
+        }
+        body.light .glass-card {
+            background: rgba(245, 240, 235, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,245,0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
+        }
+        body.light .file-link {
+            background: rgba(250, 248, 245, 0.7);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: #2c2c2c;
+        }
+        body.light .file-link:hover {
+            background: rgba(255,255,250,0.9);
+            border-left: 3px solid #b87333;
+            transform: translateX(4px);
+            box-shadow: -4px 4px 12px rgba(0,0,0,0.02);
+        }
+        body.light .theme-toggle {
+            background: rgba(30,30,40,0.08);
+            color: #3e3a3a;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* Тёмная тема — футуристичный пастельно-тёмный */
+        body.dark {
+            background: radial-gradient(circle at 30% 10%, #1e2a2e 0%, #0f1a1f 100%);
+            color: #dddcd8;
+        }
+        body.dark .glass-card {
+            background: rgba(20, 30, 32, 0.55);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(210, 205, 190, 0.2);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+        }
+        body.dark .file-link {
+            background: rgba(35, 45, 50, 0.65);
+            border-bottom: 1px solid rgba(210,205,180,0.1);
+            color: #eae7df;
+        }
+        body.dark .file-link:hover {
+            background: rgba(65, 80, 85, 0.8);
+            border-left: 3px solid #c99e6f;
+            transform: translateX(4px);
+        }
+        body.dark .theme-toggle {
+            background: rgba(210,205,180,0.12);
+            color: #ece7dd;
+            border: 1px solid rgba(230,220,200,0.25);
+        }
+
+        /* main container — глассморфная карточка */
+        .glass-card {
+            max-width: 780px;
+            width: 100%;
+            margin: 1rem auto;
+            border-radius: 2.5rem;
+            padding: 2rem 1.8rem 2.2rem 1.8rem;
+            transition: all 0.25s ease;
+        }
+
+        /* шапка */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+            padding-bottom: 0.75rem;
+        }
+        h1 {
+            font-weight: 520;
+            font-size: 1.85rem;
+            letter-spacing: -0.3px;
+        }
+        .path-badge {
+            font-family: monospace;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            background: rgba(0,0,0,0.04);
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+        }
+        body.dark .path-badge {
+            background: rgba(255,255,210,0.08);
+        }
+
+        /* переключатель темы */
+        .theme-toggle {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.7rem;
+            line-height: 1;
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
+            font-weight: 400;
+            transition: 0.2s;
+        }
+        .theme-toggle:hover {
+            opacity: 0.75;
+            transform: scale(0.96);
+        }
+
+        /* список файлов */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            margin: 1.8rem 0 0.8rem;
+        }
+        .file-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1.6rem;
+            text-decoration: none;
+            font-weight: 460;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .file-name {
+            font-size: 1rem;
+            word-break: break-word;
+            flex: 1;
+        }
+        .file-ext {
+            font-size: 0.7rem;
+            font-family: monospace;
+            opacity: 0.7;
+            letter-spacing: 0.2px;
+            background: rgba(0,0,0,0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 40px;
+        }
+        body.dark .file-ext {
+            background: rgba(230,220,200,0.12);
+        }
+
+        .empty-folder {
+            text-align: center;
+            padding: 3rem 1rem;
+            opacity: 0.65;
+            font-style: normal;
+            font-weight: 380;
+        }
+        .footer-note {
+            margin-top: 2.5rem;
+            text-align: right;
+            font-size: 0.7rem;
+            opacity: 0.45;
+            letter-spacing: 0.2px;
+            font-family: monospace;
+            border-top: 0.5px solid rgba(128,128,128,0.2);
+            padding-top: 1rem;
+        }
+        @media (max-width: 560px) {
+            body { padding: 1rem; }
+            .glass-card { padding: 1.5rem; }
+            h1 { font-size: 1.5rem; }
+            .file-link { padding: 0.7rem 1rem; }
+        }
+
+        /* легкая анимация появления элементов */
+        .file-link {
+            opacity: 0;
+            animation: fadeSlideUp 0.3s ease forwards;
+        }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* разная задержка динамическая через js (добавим style) */
+    </style>
+</head>
+<body class="light">
+    <div class="glass-card">
+        <div class="header-row">
+            <div>
+                <h1>навигатор</h1>
+                <div class="path-badge">/experts/</div>
+            </div>
+            <button class="theme-toggle" id="themeSwitcher" aria-label="светлая/темная тема">&#9788;</button>
+        </div>
+
+        <div id="fileListContainer" class="file-list">
+            <div class="empty-folder">загрузка содержимого...</div>
+        </div>
+
+        <div class="footer-note" id="copyrightDate">ASD © </div>
+    </div>
+
+    <script>
+        // ------------------- НАСТРОЙКИ (измените при необходимости) -------------------
+        const GITHUB_USER = '177asd';
+        const REPO_NAME = 'RAHSASD';
+        const FOLDER_PATH = 'experts';      // папка, содержимое которой показываем
+
+        // -------------------------------------------------------------------------
+        // Функция получения списка файлов из папки через GitHub API (contents)
+        async function fetchFolderContents() {
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('Папка не найдена или репозиторий недоступен');
+                    }
+                    throw new Error(`Ошибка API: ${response.status}`);
+                }
+                const data = await response.json();
+                if (!Array.isArray(data)) {
+                    // иногда возвращает объект если это файл, но нам нужна папка
+                    throw new Error('Путь не является папкой либо содержимое недоступно');
+                }
+                // фильтруем: убираем сам index.html, чтобы он не светился в списке
+                const files = data.filter(item => 
+                    item.type === 'file' && 
+                    item.name !== 'index.html' &&
+                    item.name !== 'index.htm'
+                );
+                return files;
+            } catch (error) {
+                console.error(error);
+                return null;
+            }
+        }
+
+        // отрисовка списка
+        function renderFileList(files) {
+            const container = document.getElementById('fileListContainer');
+            if (!container) return;
+
+            if (!files || files.length === 0) {
+                container.innerHTML = `<div class="empty-folder">📄 папка пуста или нет доступа к списку файлов</div>`;
+                return;
+            }
+
+            // сортировка: папки (пока не используем, но если появятся директории — можно будет), потом файлы по имени
+            const sorted = [...files].sort((a,b) => a.name.localeCompare(b.name));
+            
+            let filesHTML = '';
+            sorted.forEach((file, idx) => {
+                // формируем прямую ссылку на файл через RAW (чтобы открывался/скачивался)
+                // лучше использовать raw.githubusercontent для прямого доступа
+                const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${FOLDER_PATH}/${encodeURIComponent(file.name)}`;
+                // но для удобства пользователя если это html — лучше открывать через pages? Но оставим raw —
+                // гарантированно отработает. Также обеспечим открытие в новой вкладке
+                const ext = file.name.split('.').pop() || '';
+                const displayExt = ext.length < 8 ? ext.toUpperCase() : ext.slice(0,6);
+                
+                filesHTML += `
+                    <a class="file-link" href="${rawUrl}" target="_blank" rel="noopener noreferrer" style="animation-delay: ${idx * 0.02}s">
+                        <span class="file-name">${escapeHtml(file.name)}</span>
+                        <span class="file-ext">${escapeHtml(displayExt)}</span>
+                    </a>
+                `;
+            });
+            container.innerHTML = filesHTML;
+        }
+
+        // небольшой helper для защиты от XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+
+        // темы (light/dark)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let theme = 'light';
+            if (savedTheme === 'dark' || (savedTheme === null && prefersDark)) theme = 'dark';
+            setTheme(theme);
+        }
+
+        function setTheme(theme) {
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeSwitcher');
+            if (theme === 'dark') {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                if (toggleBtn) toggleBtn.innerHTML = '&#9790;';  // ☾ moon
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                if (toggleBtn) toggleBtn.innerHTML = '&#9788;';  // ☼ sun
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        }
+
+        // подвал с текущей датой YYYY·MM·DD
+        function setFooterDate() {
+            const footer = document.getElementById('copyrightDate');
+            if (footer) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                footer.textContent = `ASD © ${year}·${month}·${day}`;
+            }
+        }
+
+        // главный запуск
+        async function init() {
+            initTheme();
+            setFooterDate();
+            const themeSwitcher = document.getElementById('themeSwitcher');
+            if (themeSwitcher) themeSwitcher.addEventListener('click', toggleTheme);
+            
+            // показать статус загрузки
+            const container = document.getElementById('fileListContainer');
+            if (container) container.innerHTML = `<div class="empty-folder">загрузка содержимого папки experts ...</div>`;
+            
+            const files = await fetchFolderContents();
+            if (files && Array.isArray(files)) {
+                renderFileList(files);
+            } else {
+                container.innerHTML = `<div class="empty-folder">⚠️ не удалось получить список файлов. Проверьте название папки / репозитория или наличие прав на чтение.</div>`;
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>
