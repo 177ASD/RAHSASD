@@ -3,353 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Навигатор | experts</title>
+    <title>Experts — справочники</title>
+    <!-- Подключаем библиотеку для преобразования Markdown в HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        :root {
+            --bg: #f5faf0;
+            --card: #ffffffcc;
+            --text: #2d3e2b;
+            --accent: #6b8c5c;
+            --border: #d9e8d4;
+            --code-bg: #eef3ea;
+        }
+
+        body.dark {
+            --bg: #1a2a1f;
+            --card: #2a3a26cc;
+            --text: #e0f0da;
+            --accent: #8ab87a;
+            --border: #3a5535;
+            --code-bg: #2a3a26;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            transition: all 0.2s;
             min-height: 100vh;
-            padding: 2rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
-        /* Светлая тема (по умолчанию) */
-        body.light {
-            background: radial-gradient(circle at 10% 20%, rgba(245,240,235,1) 0%, rgba(235,225,215,1) 100%);
-            color: #2c2c2c;
-        }
-        body.light .glass-card {
-            background: rgba(245, 240, 235, 0.45);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,245,0.5);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
-        }
-        body.light .file-link {
-            background: rgba(250, 248, 245, 0.7);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            color: #2c2c2c;
-        }
-        body.light .file-link:hover {
-            background: rgba(255,255,250,0.9);
-            border-left: 3px solid #b87333;
-            transform: translateX(4px);
-            box-shadow: -4px 4px 12px rgba(0,0,0,0.02);
-        }
-        body.light .theme-toggle {
-            background: rgba(30,30,40,0.08);
-            color: #3e3a3a;
-            border: 1px solid rgba(0,0,0,0.1);
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        /* Тёмная тема */
-        body.dark {
-            background: radial-gradient(circle at 30% 10%, #1e2a2e 0%, #0f1a1f 100%);
-            color: #dddcd8;
-        }
-        body.dark .glass-card {
-            background: rgba(20, 30, 32, 0.55);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(210, 205, 190, 0.2);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
-        }
-        body.dark .file-link {
-            background: rgba(35, 45, 50, 0.65);
-            border-bottom: 1px solid rgba(210,205,180,0.1);
-            color: #eae7df;
-        }
-        body.dark .file-link:hover {
-            background: rgba(65, 80, 85, 0.8);
-            border-left: 3px solid #c99e6f;
-            transform: translateX(4px);
-        }
-        body.dark .theme-toggle {
-            background: rgba(210,205,180,0.12);
-            color: #ece7dd;
-            border: 1px solid rgba(230,220,200,0.25);
-        }
-
-        .glass-card {
-            max-width: 780px;
-            width: 100%;
-            margin: 1rem auto;
-            border-radius: 2.5rem;
-            padding: 2rem 1.8rem 2.2rem 1.8rem;
-            transition: all 0.25s ease;
-        }
-
-        .header-row {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             flex-wrap: wrap;
             margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-            padding-bottom: 0.75rem;
+            gap: 1rem;
         }
+
         h1 {
-            font-weight: 520;
-            font-size: 1.85rem;
+            font-size: 1.8rem;
+            font-weight: 500;
             letter-spacing: -0.3px;
-        }
-        .path-badge {
-            font-family: monospace;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            background: rgba(0,0,0,0.04);
-            padding: 0.2rem 0.6rem;
-            border-radius: 40px;
-        }
-        body.dark .path-badge {
-            background: rgba(255,255,210,0.08);
         }
 
         .theme-toggle {
+            background: var(--card);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
             cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 1.7rem;
-            line-height: 1;
-            padding: 0.4rem 0.8rem;
-            border-radius: 60px;
-            font-weight: 400;
-            transition: 0.2s;
+            font-size: 1.1rem;
+            color: var(--text);
         }
-        .theme-toggle:hover {
-            opacity: 0.75;
-            transform: scale(0.96);
+
+        .folder-badge {
+            background: var(--card);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.3rem 1rem;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            font-size: 0.8rem;
         }
 
         .file-list {
             display: flex;
             flex-direction: column;
-            gap: 0.55rem;
-            margin: 1.8rem 0 0.8rem;
+            gap: 0.6rem;
+            margin-bottom: 2rem;
         }
-        .file-link {
+
+        .file-card {
+            background: var(--card);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            transition: all 0.2s;
+        }
+
+        .file-card:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        body.dark .file-card:hover {
+            background: rgba(60, 90, 55, 0.9);
+        }
+
+        .file-card a {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.8rem;
             padding: 0.9rem 1.2rem;
-            border-radius: 1.6rem;
             text-decoration: none;
-            font-weight: 460;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-        .file-name {
-            font-size: 1rem;
-            word-break: break-word;
-            flex: 1;
-        }
-        .file-ext {
-            font-size: 0.7rem;
-            font-family: monospace;
-            opacity: 0.7;
-            letter-spacing: 0.2px;
-            background: rgba(0,0,0,0.05);
-            padding: 0.2rem 0.6rem;
-            border-radius: 40px;
-        }
-        body.dark .file-ext {
-            background: rgba(230,220,200,0.12);
+            color: var(--text);
         }
 
-        .empty-folder {
-            text-align: center;
-            padding: 3rem 1rem;
-            opacity: 0.65;
-            font-style: normal;
-            font-weight: 380;
+        .file-icon {
+            font-size: 1.5rem;
         }
-        .footer-note {
-            margin-top: 2.5rem;
+
+        .file-name {
+            flex: 1;
+            font-weight: 470;
+            word-break: break-word;
+        }
+
+        .file-type {
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.08);
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-family: monospace;
+        }
+
+        .arrow {
+            opacity: 0.4;
+            font-size: 1rem;
+        }
+
+        /* Стили для отформатированного README.md */
+        .readme-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
+        }
+
+        .readme-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .markdown-body {
+            background: var(--card);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .markdown-body h1 { font-size: 1.5rem; margin: 1rem 0 0.5rem; }
+        .markdown-body h2 { font-size: 1.3rem; margin: 1rem 0 0.5rem; }
+        .markdown-body h3 { font-size: 1.1rem; margin: 0.8rem 0 0.4rem; }
+        .markdown-body p { margin: 0.5rem 0; }
+        .markdown-body table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+        .markdown-body th, .markdown-body td {
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .markdown-body th {
+            background: rgba(0,0,0,0.05);
+        }
+        .markdown-body code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            font-family: monospace;
+        }
+        .markdown-body pre {
+            background: var(--code-bg);
+            padding: 0.8rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+        .markdown-body blockquote {
+            border-left: 3px solid var(--accent);
+            margin: 0.5rem 0;
+            padding-left: 1rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+        .markdown-body hr {
+            margin: 1rem 0;
+            border: none;
+            border-top: 1px solid var(--border);
+        }
+
+        .loading, .empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .footer {
+            margin-top: 2rem;
             text-align: right;
             font-size: 0.7rem;
-            opacity: 0.45;
-            letter-spacing: 0.2px;
-            font-family: monospace;
-            border-top: 0.5px solid rgba(128,128,128,0.2);
-            padding-top: 1rem;
-        }
-        @media (max-width: 560px) {
-            body { padding: 1rem; }
-            .glass-card { padding: 1.5rem; }
-            h1 { font-size: 1.5rem; }
-            .file-link { padding: 0.7rem 1rem; }
+            opacity: 0.6;
         }
 
-        .file-link {
-            opacity: 0;
-            animation: fadeSlideUp 0.3s ease forwards;
-        }
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 550px) {
+            body { padding: 1rem; }
+            .file-card a { flex-wrap: wrap; gap: 0.4rem; }
+            .file-name { width: 100%; }
+            .markdown-body { padding: 1rem; }
+            .markdown-body table { font-size: 0.8rem; }
         }
     </style>
 </head>
-<body class="light">
-    <div class="glass-card">
-        <div class="header-row">
-            <div>
-                <h1>Агростраховая экспертиза</h1>
-                <div class="path-badge">//документы/</div>
-            </div>
-            <button class="theme-toggle" id="themeSwitcher" aria-label="светлая/темная тема">&#9788;</button>
-        </div>
-
-        <div id="fileListContainer" class="file-list">
-            <div class="empty-folder">загрузка содержимого...</div>
-        </div>
-
-        <div class="footer-note" id="copyrightDate">ASD © </div>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📁 experts/</h1>
+        <div class="theme-toggle" id="themeToggle">☼ / ☾</div>
     </div>
 
-    <script>
-        // ------------------- НАСТРОЙКИ -------------------
-        const GITHUB_USER = '177asd';
-        const REPO_NAME = 'RAHSASD';
-        const FOLDER_PATH = 'experts';
+    <div class="folder-badge">
+        🧠 рабочие справочники, карты, тарифы
+    </div>
 
-        // ---------- ГЛАВНОЕ ИЗМЕНЕНИЕ: ссылки ведут на GitHub Pages ----------
-        // Базовый URL для страницы на GitHub Pages:
-        const PAGES_BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/${FOLDER_PATH}/`;
+    <div id="fileListContainer">
+        <div class="loading">📂 загрузка файлов...</div>
+    </div>
 
-        // --------------------------------------------------------------------
-        async function fetchFolderContents() {
-            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        throw new Error('Папка не найдена или репозиторий недоступен');
-                    }
-                    throw new Error(`Ошибка API: ${response.status}`);
-                }
-                const data = await response.json();
-                if (!Array.isArray(data)) {
-                    throw new Error('Путь не является папкой либо содержимое недоступно');
-                }
-                // фильтруем: убираем сам index.html
-                const files = data.filter(item => 
-                    item.type === 'file' && 
-                    item.name !== 'index.html' &&
-                    item.name !== 'index.htm'
-                );
-                return files;
-            } catch (error) {
-                console.error(error);
-                return null;
-            }
-        }
+    <div id="readmeContainer" class="readme-section" style="display: none;">
+        <div class="readme-title">
+            <span>📚</span> Справочный раздел
+        </div>
+        <div id="markdownContent" class="markdown-body"></div>
+    </div>
 
-        function renderFileList(files) {
-            const container = document.getElementById('fileListContainer');
-            if (!container) return;
+    <div class="footer" id="footerDate">ASD © <span id="currentDate"></span></div>
+</div>
 
-            if (!files || files.length === 0) {
-                container.innerHTML = `<div class="empty-folder">папка пуста или нет доступа к списку файлов</div>`;
+<script>
+    // === переключение темы ===
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    if (localStorage.getItem('theme') === 'dark') body.classList.add('dark');
+    themeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // === дата ===
+    const today = new Date();
+    document.getElementById('currentDate').textContent = `${today.getFullYear()}·${String(today.getMonth()+1).padStart(2,'0')}·${String(today.getDate()).padStart(2,'0')}`;
+
+    // === КОНФИГУРАЦИЯ GITHUB ===
+    const USER = '177ASD';
+    const REPO = 'RAHSASD';
+    const BRANCH = 'main';
+    const FOLDER = 'experts';
+
+    // файлы, которые НЕ нужно показывать в меню
+    const EXCLUDE_FILES = ['index.html', 'ReadMe.txt', 'README.md'];
+
+    // иконка по расширению
+    function getIcon(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        if (ext === 'html') return '🌐';
+        if (ext === 'pdf') return '📑';
+        if (ext === 'txt') return '📄';
+        if (ext === 'docx') return '📝';
+        if (ext === 'md') return '📘';
+        return '📄';
+    }
+
+    // правильная ссылка = GitHub Pages, а не raw
+    function getPageUrl(filename) {
+        const encoded = encodeURIComponent(filename).replace(/%2F/g, '/');
+        return `https://${USER}.github.io/${REPO}/${FOLDER}/${encoded}`;
+    }
+
+    // загрузка списка файлов
+    async function loadFolderContents() {
+        const container = document.getElementById('fileListContainer');
+        const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}?ref=${BRANCH}`;
+        
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+            
+            const files = await response.json();
+            if (!Array.isArray(files)) throw new Error('Некорректный ответ API');
+            
+            let fileList = files.filter(f => 
+                f.type === 'file' && 
+                !EXCLUDE_FILES.includes(f.name)
+            );
+            
+            fileList.sort((a, b) => a.name.localeCompare(b.name));
+            
+            if (fileList.length === 0) {
+                container.innerHTML = '<div class="empty">📭 нет доступных документов</div>';
                 return;
             }
-
-            const sorted = [...files].sort((a,b) => a.name.localeCompare(b.name));
             
-            let filesHTML = '';
-            sorted.forEach((file, idx) => {
-                // 🔥 ИЗМЕНЕНИЕ ЗДЕСЬ: ссылка ведёт на GitHub Pages, а не на raw
-                const fileUrl = `${PAGES_BASE_URL}${encodeURIComponent(file.name)}`;
+            let html = '<div class="file-list">';
+            for (const file of fileList) {
+                const fileName = file.name;
+                const fileUrl = getPageUrl(fileName);
+                const icon = getIcon(fileName);
+                const ext = fileName.split('.').pop().toLowerCase();
                 
-                const ext = file.name.split('.').pop() || '';
-                const displayExt = ext.length < 8 ? ext.toUpperCase() : ext.slice(0,6);
-                
-                filesHTML += `
-                    <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="animation-delay: ${idx * 0.02}s">
-                        <span class="file-name">${escapeHtml(file.name)}</span>
-                        <span class="file-ext">${escapeHtml(displayExt)}</span>
-                    </a>
+                html += `
+                    <div class="file-card">
+                        <a href="${fileUrl}" target="_blank">
+                            <div class="file-icon">${icon}</div>
+                            <div class="file-name">${escapeHtml(fileName)}</div>
+                            <div class="file-type">${ext}</div>
+                            <div class="arrow">→</div>
+                        </a>
+                    </div>
                 `;
-            });
-            container.innerHTML = filesHTML;
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-
-        // темы
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            let theme = 'light';
-            if (savedTheme === 'dark' || (savedTheme === null && prefersDark)) theme = 'dark';
-            setTheme(theme);
-        }
-
-        function setTheme(theme) {
-            const body = document.body;
-            const toggleBtn = document.getElementById('themeSwitcher');
-            if (theme === 'dark') {
-                body.classList.remove('light');
-                body.classList.add('dark');
-                if (toggleBtn) toggleBtn.innerHTML = '&#9790;';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                body.classList.remove('dark');
-                body.classList.add('light');
-                if (toggleBtn) toggleBtn.innerHTML = '&#9788;';
-                localStorage.setItem('theme', 'light');
             }
-        }
-
-        function toggleTheme() {
-            const isDark = document.body.classList.contains('dark');
-            setTheme(isDark ? 'light' : 'dark');
-        }
-
-        function setFooterDate() {
-            const footer = document.getElementById('copyrightDate');
-            if (footer) {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                footer.textContent = `ASD © ${year}·${month}·${day}`;
-            }
-        }
-
-        async function init() {
-            initTheme();
-            setFooterDate();
-            const themeSwitcher = document.getElementById('themeSwitcher');
-            if (themeSwitcher) themeSwitcher.addEventListener('click', toggleTheme);
+            html += '</div>';
+            container.innerHTML = html;
             
-            const container = document.getElementById('fileListContainer');
-            if (container) container.innerHTML = `<div class="empty-folder">загрузка содержимого папки experts ...</div>`;
-            
-            const files = await fetchFolderContents();
-            if (files && Array.isArray(files)) {
-                renderFileList(files);
-            } else {
-                container.innerHTML = `<div class="empty-folder">не удалось получить список файлов. Проверьте название папки / репозитория.</div>`;
-            }
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = '<div class="empty">⚠️ не удалось загрузить список файлов</div>';
         }
+    }
+
+    // загрузка и отображение README.md как форматированного HTML
+    async function loadReadme() {
+        const readmeUrl = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${FOLDER}/README.md`;
+        const readmeContainer = document.getElementById('readmeContainer');
+        const markdownContent = document.getElementById('markdownContent');
         
-        init();
-    </script>
+        try {
+            const response = await fetch(readmeUrl);
+            if (!response.ok) {
+                // если README.md нет — просто скрываем блок
+                readmeContainer.style.display = 'none';
+                return;
+            }
+            
+            const markdown = await response.text();
+            // проверяем, что это не пустой файл и не ошибка
+            if (!markdown || markdown.trim() === '') {
+                readmeContainer.style.display = 'none';
+                return;
+            }
+            
+            // преобразуем Markdown в HTML с помощью библиотеки marked
+            const html = marked.parse(markdown);
+            markdownContent.innerHTML = html;
+            readmeContainer.style.display = 'block';
+            
+        } catch (error) {
+            console.warn('README.md не загружен:', error);
+            readmeContainer.style.display = 'none';
+        }
+    }
+    
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    loadFolderContents();
+    loadReadme();
+</script>
 </body>
 </html>
