@@ -31,32 +31,35 @@
       position: relative; 
     }
 
-    /* Водяной знак (Общие стили) */
-    .watermark {
-      position: fixed; 
-      font-size: 100px;
-      font-weight: 700;
-      color: #2c5f2d; 
-      opacity: 0.03; /* Прозрачность изменена на 0.03 */
-      transform: rotate(-40deg);
-      pointer-events: none; 
-      user-select: none; 
-      white-space: nowrap;
-      z-index: 999; /* ЗНАКИ НА ПЕРЕДНЕМ ПЛАНЕ (поверх контента) */
-      font-family: inherit;
-      line-height: 1;
-    }
+   /* Водяной знак (Общие стили) */
+.watermark {
+    position: fixed;
+    font-size: 100px;
+    font-weight: 700;
+    color: #2c5f2d;
+    opacity: 0.03;
+    transform: rotate(-40deg);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 999;
+    font-family: inherit;
+    line-height: 1;
+}
 
-    /* Позиционирование по углам */
-    .wm-tl { top: 5%; left: 2%; }   
-    .wm-tr { top: 5%; right: 2%; }  
-    .wm-bl { bottom: 5%; left: 2%; } 
-    .wm-br { bottom: 5%; right: 2%; } 
+/* Позиции ровно для трёх знаков */
+.wm-tl { top: 5%; left: 2%; }           /* верхний левый */
+.wm-br { bottom: 5%; right: 2%; }       /* нижний правый */
+.wm-center { 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%) rotate(-40deg);
+}
 
-    /* Адаптив */
-    @media (max-width: 768px) {
-      .watermark { font-size: 40px; }
-    }
+/* Адаптив */
+@media (max-width: 768px) {
+    .watermark { font-size: 40px; }
+}
 
     /* Header */
     header {
@@ -170,6 +173,11 @@
   <!-- Водяные знаки (На переднем плане) -->
   <div class="watermark wm-tr">ФГБУ "РосАгрохимслужба"</div>
   <div class="watermark wm-bl">ФГБУ "РосАгрохимслужба"</div>
+	.wm-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-40deg);
+}
   <div class="watermark wm-center">ФГБУ "РосАгрохимслужба"</div>
 
   <div class="container">
