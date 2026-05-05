@@ -243,7 +243,8 @@
                 const files = data.filter(item => 
                     item.type === 'file' && 
                     item.name !== 'index.html' &&
-                    item.name !== 'index.htm'
+                    item.name !== 'index.htm' &&
+                    item.name !== 'README.md'
                 );
                 return files;
             } catch (error) {
