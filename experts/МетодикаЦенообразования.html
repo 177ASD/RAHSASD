@@ -31,14 +31,16 @@
       position: relative; 
     }
 
-   /* Водяной знак (Общие стили) */
-	.watermark {
+/* Водяной знак по центру */
+.watermark {
     position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
     font-size: 100px;
     font-weight: 700;
     color: #2c5f2d;
     opacity: 0.03;
-    transform: rotate(-15deg);
     pointer-events: none;
     user-select: none;
     white-space: nowrap;
@@ -47,19 +49,11 @@
     line-height: 1;
 }
 
-	  
-/* Позиции ровно для трёх знаков */
-/*.wm-tl { top: 5%; left: 2%; }           /* верхний левый */
-/*.wm-br { bottom: 5%; right: 2%; }       /* нижний правый */
-.wm-center { 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%) rotate(-12deg);
-}
-
-/* Адаптив */
+/* Адаптив для телефонов */
 @media (max-width: 768px) {
-    .watermark { font-size: 40px; }
+    .watermark {
+        font-size: 40px;
+    }
 }
 
     /* Header */
