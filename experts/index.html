@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Experts — справочники</title>
-    <!-- Подключаем библиотеку для преобразования Markdown в HTML -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
@@ -138,7 +137,6 @@
             font-size: 1rem;
         }
 
-        /* Стили для отформатированного README.md */
         .readme-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
@@ -206,11 +204,15 @@
             border-top: 1px solid var(--border);
         }
 
-        .loading, .empty {
+        .loading, .empty, .error {
             text-align: center;
             padding: 2rem;
             color: var(--text);
             opacity: 0.7;
+        }
+        .error {
+            color: #c26b5a;
+            opacity: 1;
         }
 
         .footer {
@@ -268,16 +270,14 @@
     const today = new Date();
     document.getElementById('currentDate').textContent = `${today.getFullYear()}·${String(today.getMonth()+1).padStart(2,'0')}·${String(today.getDate()).padStart(2,'0')}`;
 
-    // === КОНФИГУРАЦИЯ GITHUB ===
+    // === КОНФИГУРАЦИЯ ===
     const USER = '177ASD';
     const REPO = 'RAHSASD';
     const BRANCH = 'main';
     const FOLDER = 'experts';
 
-    // файлы, которые НЕ нужно показывать в меню
     const EXCLUDE_FILES = ['index.html', 'ReadMe.txt', 'README.md'];
 
-    // иконка по расширению
     function getIcon(filename) {
         const ext = filename.split('.').pop().toLowerCase();
         if (ext === 'html') return '🌐';
@@ -288,23 +288,37 @@
         return '📄';
     }
 
-    // правильная ссылка = GitHub Pages, а не raw
     function getPageUrl(filename) {
         const encoded = encodeURIComponent(filename).replace(/%2F/g, '/');
         return `https://${USER}.github.io/${REPO}/${FOLDER}/${encoded}`;
     }
 
-    // загрузка списка файлов
     async function loadFolderContents() {
         const container = document.getElementById('fileListContainer');
+        // ПРАВИЛЬНЫЙ API URL с заголовком Accept
         const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}?ref=${BRANCH}`;
         
         try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+            const response = await fetch(apiUrl, {
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`GitHub API ошибка ${response.status}: ${response.statusText}`);
+            }
             
             const files = await response.json();
-            if (!Array.isArray(files)) throw new Error('Некорректный ответ API');
+            
+            // Важно: API может вернуть объект с message (например, "Not found")
+            if (files.message) {
+                throw new Error(files.message);
+            }
+            
+            if (!Array.isArray(files)) {
+                throw new Error('Неверный формат ответа от API');
+            }
             
             let fileList = files.filter(f => 
                 f.type === 'file' && 
@@ -340,12 +354,11 @@
             container.innerHTML = html;
             
         } catch (error) {
-            console.error(error);
-            container.innerHTML = '<div class="empty">⚠️ не удалось загрузить список файлов</div>';
+            console.error('Ошибка загрузки:', error);
+            container.innerHTML = `<div class="error">⚠️ Ошибка: ${error.message}<br><br>🔍 Проверьте:<br>• Репозиторий "${USER}/${REPO}" существует и публичный<br>• Папка "${FOLDER}" существует в ветке "${BRANCH}"<br>• Файлы в папке есть</div>`;
         }
     }
 
-    // загрузка и отображение README.md как форматированного HTML
     async function loadReadme() {
         const readmeUrl = `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${FOLDER}/README.md`;
         const readmeContainer = document.getElementById('readmeContainer');
@@ -354,21 +367,23 @@
         try {
             const response = await fetch(readmeUrl);
             if (!response.ok) {
-                // если README.md нет — просто скрываем блок
                 readmeContainer.style.display = 'none';
                 return;
             }
             
             const markdown = await response.text();
-            // проверяем, что это не пустой файл и не ошибка
-            if (!markdown || markdown.trim() === '') {
+            if (!markdown || markdown.trim() === '' || markdown.startsWith('404')) {
                 readmeContainer.style.display = 'none';
                 return;
             }
             
-            // преобразуем Markdown в HTML с помощью библиотеки marked
-            const html = marked.parse(markdown);
-            markdownContent.innerHTML = html;
+            if (typeof marked !== 'undefined') {
+                const html = marked.parse(markdown);
+                markdownContent.innerHTML = html;
+            } else {
+                // fallback: показать как текст
+                markdownContent.innerHTML = `<pre>${escapeHtml(markdown)}</pre>`;
+            }
             readmeContainer.style.display = 'block';
             
         } catch (error) {
@@ -386,6 +401,7 @@
         });
     }
     
+    // Запуск
     loadFolderContents();
     loadReadme();
 </script>
