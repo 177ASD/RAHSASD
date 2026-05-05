@@ -325,40 +325,43 @@ const activeFilters = new Set();
 const radiusLayerGroup = L.layerGroup().addTo(map);
 
 function showFilialDetails(filial) {
-const detailsPanel = document.getElementById('filial-details');
-if (!detailsPanel) return;
-document.getElementById('detail-name').textContent = filial.name;
-document.getElementById('detail-region').textContent = filial.region;
-document.getElementById('detail-fo').textContent = filial.fo;
-document.getElementById('detail-fo').style.color = foColors[filial.fo] || '#333';
-document.getElementById('detail-address').textContent = filial.address;
+    const detailsPanel = document.getElementById('filial-details');
+    if (!detailsPanel) return;
+    document.getElementById('detail-name').textContent = filial.name;
+    document.getElementById('detail-region').textContent = filial.region;
+    document.getElementById('detail-fo').textContent = filial.fo;
+    document.getElementById('detail-fo').style.color = foColors[filial.fo] || '#333';
+    document.getElementById('detail-address').textContent = filial.address;
 
-const expertsContainer = document.getElementById('detail-experts-container');
-const expertsList = document.getElementById('detail-experts-list');
-expertsList.innerHTML = '';
+    const expertsContainer = document.getElementById('detail-experts-container');
+    const expertsList = document.getElementById('detail-experts-list');
+    expertsList.innerHTML = '';
+    
+    // Добавляем заголовок перед списком экспертов
+    expertsList.innerHTML = `<div class="detail-label" style="margin-bottom: 6px; color: #33691e;">ЭКСПЕРТЫ:</div>`;
 
-let baseName = filial.name;
-if (baseName.includes(' отд.')) { baseName = baseName.split(' отд.')[0]; }
-const experts = expertsMap[baseName];
+    let baseName = filial.name;
+    if (baseName.includes(' отд.')) { baseName = baseName.split(' отд.')[0]; }
+    const experts = expertsMap[baseName];
 
-if (experts && experts.length > 0) {
-expertsContainer.style.display = 'block';
-experts.forEach(exp => {
-const div = document.createElement('div');
-div.className = 'detail-expert-item';
-div.innerHTML = `<span style="margin-right:6px;">👤</span> ${exp}`;
-expertsList.appendChild(div);
-});
-} else {
-expertsContainer.style.display = 'none';
-}
+    if (experts && experts.length > 0) {
+        expertsContainer.style.display = 'block';
+        experts.forEach(exp => {
+            const div = document.createElement('div');
+            div.className = 'detail-expert-item';
+            div.innerHTML = `<span style="margin-right:6px;">👤</span> ${exp}`;
+            expertsList.appendChild(div);
+        });
+    } else {
+        expertsContainer.style.display = 'none';
+    }
 
-const contactsContainer = document.getElementById('detail-contacts-container');
-contactsContainer.innerHTML = '';
-if (filial.email) { contactsContainer.innerHTML += `<div class="contact-row"><span class="contact-icon">✉️</span><a href="mailto:${filial.email}" class="contact-link">${filial.email}</a></div>`; }
-if (filial.site) { contactsContainer.innerHTML += `<div class="contact-row"><span class="contact-icon">🌐</span><a href="${filial.site}" target="_blank" class="contact-link">${filial.site.replace('https://','')}</a></div>`; }
+    const contactsContainer = document.getElementById('detail-contacts-container');
+    contactsContainer.innerHTML = '';
+    if (filial.email) { contactsContainer.innerHTML += `<div class="contact-row"><span class="contact-icon">✉️</span><a href="mailto:${filial.email}" class="contact-link">${filial.email}</a></div>`; }
+    if (filial.site) { contactsContainer.innerHTML += `<div class="contact-row"><span class="contact-icon">🌐</span><a href="${filial.site}" target="_blank" class="contact-link">${filial.site.replace('https://','')}</a></div>`; }
 
-detailsPanel.style.display = 'block';
+    detailsPanel.style.display = 'block';
 }
 
 function closeDetails() {
