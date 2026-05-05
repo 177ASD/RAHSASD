@@ -295,7 +295,6 @@
 
     async function loadFolderContents() {
         const container = document.getElementById('fileListContainer');
-        // ПРАВИЛЬНЫЙ API URL с заголовком Accept
         const apiUrl = `https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}?ref=${BRANCH}`;
         
         try {
@@ -306,18 +305,21 @@
             });
             
             if (!response.ok) {
-                throw new Error(`GitHub API ошибка ${response.status}: ${response.statusText}`);
+                if (response.status === 403) {
+                    // Попробуем обходной путь: использовать кэш или явный токен
+                    throw new Error('GitHub API ограничивает частоту запросов. Попробуйте позже или откройте страницу в режиме инкогнито.');
+                }
+                throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
             }
             
             const files = await response.json();
             
-            // Важно: API может вернуть объект с message (например, "Not found")
             if (files.message) {
                 throw new Error(files.message);
             }
             
             if (!Array.isArray(files)) {
-                throw new Error('Неверный формат ответа от API');
+                throw new Error('Неверный формат ответа');
             }
             
             let fileList = files.filter(f => 
@@ -355,7 +357,7 @@
             
         } catch (error) {
             console.error('Ошибка загрузки:', error);
-            container.innerHTML = `<div class="error">⚠️ Ошибка: ${error.message}<br><br>🔍 Проверьте:<br>• Репозиторий "${USER}/${REPO}" существует и публичный<br>• Папка "${FOLDER}" существует в ветке "${BRANCH}"<br>• Файлы в папке есть</div>`;
+            container.innerHTML = `<div class="error">⚠️ ${error.message}<br><br>🔍 Проверьте:<br>• Доступность репозитория<br>• Откройте страницу в "режиме инкогнито"</div>`;
         }
     }
 
@@ -372,7 +374,7 @@
             }
             
             const markdown = await response.text();
-            if (!markdown || markdown.trim() === '' || markdown.startsWith('404')) {
+            if (!markdown || markdown.trim() === '') {
                 readmeContainer.style.display = 'none';
                 return;
             }
@@ -381,7 +383,6 @@
                 const html = marked.parse(markdown);
                 markdownContent.innerHTML = html;
             } else {
-                // fallback: показать как текст
                 markdownContent.innerHTML = `<pre>${escapeHtml(markdown)}</pre>`;
             }
             readmeContainer.style.display = 'block';
@@ -401,9 +402,11 @@
         });
     }
     
-    // Запуск
-    loadFolderContents();
-    loadReadme();
+    // Запуск с небольшой задержкой для избежания конфликта
+    setTimeout(() => {
+        loadFolderContents();
+        loadReadme();
+    }, 100);
 </script>
 </body>
 </html>
