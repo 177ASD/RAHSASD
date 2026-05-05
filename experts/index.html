@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Навигатор | experts</title>
+    <title>Агростраховая экспертиза</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding: 2rem 1.5rem;
             display: flex;
@@ -21,16 +21,16 @@
             align-items: center;
         }
 
-        /* Светлая тема (по умолчанию) */
+        /* Светлая тема */
         body.light {
-            background: radial-gradient(circle at 10% 20%, rgba(245,240,235,1) 0%, rgba(235,225,215,1) 100%);
+            background: radial-gradient(circle at 10% 20%, #f5f0eb 0%, #ebe1d7 100%);
             color: #2c2c2c;
         }
         body.light .glass-card {
-            background: rgba(245, 240, 235, 0.45);
+            background: rgba(245, 240, 235, 0.55);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,245,0.5);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
         }
         body.light .file-link {
             background: rgba(250, 248, 245, 0.7);
@@ -41,12 +41,17 @@
             background: rgba(255,255,250,0.9);
             border-left: 3px solid #b87333;
             transform: translateX(4px);
-            box-shadow: -4px 4px 12px rgba(0,0,0,0.02);
         }
         body.light .theme-toggle {
             background: rgba(30,30,40,0.08);
             color: #3e3a3a;
             border: 1px solid rgba(0,0,0,0.1);
+        }
+        body.light .path-badge {
+            background: rgba(0,0,0,0.04);
+        }
+        body.light .file-ext {
+            background: rgba(0,0,0,0.05);
         }
 
         /* Тёмная тема */
@@ -55,7 +60,7 @@
             color: #dddcd8;
         }
         body.dark .glass-card {
-            background: rgba(20, 30, 32, 0.55);
+            background: rgba(20, 30, 32, 0.6);
             backdrop-filter: blur(14px);
             border: 1px solid rgba(210, 205, 190, 0.2);
             box-shadow: 0 12px 28px rgba(0,0,0,0.4);
@@ -75,14 +80,19 @@
             color: #ece7dd;
             border: 1px solid rgba(230,220,200,0.25);
         }
+        body.dark .path-badge {
+            background: rgba(255,255,210,0.08);
+        }
+        body.dark .file-ext {
+            background: rgba(230,220,200,0.12);
+        }
 
         .glass-card {
             max-width: 780px;
             width: 100%;
             margin: 1rem auto;
             border-radius: 2.5rem;
-            padding: 2rem 1.8rem 2.2rem 1.8rem;
-            transition: all 0.25s ease;
+            padding: 2rem 1.8rem 2rem 1.8rem;
         }
 
         .header-row {
@@ -103,12 +113,10 @@
             font-family: monospace;
             font-size: 0.8rem;
             opacity: 0.7;
-            background: rgba(0,0,0,0.04);
             padding: 0.2rem 0.6rem;
             border-radius: 40px;
-        }
-        body.dark .path-badge {
-            background: rgba(255,255,210,0.08);
+            display: inline-block;
+            margin-top: 0.3rem;
         }
 
         .theme-toggle {
@@ -119,8 +127,6 @@
             line-height: 1;
             padding: 0.4rem 0.8rem;
             border-radius: 60px;
-            font-weight: 400;
-            transition: 0.2s;
         }
         .theme-toggle:hover {
             opacity: 0.75;
@@ -130,8 +136,8 @@
         .file-list {
             display: flex;
             flex-direction: column;
-            gap: 0.55rem;
-            margin: 1.8rem 0 0.8rem;
+            gap: 0.6rem;
+            margin: 1.5rem 0 0.5rem;
         }
         .file-link {
             display: flex;
@@ -143,7 +149,7 @@
             border-radius: 1.6rem;
             text-decoration: none;
             font-weight: 460;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.2s ease;
         }
         .file-name {
             font-size: 1rem;
@@ -154,46 +160,25 @@
             font-size: 0.7rem;
             font-family: monospace;
             opacity: 0.7;
-            letter-spacing: 0.2px;
-            background: rgba(0,0,0,0.05);
-            padding: 0.2rem 0.6rem;
+            padding: 0.2rem 0.7rem;
             border-radius: 40px;
         }
-        body.dark .file-ext {
-            background: rgba(230,220,200,0.12);
-        }
 
-        .empty-folder {
-            text-align: center;
-            padding: 3rem 1rem;
-            opacity: 0.65;
-            font-style: normal;
-            font-weight: 380;
-        }
         .footer-note {
             margin-top: 2.5rem;
             text-align: right;
             font-size: 0.7rem;
-            opacity: 0.45;
-            letter-spacing: 0.2px;
+            opacity: 0.5;
             font-family: monospace;
             border-top: 0.5px solid rgba(128,128,128,0.2);
             padding-top: 1rem;
         }
+
         @media (max-width: 560px) {
             body { padding: 1rem; }
             .glass-card { padding: 1.5rem; }
             h1 { font-size: 1.5rem; }
             .file-link { padding: 0.7rem 1rem; }
-        }
-
-        .file-link {
-            opacity: 0;
-            animation: fadeSlideUp 0.3s ease forwards;
-        }
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -207,79 +192,56 @@
             <button class="theme-toggle" id="themeSwitcher" aria-label="светлая/темная тема">&#9788;</button>
         </div>
 
-        <div id="fileListContainer" class="file-list">
-            <div class="empty-folder">загрузка содержимого...</div>
-        </div>
+        <div id="fileListContainer" class="file-list"></div>
 
         <div class="footer-note" id="copyrightDate">ASD © </div>
     </div>
 
     <script>
-        // ------------------- НАСТРОЙКИ -------------------
+        // ========== НАСТРОЙКИ (МЕНЯЙТЕ ЗДЕСЬ) ==========
+        // Репозиторий и папка для GitHub Pages
         const GITHUB_USER = '177asd';
         const REPO_NAME = 'RAHSASD';
-        const FOLDER_PATH = 'experts';
+        const FOLDER_NAME = 'experts';
 
-        // ---------- ГЛАВНОЕ ИЗМЕНЕНИЕ: ссылки ведут на GitHub Pages ----------
-        // Базовый URL для страницы на GitHub Pages:
-        const PAGES_BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/${FOLDER_PATH}/`;
+        // СПИСОК ФАЙЛОВ (ДОБАВЛЯЙТЕ / УДАЛЯЙТЕ ЗДЕСЬ)
+        // формат: { name: "имя_файла.расширение" }
+        const FILES_LIST = [
+            { name: "Договор_типовой.docx" },
+            { name: "МетодикаЦенообразования.html" },
+            { name: "Тарифы&Коэффициенты.html" },
+            { name: "Филиалы&Эксперты.html" }
+        ];
+        // ==============================================
 
-        // --------------------------------------------------------------------
-        async function fetchFolderContents() {
-            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        throw new Error('Папка не найдена или репозиторий недоступен');
-                    }
-                    throw new Error(`Ошибка API: ${response.status}`);
-                }
-                const data = await response.json();
-                if (!Array.isArray(data)) {
-                    throw new Error('Путь не является папкой либо содержимое недоступно');
-                }
-                // фильтруем: убираем сам index.html
-                const files = data.filter(item => 
-                    item.type === 'file' && 
-                    item.name !== 'index.html' &&
-                    item.name !== 'index.htm' &&
-                    item.name !== 'README.md'
-                );
-                return files;
-            } catch (error) {
-                console.error(error);
-                return null;
-            }
-        }
+        // Базовый URL для ссылок на GitHub Pages
+        const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/${FOLDER_NAME}/`;
 
-        function renderFileList(files) {
+        function renderFileList() {
             const container = document.getElementById('fileListContainer');
             if (!container) return;
 
-            if (!files || files.length === 0) {
-                container.innerHTML = `<div class="empty-folder">папка пуста или нет доступа к списку файлов</div>`;
+            if (!FILES_LIST || FILES_LIST.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:2rem; opacity:0.6;">папка пуста</div>`;
                 return;
             }
 
-            const sorted = [...files].sort((a,b) => a.name.localeCompare(b.name));
-            
-            let filesHTML = '';
-            sorted.forEach((file, idx) => {
-                // 🔥 ИЗМЕНЕНИЕ ЗДЕСЬ: ссылка ведёт на GitHub Pages, а не на raw
-                const fileUrl = `${PAGES_BASE_URL}${encodeURIComponent(file.name)}`;
-                
-                const ext = file.name.split('.').pop() || '';
-                const displayExt = ext.length < 8 ? ext.toUpperCase() : ext.slice(0,6);
-                
-                filesHTML += `
-                    <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="animation-delay: ${idx * 0.02}s">
-                        <span class="file-name">${escapeHtml(file.name)}</span>
+            let html = '';
+            FILES_LIST.forEach((file, idx) => {
+                const fileName = file.name;
+                const encodedName = encodeURIComponent(fileName);
+                const fileUrl = BASE_URL + encodedName;
+                const ext = fileName.split('.').pop() || '';
+                const displayExt = ext.length < 8 ? ext.toUpperCase() : ext.slice(0, 6);
+
+                html += `
+                    <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="animation: none;">
+                        <span class="file-name">${escapeHtml(fileName)}</span>
                         <span class="file-ext">${escapeHtml(displayExt)}</span>
                     </a>
                 `;
             });
-            container.innerHTML = filesHTML;
+            container.innerHTML = html;
         }
 
         function escapeHtml(str) {
@@ -292,27 +254,26 @@
             });
         }
 
-        // темы
+        // ТЕМЫ
         function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
+            const saved = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            let theme = 'light';
-            if (savedTheme === 'dark' || (savedTheme === null && prefersDark)) theme = 'dark';
+            const theme = saved === 'dark' || (saved === null && prefersDark) ? 'dark' : 'light';
             setTheme(theme);
         }
 
         function setTheme(theme) {
             const body = document.body;
-            const toggleBtn = document.getElementById('themeSwitcher');
+            const btn = document.getElementById('themeSwitcher');
             if (theme === 'dark') {
                 body.classList.remove('light');
                 body.classList.add('dark');
-                if (toggleBtn) toggleBtn.innerHTML = '&#9790;';
+                if (btn) btn.innerHTML = '&#9790;';
                 localStorage.setItem('theme', 'dark');
             } else {
                 body.classList.remove('dark');
                 body.classList.add('light');
-                if (toggleBtn) toggleBtn.innerHTML = '&#9788;';
+                if (btn) btn.innerHTML = '&#9788;';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -333,24 +294,13 @@
             }
         }
 
-        async function init() {
-            initTheme();
-            setFooterDate();
-            const themeSwitcher = document.getElementById('themeSwitcher');
-            if (themeSwitcher) themeSwitcher.addEventListener('click', toggleTheme);
-            
-            const container = document.getElementById('fileListContainer');
-            if (container) container.innerHTML = `<div class="empty-folder">загрузка содержимого папки experts ...</div>`;
-            
-            const files = await fetchFolderContents();
-            if (files && Array.isArray(files)) {
-                renderFileList(files);
-            } else {
-                container.innerHTML = `<div class="empty-folder">не удалось получить список файлов. Проверьте название папки / репозитория.</div>`;
-            }
-        }
-        
-        init();
+        // ЗАПУСК
+        initTheme();
+        setFooterDate();
+        renderFileList();
+
+        const switcher = document.getElementById('themeSwitcher');
+        if (switcher) switcher.addEventListener('click', toggleTheme);
     </script>
 </body>
 </html>
