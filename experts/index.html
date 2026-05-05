@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Агростраховая экспертизы | документы</title>
+    <title>Навигатор | experts</title>
     <style>
         * {
             margin: 0;
@@ -19,8 +19,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(145deg, #f5f0eb 0%, #e8e2da 100%);
-            /* будет переопределено через JS / классы темы, но оставим базовый светлый */
         }
 
         /* Светлая тема (по умолчанию) */
@@ -51,7 +49,7 @@
             border: 1px solid rgba(0,0,0,0.1);
         }
 
-        /* Тёмная тема — футуристичный пастельно-тёмный */
+        /* Тёмная тема */
         body.dark {
             background: radial-gradient(circle at 30% 10%, #1e2a2e 0%, #0f1a1f 100%);
             color: #dddcd8;
@@ -78,7 +76,6 @@
             border: 1px solid rgba(230,220,200,0.25);
         }
 
-        /* main container — глассморфная карточка */
         .glass-card {
             max-width: 780px;
             width: 100%;
@@ -88,7 +85,6 @@
             transition: all 0.25s ease;
         }
 
-        /* шапка */
         .header-row {
             display: flex;
             justify-content: space-between;
@@ -115,7 +111,6 @@
             background: rgba(255,255,210,0.08);
         }
 
-        /* переключатель темы */
         .theme-toggle {
             cursor: pointer;
             background: none;
@@ -132,7 +127,6 @@
             transform: scale(0.96);
         }
 
-        /* список файлов */
         .file-list {
             display: flex;
             flex-direction: column;
@@ -193,7 +187,6 @@
             .file-link { padding: 0.7rem 1rem; }
         }
 
-        /* легкая анимация появления элементов */
         .file-link {
             opacity: 0;
             animation: fadeSlideUp 0.3s ease forwards;
@@ -202,7 +195,6 @@
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* разная задержка динамическая через js (добавим style) */
     </style>
 </head>
 <body class="light">
@@ -210,7 +202,7 @@
         <div class="header-row">
             <div>
                 <h1>Агростраховая экспертиза</h1>
-                <div class="path-badge">*документы*</div>
+                <div class="path-badge">/документы/</div>
             </div>
             <button class="theme-toggle" id="themeSwitcher" aria-label="светлая/темная тема">&#9788;</button>
         </div>
@@ -223,13 +215,16 @@
     </div>
 
     <script>
-        // ------------------- НАСТРОЙКИ (измените при необходимости) -------------------
+        // ------------------- НАСТРОЙКИ -------------------
         const GITHUB_USER = '177asd';
         const REPO_NAME = 'RAHSASD';
-        const FOLDER_PATH = 'experts';      // папка, содержимое которой показываем
+        const FOLDER_PATH = 'experts';
 
-        // -------------------------------------------------------------------------
-        // Функция получения списка файлов из папки через GitHub API (contents)
+        // ---------- ГЛАВНОЕ ИЗМЕНЕНИЕ: ссылки ведут на GitHub Pages ----------
+        // Базовый URL для страницы на GitHub Pages:
+        const PAGES_BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/${FOLDER_PATH}/`;
+
+        // --------------------------------------------------------------------
         async function fetchFolderContents() {
             const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
             try {
@@ -242,10 +237,9 @@
                 }
                 const data = await response.json();
                 if (!Array.isArray(data)) {
-                    // иногда возвращает объект если это файл, но нам нужна папка
                     throw new Error('Путь не является папкой либо содержимое недоступно');
                 }
-                // фильтруем: убираем сам index.html, чтобы он не светился в списке
+                // фильтруем: убираем сам index.html
                 const files = data.filter(item => 
                     item.type === 'file' && 
                     item.name !== 'index.html' &&
@@ -258,31 +252,27 @@
             }
         }
 
-        // отрисовка списка
         function renderFileList(files) {
             const container = document.getElementById('fileListContainer');
             if (!container) return;
 
             if (!files || files.length === 0) {
-                container.innerHTML = `<div class="empty-folder">📄 папка пуста или нет доступа к списку файлов</div>`;
+                container.innerHTML = `<div class="empty-folder">папка пуста или нет доступа к списку файлов</div>`;
                 return;
             }
 
-            // сортировка: папки (пока не используем, но если появятся директории — можно будет), потом файлы по имени
             const sorted = [...files].sort((a,b) => a.name.localeCompare(b.name));
             
             let filesHTML = '';
             sorted.forEach((file, idx) => {
-                // формируем прямую ссылку на файл через RAW (чтобы открывался/скачивался)
-                // лучше использовать raw.githubusercontent для прямого доступа
-                const rawUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/main/${FOLDER_PATH}/${encodeURIComponent(file.name)}`;
-                // но для удобства пользователя если это html — лучше открывать через pages? Но оставим raw —
-                // гарантированно отработает. Также обеспечим открытие в новой вкладке
+                // 🔥 ИЗМЕНЕНИЕ ЗДЕСЬ: ссылка ведёт на GitHub Pages, а не на raw
+                const fileUrl = `${PAGES_BASE_URL}${encodeURIComponent(file.name)}`;
+                
                 const ext = file.name.split('.').pop() || '';
                 const displayExt = ext.length < 8 ? ext.toUpperCase() : ext.slice(0,6);
                 
                 filesHTML += `
-                    <a class="file-link" href="${rawUrl}" target="_blank" rel="noopener noreferrer" style="animation-delay: ${idx * 0.02}s">
+                    <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener noreferrer" style="animation-delay: ${idx * 0.02}s">
                         <span class="file-name">${escapeHtml(file.name)}</span>
                         <span class="file-ext">${escapeHtml(displayExt)}</span>
                     </a>
@@ -291,7 +281,6 @@
             container.innerHTML = filesHTML;
         }
 
-        // небольшой helper для защиты от XSS
         function escapeHtml(str) {
             if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -299,12 +288,10 @@
                 if (m === '<') return '&lt;';
                 if (m === '>') return '&gt;';
                 return m;
-            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-                return c;
             });
         }
 
-        // темы (light/dark)
+        // темы
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -319,12 +306,12 @@
             if (theme === 'dark') {
                 body.classList.remove('light');
                 body.classList.add('dark');
-                if (toggleBtn) toggleBtn.innerHTML = '&#9790;';  // ☾ moon
+                if (toggleBtn) toggleBtn.innerHTML = '&#9790;';
                 localStorage.setItem('theme', 'dark');
             } else {
                 body.classList.remove('dark');
                 body.classList.add('light');
-                if (toggleBtn) toggleBtn.innerHTML = '&#9788;';  // ☼ sun
+                if (toggleBtn) toggleBtn.innerHTML = '&#9788;';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -334,7 +321,6 @@
             setTheme(isDark ? 'light' : 'dark');
         }
 
-        // подвал с текущей датой YYYY·MM·DD
         function setFooterDate() {
             const footer = document.getElementById('copyrightDate');
             if (footer) {
@@ -346,14 +332,12 @@
             }
         }
 
-        // главный запуск
         async function init() {
             initTheme();
             setFooterDate();
             const themeSwitcher = document.getElementById('themeSwitcher');
             if (themeSwitcher) themeSwitcher.addEventListener('click', toggleTheme);
             
-            // показать статус загрузки
             const container = document.getElementById('fileListContainer');
             if (container) container.innerHTML = `<div class="empty-folder">загрузка содержимого папки experts ...</div>`;
             
@@ -361,7 +345,7 @@
             if (files && Array.isArray(files)) {
                 renderFileList(files);
             } else {
-                container.innerHTML = `<div class="empty-folder">⚠️ не удалось получить список файлов. Проверьте название папки / репозитория или наличие прав на чтение.</div>`;
+                container.innerHTML = `<div class="empty-folder">не удалось получить список файлов. Проверьте название папки / репозитория.</div>`;
             }
         }
         
