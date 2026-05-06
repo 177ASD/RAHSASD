@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RAHSASD — experts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        body.light {
+            background: radial-gradient(circle at 10% 20%, #f0f4e8 0%, #e2e8d5 100%);
+            color: #2d3e2b;
+        }
+        body.light .glass-card {
+            background: rgba(240, 245, 235, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 210, 180, 0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        body.light .file-link {
+            background: rgba(250, 252, 245, 0.6);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        body.light .file-link:hover {
+            background: rgba(255, 255, 250, 0.9);
+            border-left: 3px solid #6b8c5c;
+        }
+        body.light .theme-toggle {
+            background: rgba(60, 70, 50, 0.1);
+            border: 1px solid rgba(80, 100, 60, 0.2);
+        }
+        body.light .file-ext {
+            background: rgba(0,0,0,0.05);
+        }
+
+        body.dark {
+            background: radial-gradient(circle at 30% 10%, #1e2a1f 0%, #0f180e 100%);
+            color: #e0ecd8;
+        }
+        body.dark .glass-card {
+            background: rgba(25, 40, 22, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(120, 140, 100, 0.25);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+        }
+        body.dark .file-link {
+            background: rgba(45, 65, 40, 0.5);
+            border-bottom: 1px solid rgba(180, 200, 140, 0.08);
+            color: #e0ecd8;
+        }
+        body.dark .file-link:hover {
+            background: rgba(70, 95, 60, 0.8);
+            border-left: 3px solid #9bc48a;
+        }
+        body.dark .theme-toggle {
+            background: rgba(200, 220, 170, 0.1);
+            border: 1px solid rgba(180, 200, 140, 0.25);
+        }
+        body.dark .file-ext {
+            background: rgba(255,255,220,0.08);
+        }
+
+        .glass-card {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(128,128,128,0.2);
+            padding-bottom: 0.75rem;
+        }
+        h1 {
+            font-weight: 550;
+            font-size: 1.6rem;
+            letter-spacing: -0.3px;
+        }
+        .path-badge {
+            font-family: monospace;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 0.25rem;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
+            transition: 0.2s;
+        }
+        .theme-toggle:hover {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin: 1rem 0;
+        }
+        .file-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .file-name {
+            font-size: 1rem;
+            word-break: break-word;
+            flex: 1;
+        }
+        .file-ext {
+            font-size: 0.65rem;
+            font-family: monospace;
+            opacity: 0.7;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .back-link {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(128,128,128,0.3);
+        }
+        .back-link a {
+            text-decoration: none;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: right;
+            font-size: 0.7rem;
+            opacity: 0.45;
+            font-family: monospace;
+            border-top: 0.5px solid rgba(128,128,128,0.2);
+            padding-top: 1rem;
+        }
+
+        @media (max-width: 560px) {
+            .glass-card { padding: 1.2rem; }
+            h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="glass-card">
+        <div class="header-row">
+            <div>
+                <h1>📁 experts/</h1>
+                <div class="path-badge">справочные документы</div>
+            </div>
+            <button class="theme-toggle" id="themeSwitcher">☼</button>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- === БЛОК СО ССЫЛКАМИ (РЕДАКТИРОВАТЬ ЗДЕСЬ) ================= -->
+        <!-- ============================================================ -->
+        <div class="file-list">
+            <!-- ОСНОВНЫЕ ФАЙЛЫ -->
+            <a class="file-link" href="Договор_типовой.docx" target="_blank"><span class="file-name">📄 Договор_типовой.docx</span><span class="file-ext">DOCX</span></a>
+            <a class="file-link" href="МетодикаЦенообразования.html" target="_blank"><span class="file-name">📄 МетодикаЦенообразования.html</span><span class="file-ext">HTML</span></a>
+            <a class="file-link" href="Тарифы&amp;Коэффициенты.html" target="_blank"><span class="file-name">📄 Тарифы&amp;Коэффициенты.html</span><span class="file-ext">HTML</span></a>
+            <a class="file-link" href="Филиалы&amp;Эксперты.html" target="_blank"><span class="file-name">📄 Филиалы&amp;Эксперты.html</span><span class="file-ext">HTML</span></a>
+
+            <!-- ⬇️⬇️⬇️ ДЛЯ ДОБАВЛЕНИЯ НОВОГО ФАЙЛА: скопируйте строку ниже, вставьте и замените имя файла -->
+            <!-- <a class="file-link" href="новый_файл.html" target="_blank"><span class="file-name">📄 новый_файл.html</span><span class="file-ext">HTML</span></a> -->
+            <!-- ⬇️⬇️⬇️ ДЛЯ ДОБАВЛЕНИЯ НОВОГО DOCX: -->
+            <!-- <a class="file-link" href="новый_файл.docx" target="_blank"><span class="file-name">📄 новый_файл.docx</span><span class="file-ext">DOCX</span></a> -->
+        </div>
+        <!-- ============================================================ -->
+        <!-- === КОНЕЦ БЛОКА СО ССЫЛКАМИ ================================= -->
+        <!-- ============================================================ -->
+
+        <div class="back-link">
+            <a href="../index.html">← назад к корню</a>
+        </div>
+
+        <div class="footer" id="copyrightDate">ASD © </div>
+    </div>
+
+    <script>
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved === 'dark' || (saved === null && prefersDark) ? 'dark' : 'light';
+            setTheme(theme);
+        }
+        
+        function setTheme(theme) {
+            const body = document.body;
+            const btn = document.getElementById('themeSwitcher');
+            if (theme === 'dark') {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                if (btn) btn.innerHTML = '☾';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                if (btn) btn.innerHTML = '☼';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        }
+        
+        function setFooterDate() {
+            const footer = document.getElementById('copyrightDate');
+            if (footer) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                footer.textContent = `ASD © ${year}·${month}·${day}`;
+            }
+        }
+        
+        initTheme();
+        setFooterDate();
+        
+        const switcher = document.getElementById('themeSwitcher');
+        if (switcher) switcher.addEventListener('click', toggleTheme);
+    </script>
+</body>
+</html>
