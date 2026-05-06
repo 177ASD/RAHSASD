@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Дефицит экспертов (Red Zone)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              50: '#f0f7f4',
+              100: '#dcefe9',
+              200: '#b9dfd4',
+              300: '#8cc9b8',
+              400: '#5fb39a',
+              500: '#3d9d82',
+              600: '#2d7a65',
+              700: '#245d4d',
+              800: '#1e4a3e',
+              900: '#1a3d33'
+            },
+            earth: {
+              50: '#f9f5f0',
+              100: '#f1e8dc',
+              200: '#e0d0b8',
+              300: '#c9b392',
+              400: '#ad9269',
+              500: '#8f764f',
+              600: '#735d3d',
+              700: '#5a4931',
+              800: '#463928',
+              900: '#382e21'
+            },
+            alert: {
+              light: '#fef2f2',
+              DEFAULT: '#ef4444',
+              dark: '#b91c1c'
+            }
+          },
+          fontFamily: {
+            display: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+            body: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none; }
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade { animation: fadeIn 0.4s ease-out forwards; }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: linear-gradient(135deg, #f0f7f4 0%, #e8f4ef 100%);
+      min-height: 100vh;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(45, 122, 101, 0.08);
+      border: 1px solid rgba(45, 122, 101, 0.1);
+    }
+
+    /* Mobile Card View for Table */
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr { display: block; }
+      thead tr { position: absolute; top: -9999px; left: -9999px; }
+      tr { 
+        margin-bottom: 1rem; 
+        background: white; 
+        border-radius: 0.5rem; 
+        padding: 1rem; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-left: 4px solid #ef4444;
+      }
+      td { 
+        border: none; 
+        position: relative; 
+        padding-left: 50%; 
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+      }
+      td:before { 
+        position: absolute; 
+        top: 0.25rem; 
+        left: 0; 
+        width: 45%; 
+        padding-right: 10px; 
+        white-space: nowrap; 
+        font-weight: 600;
+        color: #245d4d;
+        content: attr(data-label); 
+      }
+      .desktop-only { display: none; }
+    }
+    
+    .badge-deficit {
+      background-color: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: bold;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <div class="max-w-5xl mx-auto">
+    
+    <!-- Header -->
+    <header class="mb-6 animate-fade">
+      <h1 class="text-2xl font-bold text-forest-800 mb-2">Филиалы с дефицитом экспертов</h1>
+      <p class="text-sm text-forest-600">Список субъектов, требующих срочного кадрового усиления (Red Zone)</p>
+    </header>
+
+    <!-- Summary Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 animate-fade">
+      <div class="card p-4 rounded-lg border-l-4 border-alert">
+        <div class="text-xs text-gray-500 uppercase">Всего филиалов</div>
+        <div class="text-2xl font-bold text-forest-800">20</div>
+      </div>
+      <div class="card p-4 rounded-lg border-l-4 border-alert">
+        <div class="text-xs text-gray-500 uppercase">Общий дефицит</div>
+        <div class="text-2xl font-bold text-alert-dark">-58</div>
+      </div>
+      <div class="card p-4 rounded-lg border-l-4 border-forest-500">
+        <div class="text-xs text-gray-500 uppercase">Расчетная потребность</div>
+        <div class="text-2xl font-bold text-forest-800">103</div>
+      </div>
+      <div class="card p-4 rounded-lg border-l-4 border-earth-500">
+        <div class="text-xs text-gray-500 uppercase">Факт + Кандидаты</div>
+        <div class="text-2xl font-bold text-earth-700">45</div>
+      </div>
+    </div>
+
+    <!-- Table / Cards -->
+    <div class="card rounded-xl overflow-hidden animate-fade delay-100">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-forest-50 text-forest-800 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3">Субъект / Филиал</th>
+              <th class="px-4 py-3 text-center desktop-only">Площадь (тыс.га)</th>
+              <th class="px-4 py-3 text-center desktop-only">Убытки (шт)</th>
+              <th class="px-4 py-3 text-center">План</th>
+              <th class="px-4 py-3 text-center desktop-only">Факт+Канд</th>
+              <th class="px-4 py-3 text-center">Дефицит</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            
+            <!-- Row 1 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Ставропольский край<br>
+                <span class="text-xs text-gray-500 font-normal">Прикумский, Ставропольский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">1 047,3</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">84</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">9</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-8</span></td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Омская область<br>
+                <span class="text-xs text-gray-500 font-normal">Омский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">1 091,8</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">116</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">10</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">3</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-7</span></td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Ростовская область<br>
+                <span class="text-xs text-gray-500 font-normal">Ростовский, Северо-Донецкий, Цимлянский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">1 215,0</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">71</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">9</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">4</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-5</span></td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Тамбовская область<br>
+                <span class="text-xs text-gray-500 font-normal">Тамбовский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">732,8</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">42</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-5</span></td>
+            </tr>
+
+            <!-- Row 5 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Липецкая область<br>
+                <span class="text-xs text-gray-500 font-normal">Липецкий</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">585,0</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">11</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-4</span></td>
+            </tr>
+
+             <!-- Row 6 -->
+             <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Самарская область<br>
+                <span class="text-xs text-gray-500 font-normal">Самарский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">406,6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">24</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">4</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">0</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-4</span></td>
+            </tr>
+
+            <!-- Row 7 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Волгоградская область<br>
+                <span class="text-xs text-gray-500 font-normal">Волгоградский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">705,2</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">73</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">2</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-3</span></td>
+            </tr>
+
+            <!-- Row 8 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Воронежская область<br>
+                <span class="text-xs text-gray-500 font-normal">Воронежский, Таловский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">824,5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">47</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">3</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-3</span></td>
+            </tr>
+
+            <!-- Row 9 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Красноярский край<br>
+                <span class="text-xs text-gray-500 font-normal">Красноярский, Минусинский, Солянский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">447,5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">31</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">3</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-3</span></td>
+            </tr>
+
+            <!-- Row 10 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Орловская область<br>
+                <span class="text-xs text-gray-500 font-normal">Орловский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">414,9</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">16</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">4</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-3</span></td>
+            </tr>
+
+            <!-- Row 11 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Пензенская область<br>
+                <span class="text-xs text-gray-500 font-normal">Пензенский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">300,4</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">17</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">3</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">0</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-3</span></td>
+            </tr>
+
+            <!-- Row 12 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Приморский край<br>
+                <span class="text-xs text-gray-500 font-normal">Приморский отд. (Хабаровский)</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">217,6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">109</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">3</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-2</span></td>
+            </tr>
+
+            <!-- Row 13 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Республика Башкортостан<br>
+                <span class="text-xs text-gray-500 font-normal">Башкирский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">308,0</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">37</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">3</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-2</span></td>
+            </tr>
+
+            <!-- Row 14 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Саратовская область<br>
+                <span class="text-xs text-gray-500 font-normal">Саратовский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">474,9</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">42</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">4</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">2</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-2</span></td>
+            </tr>
+
+            <!-- Row 15 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Алтайский край<br>
+                <span class="text-xs text-gray-500 font-normal">Алейский, Алтайский, Бийский, Кулундинский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">531,0</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">19</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">4</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-1</span></td>
+            </tr>
+
+            <!-- Row 16 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Белгородская область<br>
+                <span class="text-xs text-gray-500 font-normal">Белгородский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">250,2</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">16</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">2</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-1</span></td>
+            </tr>
+
+            <!-- Row 17 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Нижегородская область<br>
+                <span class="text-xs text-gray-500 font-normal">Нижегородский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">190,6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">17</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">2</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-1</span></td>
+            </tr>
+
+            <!-- Row 18 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Республика Мордовия<br>
+                <span class="text-xs text-gray-500 font-normal">Мордовский отд. (Нижегородский)</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">241,6</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">26</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">2</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-1</span></td>
+            </tr>
+
+            <!-- Row 19 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Республика Татарстан<br>
+                <span class="text-xs text-gray-500 font-normal">Альметьевский, Татарский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">710,5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">34</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">5</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">4</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-1</span></td>
+            </tr>
+
+            <!-- Row 20 -->
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 font-medium text-forest-900" data-label="Субъект / Филиал">
+                Свердловская область<br>
+                <span class="text-xs text-gray-500 font-normal">Свердловский</span>
+              </td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Площадь">155,1</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Убытки">10</td>
+              <td class="px-4 py-3 text-center font-bold" data-label="План">2</td>
+              <td class="px-4 py-3 text-center desktop-only" data-label="Факт+Канд">1</td>
+              <td class="px-4 py-3 text-center" data-label="Дефицит"><span class="badge-deficit">-1</span></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="mt-4 text-xs text-gray-500 text-center animate-fade delay-200">
+      Данные актуальны на 05.05.2026. Дефицит = Расчет - (Факт + Кандидаты).
+    </div>
+
+  </div>
+
+</body>
+</html>
