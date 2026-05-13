@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RAHSASD — справочная система</title>
+    <title>RAHSASD — Справочник</title>
     <style>
+        /* Стили оставлены без изменений для сохранения дизайна */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -106,6 +107,7 @@
             flex-wrap: wrap; gap: 0.5rem; padding: 0.7rem 1rem; border-radius: 1rem;
             text-decoration: none; transition: all 0.2s; cursor: pointer;
         }
+        .file-link:hover { background: rgba(255, 255, 250, 0.9); border-left: 3px solid #6b8c5c; }
         .file-name { font-size: 0.95rem; word-break: break-word; flex: 1; }
         .file-ext {
             font-size: 0.65rem; font-family: monospace; opacity: 0.6;
@@ -141,7 +143,7 @@
         <div class="header-row">
             <div>
                 <h1>📚 RAHSASD</h1>
-                <div class="repo-badge">справочная система</div>
+                <div class="repo-badge">Справочная система</div>
             </div>
             <button class="theme-toggle" id="themeSwitcher">☼</button>
         </div>
@@ -155,31 +157,34 @@
         // ========== НАСТРОЙКИ ==========
         const GITHUB_USER = '177asd';
         const REPO_NAME = 'RAHSASD';
-        const BRANCH = 'InfoDocs';
         
-        // Путь к сканируемой папке (относительно корня репозитория)
+        // ГЛАВНОЕ ИСПРАВЛЕНИЕ: Указана правильная основная ветка
+        const BRANCH = 'main'; 
+        
+        // Путь к папке, где лежит этот файл и которую нужно сканировать
         const SCAN_PATH = 'InfoDocs';
         
-        // Базовый URL для GitHub Pages (куда будут вести ссылки)
+        // Ссылка на GitHub Pages
         const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/${SCAN_PATH}/`;
         
         // Папки, которые НЕ показываем (скрытые)
         const EXCLUDE_FOLDERS = ['.git', '.github', 'images', 'assets'];
         // =================================
 
-        // Проверка файла на соответствие критериям:
-        // - расширение .html или .htm
-        // - в названии нет "index" (любой регистр)
+        // Проверка файла на соответствие критериям
         function isValidHtmlFile(item) {
             if (!item || item.type !== 'file') return false;
             const name = item.name;
             const lowerName = name.toLowerCase();
+            // Исключаем файлы с "index" в названии
             if (lowerName.includes('index')) return false;
+            // Разрешаем только .html и .htm
             const ext = getFileExt(name).toLowerCase();
             return ext === 'html' || ext === 'htm';
         }
 
         async function fetchRepoContents(path = '') {
+            // Формируем URL API с правильной веткой (main)
             const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
             try {
                 const response = await fetch(apiUrl, {
@@ -213,7 +218,7 @@
             // Загружаем содержимое папки InfoDocs
             const rootItems = await fetchRepoContents(SCAN_PATH);
             if (!rootItems || !Array.isArray(rootItems)) {
-                container.innerHTML = '<div class="error">⚠️ не удалось загрузить содержимое папки ' + SCAN_PATH + '</div>';
+                container.innerHTML = `<div class="error">⚠️ Не удалось загрузить папку ${SCAN_PATH}.<br>Проверьте настройки ветки (BRANCH).</div>`;
                 return;
             }
             
@@ -231,12 +236,11 @@
             if (rootFiles.length > 0) {
                 html += `<div class="root-files"><div class="root-title">📄 Файлы в корне</div><div class="file-list">`;
                 for (const file of rootFiles) {
-                    // Формируем URL: базовый путь + имя файла
                     const fileUrl = BASE_URL + encodeURIComponent(file.name);
                     const ext = getFileExt(file.name);
                     html += `
                         <a class="file-link" data-href="${fileUrl}" rel="noopener">
-                            <span class="file-name">📄 ${escapeHtml(file.name)}</span>
+                            <span class="file-name"> ${escapeHtml(file.name)}</span>
                             <span class="file-ext">${escapeHtml(ext)}</span>
                         </a>
                     `;
@@ -269,7 +273,6 @@
                 `;
                 
                 for (const file of files) {
-                    // Формируем URL: базовый путь + имя папки + имя файла
                     const fileUrl = `${BASE_URL}${folder.name}/${encodeURIComponent(file.name)}`;
                     const ext = getFileExt(file.name);
                     html += `
@@ -288,12 +291,12 @@
             }
             
             if (folders.length === 0 && rootFiles.length === 0) {
-                html = '<div class="empty-folder">📭 нет подходящих HTML-файлов в папке ' + SCAN_PATH + '</div>';
+                html = `<div class="empty-folder">📭 В папке ${SCAN_PATH} нет HTML-файлов.</div>`;
             }
             
             container.innerHTML = html;
             
-            // === ОБРАБОТЧИК КЛИКА: принудительное открытие в новой вкладке ===
+            // Обработчик клика для принудительного открытия в новой вкладке
             document.querySelectorAll('.file-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
