@@ -234,7 +234,7 @@
             
             // === ФАЙЛЫ В КОРНЕ InfoDocs ===
             if (rootFiles.length > 0) {
-                html += `<div class="root-files"><div class="root-title">📄 Файлы в корне</div><div class="file-list">`;
+                html += `<div class="root-files"><div class="root-title">Список файлов</div><div class="file-list">`;
                 for (const file of rootFiles) {
                     const fileUrl = BASE_URL + encodeURIComponent(file.name);
                     const ext = getFileExt(file.name);
