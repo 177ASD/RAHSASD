@@ -1,1 +1,493 @@
 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RAHSASD — справочная система</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* Светлая тема */
+        body.light {
+            background: radial-gradient(circle at 10% 20%, #f0f4e8 0%, #e2e8d5 100%);
+            color: #2d3e2b;
+        }
+        body.light .glass-card {
+            background: rgba(240, 245, 235, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 210, 180, 0.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        body.light .folder-header {
+            background: rgba(230, 240, 220, 0.7);
+            border-bottom: 1px solid rgba(100, 120, 80, 0.2);
+        }
+        body.light .file-link {
+            background: rgba(250, 252, 245, 0.6);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+        body.light .file-link:hover {
+            background: rgba(255, 255, 250, 0.9);
+            border-left: 3px solid #6b8c5c;
+        }
+        body.light .theme-toggle {
+            background: rgba(60, 70, 50, 0.1);
+            border: 1px solid rgba(80, 100, 60, 0.2);
+        }
+
+        /* Тёмная тема */
+        body.dark {
+            background: radial-gradient(circle at 30% 10%, #1e2a1f 0%, #0f180e 100%);
+            color: #d8e4d0;
+        }
+        body.dark .glass-card {
+            background: rgba(25, 40, 22, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(120, 140, 100, 0.25);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+        }
+        body.dark .folder-header {
+            background: rgba(35, 55, 30, 0.7);
+            border-bottom: 1px solid rgba(150, 170, 120, 0.2);
+        }
+        body.dark .file-link {
+            background: rgba(45, 65, 40, 0.5);
+            border-bottom: 1px solid rgba(180, 200, 140, 0.08);
+            color: #f0ecd8;
+        }
+        body.dark .file-link:hover {
+            background: rgba(70, 95, 60, 0.8);
+            border-left: 3px solid #9bc48a;
+        }
+        body.dark .theme-toggle {
+            background: rgba(200, 220, 170, 0.1);
+            border: 1px solid rgba(180, 200, 140, 0.25);
+        }
+
+        .glass-card {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            border-radius: 2rem;
+            padding: 2rem 1.8rem;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(128,128,128,0.2);
+            padding-bottom: 0.75rem;
+        }
+        h1 {
+            font-weight: 550;
+            font-size: 1.8rem;
+            letter-spacing: -0.3px;
+        }
+        .repo-badge {
+            font-family: monospace;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            margin-top: 0.25rem;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 60px;
+            transition: 0.2s;
+        }
+        .theme-toggle:hover {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        /* Папки-аккордеоны */
+        .folder-section {
+            margin-bottom: 1rem;
+            border-radius: 1.2rem;
+            overflow: hidden;
+        }
+        .folder-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 1.2rem;
+            cursor: pointer;
+            font-weight: 530;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+        .folder-header:hover {
+            filter: brightness(0.97);
+        }
+        .folder-icon {
+            font-size: 1.3rem;
+        }
+        .folder-name {
+            flex: 1;
+        }
+        .folder-count {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            font-family: monospace;
+        }
+        .toggle-icon {
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        .folder-content {
+            display: none;
+            padding: 0.3rem 0 0.5rem 2rem;
+        }
+        .folder-content.open {
+            display: block;
+        }
+
+        /* Файлы */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .file-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.7rem 1rem;
+            border-radius: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .file-name {
+            font-size: 0.95rem;
+            word-break: break-word;
+            flex: 1;
+        }
+        .file-ext {
+            font-size: 0.65rem;
+            font-family: monospace;
+            opacity: 0.6;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.04);
+        }
+        body.dark .file-ext {
+            background: rgba(255,255,220,0.08);
+        }
+
+        .root-files {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed rgba(128,128,128,0.2);
+        }
+        .root-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.55;
+            margin-bottom: 0.8rem;
+        }
+
+        .loading, .error {
+            text-align: center;
+            padding: 2rem;
+            opacity: 0.7;
+        }
+        .error {
+            color: #c0725a;
+            opacity: 1;
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: right;
+            font-size: 0.7rem;
+            opacity: 0.45;
+            font-family: monospace;
+            border-top: 0.5px solid rgba(128,128,128,0.2);
+            padding-top: 1rem;
+        }
+        @media (max-width: 560px) {
+            .glass-card { padding: 1.2rem; }
+            h1 { font-size: 1.4rem; }
+            .folder-content { padding-left: 1rem; }
+            .file-link { padding: 0.6rem 0.8rem; }
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="glass-card">
+        <div class="header-row">
+            <div>
+                <h1>📚 RAHSASD</h1>
+                <div class="repo-badge">справочная система</div>
+            </div>
+            <button class="theme-toggle" id="themeSwitcher">☼</button>
+        </div>
+
+        <div id="contentContainer">
+            <div class="loading">📂 загрузка структуры...</div>
+        </div>
+
+        <div class="footer" id="copyrightDate">ASD © </div>
+    </div>
+
+    <script>
+        // ========== НАСТРОЙКИ ==========
+        const GITHUB_USER = '177asd';
+        const REPO_NAME = 'RAHSASD';
+        const BRANCH = 'InfoDocs';
+        
+        // Папки, которые нужно показать (пустой массив = все папки)
+        // Если хотите показывать ТОЛЬКО определённые папки, перечислите их:
+        // const ALLOWED_FOLDERS = ['00', '01_Текущая работа', '02_Администрирование', '03_Методические_материалы', '04_Нормативно-правовая_база'];
+        const ALLOWED_FOLDERS = null;  // null = показываем все папки
+        
+        // Файлы, которые НЕ показываем в корне
+        const EXCLUDE_ROOT_FILES = ['index.htm', 'README.md', 'readme.md'];
+        
+        // Папки, которые НЕ показываем (скрытые)
+        const EXCLUDE_FOLDERS = ['.git', '.github', 'images', 'assets'];
+        // =================================
+
+        async function fetchRepoContents(path = '') {
+            const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' }
+                });
+                if (!response.ok) {
+                    if (response.status === 404) return null;
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.warn(`Ошибка загрузки ${path}:`, error);
+                return null;
+            }
+        }
+
+        function getFileExt(filename) {
+            const dot = filename.lastIndexOf('.');
+            if (dot === -1) return '';
+            return filename.substring(dot + 1).toUpperCase();
+        }
+
+        function isFolder(item) {
+            return item.type === 'dir';
+        }
+
+        async function buildNavigation() {
+            const container = document.getElementById('contentContainer');
+            if (!container) return;
+            
+            container.innerHTML = '<div class="loading">📂 загрузка структуры...</div>';
+            
+            const rootItems = await fetchRepoContents('');
+            if (!rootItems || !Array.isArray(rootItems)) {
+                container.innerHTML = '<div class="error">⚠️ не удалось загрузить содержимое репозитория</div>';
+                return;
+            }
+            
+            // Разделяем папки и файлы
+            let folders = rootItems.filter(item => isFolder(item));
+            let rootFiles = rootItems.filter(item => !isFolder(item) && !EXCLUDE_ROOT_FILES.includes(item.name));
+            
+            // Фильтруем папки
+            if (ALLOWED_FOLDERS) {
+                folders = folders.filter(f => ALLOWED_FOLDERS.includes(f.name));
+            } else {
+                folders = folders.filter(f => !EXCLUDE_FOLDERS.includes(f.name));
+            }
+            
+            // Сортируем
+            folders.sort((a, b) => a.name.localeCompare(b.name));
+            rootFiles.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Базовый URL для ссылок
+            const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/`;
+            
+            let html = '';
+            
+            // === ФАЙЛЫ В КОРНЕ ===
+            if (rootFiles.length > 0) {
+                html += `<div class="root-files"><div class="root-title">📄 Файлы в корне</div><div class="file-list">`;
+                for (const file of rootFiles) {
+                    const fileUrl = BASE_URL + encodeURIComponent(file.name);
+                    const ext = getFileExt(file.name);
+                    html += `
+                        <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener">
+                            <span class="file-name">📄 ${escapeHtml(file.name)}</span>
+                            <span class="file-ext">${escapeHtml(ext)}</span>
+                        </a>
+                    `;
+                }
+                html += `</div></div>`;
+            }
+            
+            // === ПАПКИ (аккордеоны) ===
+            for (const folder of folders) {
+                // Загружаем содержимое папки
+                const folderContents = await fetchRepoContents(folder.path);
+                if (!folderContents || !Array.isArray(folderContents)) continue;
+                
+                const files = folderContents.filter(item => !isFolder(item) && item.name !== 'index.html');
+                if (files.length === 0) continue;
+                
+                files.sort((a, b) => a.name.localeCompare(b.name));
+                
+                const folderId = `folder_${folder.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                
+                html += `
+                    <div class="folder-section">
+                        <div class="folder-header" data-folder="${folderId}">
+                            <span class="folder-icon">📁</span>
+                            <span class="folder-name">${escapeHtml(folder.name)}</span>
+                            <span class="folder-count">${files.length}</span>
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="folder-content" id="${folderId}">
+                            <div class="file-list">
+                `;
+                
+                for (const file of files) {
+                    const fileUrl = `${BASE_URL}${folder.name}/${encodeURIComponent(file.name)}`;
+                    const ext = getFileExt(file.name);
+                    html += `
+                        <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener">
+                            <span class="file-name">📄 ${escapeHtml(file.name)}</span>
+                            <span class="file-ext">${escapeHtml(ext)}</span>
+                        </a>
+                    `;
+                }
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (folders.length === 0 && rootFiles.length === 0) {
+                html = '<div class="empty-folder">📭 репозиторий пуст или нет доступа</div>';
+            }
+            
+            container.innerHTML = html;
+            
+            // Инициализируем аккордеоны (открываем первую папку по умолчанию)
+            const headers = document.querySelectorAll('.folder-header');
+            let isFirst = true;
+            headers.forEach(header => {
+                const folderId = header.dataset.folder;
+                const content = document.getElementById(folderId);
+                if (content) {
+                    // Первую папку открываем, остальные закрыты
+                    if (isFirst) {
+                        content.classList.add('open');
+                        const toggle = header.querySelector('.toggle-icon');
+                        if (toggle) toggle.textContent = '▼';
+                        isFirst = false;
+                    } else {
+                        content.classList.remove('open');
+                        const toggle = header.querySelector('.toggle-icon');
+                        if (toggle) toggle.textContent = '▶';
+                    }
+                }
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const targetId = header.dataset.folder;
+                    const targetContent = document.getElementById(targetId);
+                    const toggleIcon = header.querySelector('.toggle-icon');
+                    if (targetContent) {
+                        if (targetContent.classList.contains('open')) {
+                            targetContent.classList.remove('open');
+                            if (toggleIcon) toggleIcon.textContent = '▶';
+                        } else {
+                            targetContent.classList.add('open');
+                            if (toggleIcon) toggleIcon.textContent = '▼';
+                        }
+                    }
+                });
+            });
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, (m) => {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // ТЕМА
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved === 'dark' || (saved === null && prefersDark) ? 'dark' : 'light';
+            setTheme(theme);
+        }
+        
+        function setTheme(theme) {
+            const body = document.body;
+            const btn = document.getElementById('themeSwitcher');
+            if (theme === 'dark') {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                if (btn) btn.innerHTML = '☾';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                if (btn) btn.innerHTML = '☼';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        }
+        
+        function setFooterDate() {
+            const footer = document.getElementById('copyrightDate');
+            if (footer) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                footer.textContent = `ASD © ${year}·${month}·${day}`;
+            }
+        }
+        
+        // ЗАПУСК
+        initTheme();
+        setFooterDate();
+        buildNavigation();
+        
+        const switcher = document.getElementById('themeSwitcher');
+        if (switcher) switcher.addEventListener('click', toggleTheme);
+    </script>
+</body>
+</html>
