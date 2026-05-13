@@ -5,20 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RAHSASD — справочная система</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             padding: 2rem 1rem;
             transition: background 0.2s, color 0.2s;
         }
-
-        /* Светлая тема */
         body.light {
             background: radial-gradient(circle at 10% 20%, #f0f4e8 0%, #e2e8d5 100%);
             color: #2d3e2b;
@@ -45,8 +38,6 @@
             background: rgba(60, 70, 50, 0.1);
             border: 1px solid rgba(80, 100, 60, 0.2);
         }
-
-        /* Тёмная тема */
         body.dark {
             background: radial-gradient(circle at 30% 10%, #1e2a1f 0%, #0f180e 100%);
             color: #d8e4d0;
@@ -74,7 +65,6 @@
             background: rgba(200, 220, 170, 0.1);
             border: 1px solid rgba(180, 200, 140, 0.25);
         }
-
         .glass-card {
             max-width: 900px;
             width: 100%;
@@ -82,7 +72,6 @@
             border-radius: 2rem;
             padding: 2rem 1.8rem;
         }
-
         .header-row {
             display: flex;
             justify-content: space-between;
@@ -92,144 +81,52 @@
             border-bottom: 1px solid rgba(128,128,128,0.2);
             padding-bottom: 0.75rem;
         }
-        h1 {
-            font-weight: 550;
-            font-size: 1.8rem;
-            letter-spacing: -0.3px;
-        }
-        .repo-badge {
-            font-family: monospace;
-            font-size: 0.75rem;
-            opacity: 0.6;
-            margin-top: 0.25rem;
-        }
-
+        h1 { font-weight: 550; font-size: 1.8rem; letter-spacing: -0.3px; }
+        .repo-badge { font-family: monospace; font-size: 0.75rem; opacity: 0.6; margin-top: 0.25rem; }
         .theme-toggle {
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 1.6rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 60px;
-            transition: 0.2s;
+            cursor: pointer; background: none; border: none; font-size: 1.6rem;
+            padding: 0.4rem 0.8rem; border-radius: 60px; transition: 0.2s;
         }
-        .theme-toggle:hover {
-            opacity: 0.7;
-            transform: scale(0.95);
-        }
-
-        /* Папки-аккордеоны */
-        .folder-section {
-            margin-bottom: 1rem;
-            border-radius: 1.2rem;
-            overflow: hidden;
-        }
+        .theme-toggle:hover { opacity: 0.7; transform: scale(0.95); }
+        .folder-section { margin-bottom: 1rem; border-radius: 1.2rem; overflow: hidden; }
         .folder-header {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.9rem 1.2rem;
-            cursor: pointer;
-            font-weight: 530;
-            font-size: 1.1rem;
-            transition: background 0.2s;
+            display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1.2rem;
+            cursor: pointer; font-weight: 530; font-size: 1.1rem; transition: background 0.2s;
         }
-        .folder-header:hover {
-            filter: brightness(0.97);
-        }
-        .folder-icon {
-            font-size: 1.3rem;
-        }
-        .folder-name {
-            flex: 1;
-        }
-        .folder-count {
-            font-size: 0.7rem;
-            opacity: 0.6;
-            font-family: monospace;
-        }
-        .toggle-icon {
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-        .folder-content {
-            display: none;
-            padding: 0.3rem 0 0.5rem 2rem;
-        }
-        .folder-content.open {
-            display: block;
-        }
-
-        /* Файлы */
-        .file-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
+        .folder-header:hover { filter: brightness(0.97); }
+        .folder-icon { font-size: 1.3rem; }
+        .folder-name { flex: 1; }
+        .folder-count { font-size: 0.7rem; opacity: 0.6; font-family: monospace; }
+        .toggle-icon { font-size: 1rem; transition: transform 0.2s; }
+        .folder-content { display: none; padding: 0.3rem 0 0.5rem 2rem; }
+        .folder-content.open { display: block; }
+        .file-list { display: flex; flex-direction: column; gap: 0.4rem; }
         .file-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0.7rem 1rem;
-            border-radius: 1rem;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 0.5rem; padding: 0.7rem 1rem; border-radius: 1rem;
+            text-decoration: none; transition: all 0.2s; cursor: pointer;
         }
-        .file-link:hover {
-            background: rgba(255, 255, 250, 0.9);
-            border-left: 3px solid #6b8c5c;
-        }
-        .file-name {
-            font-size: 0.95rem;
-            word-break: break-word;
-            flex: 1;
-        }
+        .file-name { font-size: 0.95rem; word-break: break-word; flex: 1; }
         .file-ext {
-            font-size: 0.65rem;
-            font-family: monospace;
-            opacity: 0.6;
-            padding: 0.15rem 0.5rem;
-            border-radius: 20px;
+            font-size: 0.65rem; font-family: monospace; opacity: 0.6;
+            padding: 0.15rem 0.5rem; border-radius: 20px;
             background: rgba(0,0,0,0.04);
         }
-        body.dark .file-ext {
-            background: rgba(255,255,220,0.08);
-        }
-
+        body.dark .file-ext { background: rgba(255,255,220,0.08); }
         .root-files {
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem; padding-bottom: 0.5rem;
             border-bottom: 1px dashed rgba(128,128,128,0.2);
         }
         .root-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.55;
-            margin-bottom: 0.8rem;
+            font-size: 0.85rem; text-transform: uppercase;
+            letter-spacing: 1px; opacity: 0.55; margin-bottom: 0.8rem;
         }
-
-        .loading, .error {
-            text-align: center;
-            padding: 2rem;
-            opacity: 0.7;
-        }
-        .error {
-            color: #c0725a;
-            opacity: 1;
-        }
-
+        .loading, .error { text-align: center; padding: 2rem; opacity: 0.7; }
+        .error { color: #c0725a; opacity: 1; }
         .footer {
-            margin-top: 2rem;
-            text-align: right;
-            font-size: 0.7rem;
-            opacity: 0.45;
-            font-family: monospace;
-            border-top: 0.5px solid rgba(128,128,128,0.2);
-            padding-top: 1rem;
+            margin-top: 2rem; text-align: right; font-size: 0.7rem;
+            opacity: 0.45; font-family: monospace;
+            border-top: 0.5px solid rgba(128,128,128,0.2); padding-top: 1rem;
         }
         @media (max-width: 560px) {
             .glass-card { padding: 1.2rem; }
@@ -248,11 +145,9 @@
             </div>
             <button class="theme-toggle" id="themeSwitcher">☼</button>
         </div>
-
         <div id="contentContainer">
             <div class="loading">📂 загрузка структуры...</div>
         </div>
-
         <div class="footer" id="copyrightDate">ASD © </div>
     </div>
 
@@ -262,24 +157,24 @@
         const REPO_NAME = 'RAHSASD';
         const BRANCH = 'InfoDocs';
         
-        // Папки, которые нужно показать (пустой массив = все папки)
-        const ALLOWED_FOLDERS = null;  // null = показываем все папки
+        // Путь к сканируемой папке (относительно корня репозитория)
+        const SCAN_PATH = 'InfoDocs';
         
-        // Файлы, которые НЕ показываем в корне
-        const EXCLUDE_ROOT_FILES = ['index.htm', 'README.md', 'readme.md'];
+        // Базовый URL для GitHub Pages (куда будут вести ссылки)
+        const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/${SCAN_PATH}/`;
         
         // Папки, которые НЕ показываем (скрытые)
         const EXCLUDE_FOLDERS = ['.git', '.github', 'images', 'assets'];
         // =================================
 
-        // === НОВАЯ ФУНКЦИЯ: проверка файла на соответствие критериям ===
+        // Проверка файла на соответствие критериям:
+        // - расширение .html или .htm
+        // - в названии нет "index" (любой регистр)
         function isValidHtmlFile(item) {
             if (!item || item.type !== 'file') return false;
             const name = item.name;
             const lowerName = name.toLowerCase();
-            // Исключаем файлы с "index" в названии
             if (lowerName.includes('index')) return false;
-            // Разрешаем только .html и .htm
             const ext = getFileExt(name).toLowerCase();
             return ext === 'html' || ext === 'htm';
         }
@@ -307,9 +202,7 @@
             return filename.substring(dot + 1).toUpperCase();
         }
 
-        function isFolder(item) {
-            return item.type === 'dir';
-        }
+        function isFolder(item) { return item.type === 'dir'; }
 
         async function buildNavigation() {
             const container = document.getElementById('contentContainer');
@@ -317,40 +210,30 @@
             
             container.innerHTML = '<div class="loading">📂 загрузка структуры...</div>';
             
-            const rootItems = await fetchRepoContents('');
+            // Загружаем содержимое папки InfoDocs
+            const rootItems = await fetchRepoContents(SCAN_PATH);
             if (!rootItems || !Array.isArray(rootItems)) {
-                container.innerHTML = '<div class="error">⚠️ не удалось загрузить содержимое репозитория</div>';
+                container.innerHTML = '<div class="error">⚠️ не удалось загрузить содержимое папки ' + SCAN_PATH + '</div>';
                 return;
             }
             
             // Разделяем папки и файлы
-            let folders = rootItems.filter(item => isFolder(item));
-            // === ИЗМЕНЕНИЕ: фильтрация корневых файлов по новым критериям ===
-            let rootFiles = rootItems.filter(item => isValidHtmlFile(item) && !EXCLUDE_ROOT_FILES.includes(item.name));
-            
-            // Фильтруем папки
-            if (ALLOWED_FOLDERS) {
-                folders = folders.filter(f => ALLOWED_FOLDERS.includes(f.name));
-            } else {
-                folders = folders.filter(f => !EXCLUDE_FOLDERS.includes(f.name));
-            }
+            let folders = rootItems.filter(item => isFolder(item) && !EXCLUDE_FOLDERS.includes(item.name));
+            let rootFiles = rootItems.filter(item => isValidHtmlFile(item));
             
             // Сортируем
             folders.sort((a, b) => a.name.localeCompare(b.name));
             rootFiles.sort((a, b) => a.name.localeCompare(b.name));
             
-            // Базовый URL для ссылок
-            const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}/`;
-            
             let html = '';
             
-            // === ФАЙЛЫ В КОРНЕ ===
+            // === ФАЙЛЫ В КОРНЕ InfoDocs ===
             if (rootFiles.length > 0) {
                 html += `<div class="root-files"><div class="root-title">📄 Файлы в корне</div><div class="file-list">`;
                 for (const file of rootFiles) {
+                    // Формируем URL: базовый путь + имя файла
                     const fileUrl = BASE_URL + encodeURIComponent(file.name);
                     const ext = getFileExt(file.name);
-                    // Убрали target="_blank" из HTML, обработка через JS ниже
                     html += `
                         <a class="file-link" data-href="${fileUrl}" rel="noopener">
                             <span class="file-name">📄 ${escapeHtml(file.name)}</span>
@@ -363,11 +246,9 @@
             
             // === ПАПКИ (аккордеоны) ===
             for (const folder of folders) {
-                // Загружаем содержимое папки
                 const folderContents = await fetchRepoContents(folder.path);
                 if (!folderContents || !Array.isArray(folderContents)) continue;
                 
-                // === ИЗМЕНЕНИЕ: фильтрация файлов в папке по новым критериям ===
                 const files = folderContents.filter(item => isValidHtmlFile(item));
                 if (files.length === 0) continue;
                 
@@ -388,9 +269,9 @@
                 `;
                 
                 for (const file of files) {
+                    // Формируем URL: базовый путь + имя папки + имя файла
                     const fileUrl = `${BASE_URL}${folder.name}/${encodeURIComponent(file.name)}`;
                     const ext = getFileExt(file.name);
-                    // Убрали target="_blank" из HTML, обработка через JS ниже
                     html += `
                         <a class="file-link" data-href="${fileUrl}" rel="noopener">
                             <span class="file-name">📄 ${escapeHtml(file.name)}</span>
@@ -407,21 +288,18 @@
             }
             
             if (folders.length === 0 && rootFiles.length === 0) {
-                html = '<div class="empty-folder">📭 репозиторий пуст или нет подходящих HTML-файлов</div>';
+                html = '<div class="empty-folder">📭 нет подходящих HTML-файлов в папке ' + SCAN_PATH + '</div>';
             }
             
             container.innerHTML = html;
             
-            // === НОВЫЙ ОБРАБОТЧИК: принудительное открытие в новой вкладке ===
+            // === ОБРАБОТЧИК КЛИКА: принудительное открытие в новой вкладке ===
             document.querySelectorAll('.file-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const url = link.dataset.href;
                     if (url) {
-                        // window.open с _blank и параметрами безопасности
-                        // Это максимально приближено к "принудительному" открытию
                         const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-                        // Фолбэк: если браузер заблокировал, пробуем перейти напрямую
                         if (!newWindow) {
                             window.location.href = url;
                         }
@@ -429,14 +307,13 @@
                 });
             });
             
-            // Инициализируем аккордеоны (открываем первую папку по умолчанию)
+            // Инициализация аккордеонов
             const headers = document.querySelectorAll('.folder-header');
             let isFirst = true;
             headers.forEach(header => {
                 const folderId = header.dataset.folder;
                 const content = document.getElementById(folderId);
                 if (content) {
-                    // Первую папку открываем, остальные закрыты
                     if (isFirst) {
                         content.classList.add('open');
                         const toggle = header.querySelector('.toggle-icon');
@@ -483,7 +360,6 @@
             const theme = saved === 'dark' || (saved === null && prefersDark) ? 'dark' : 'light';
             setTheme(theme);
         }
-        
         function setTheme(theme) {
             const body = document.body;
             const btn = document.getElementById('themeSwitcher');
@@ -499,7 +375,6 @@
                 localStorage.setItem('theme', 'light');
             }
         }
-        
         function toggleTheme() {
             const isDark = document.body.classList.contains('dark');
             setTheme(isDark ? 'light' : 'dark');
@@ -520,7 +395,6 @@
         initTheme();
         setFooterDate();
         buildNavigation();
-        
         const switcher = document.getElementById('themeSwitcher');
         if (switcher) switcher.addEventListener('click', toggleTheme);
     </script>
