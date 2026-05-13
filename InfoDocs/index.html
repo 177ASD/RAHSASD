@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RAHSASD — Справочник</title>
+    <title>Рабочие документы</title>
     <style>
         /* Стили оставлены без изменений для сохранения дизайна */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -150,7 +150,7 @@
         <div id="contentContainer">
             <div class="loading">📂 загрузка структуры...</div>
         </div>
-        <div class="footer" id="copyrightDate">ASD © </div>
+        <div class="footer" id="copyrightDate">ASD ©2026.05 </div>
     </div>
 
     <script>
@@ -390,7 +390,7 @@
                 const year = now.getFullYear();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const day = String(now.getDate()).padStart(2, '0');
-                footer.textContent = `ASD © ${year}·${month}·${day}`;
+                footer.textContent = `ASD © ${year}·${month}`;
             }
         }
         
