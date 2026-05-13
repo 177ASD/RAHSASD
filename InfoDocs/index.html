@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -177,6 +176,11 @@
             border-radius: 1rem;
             text-decoration: none;
             transition: all 0.2s;
+            cursor: pointer;
+        }
+        .file-link:hover {
+            background: rgba(255, 255, 250, 0.9);
+            border-left: 3px solid #6b8c5c;
         }
         .file-name {
             font-size: 0.95rem;
@@ -259,8 +263,6 @@
         const BRANCH = 'InfoDocs';
         
         // Папки, которые нужно показать (пустой массив = все папки)
-        // Если хотите показывать ТОЛЬКО определённые папки, перечислите их:
-        // const ALLOWED_FOLDERS = ['00', '01_Текущая работа', '02_Администрирование', '03_Методические_материалы', '04_Нормативно-правовая_база'];
         const ALLOWED_FOLDERS = null;  // null = показываем все папки
         
         // Файлы, которые НЕ показываем в корне
@@ -269,6 +271,18 @@
         // Папки, которые НЕ показываем (скрытые)
         const EXCLUDE_FOLDERS = ['.git', '.github', 'images', 'assets'];
         // =================================
+
+        // === НОВАЯ ФУНКЦИЯ: проверка файла на соответствие критериям ===
+        function isValidHtmlFile(item) {
+            if (!item || item.type !== 'file') return false;
+            const name = item.name;
+            const lowerName = name.toLowerCase();
+            // Исключаем файлы с "index" в названии
+            if (lowerName.includes('index')) return false;
+            // Разрешаем только .html и .htm
+            const ext = getFileExt(name).toLowerCase();
+            return ext === 'html' || ext === 'htm';
+        }
 
         async function fetchRepoContents(path = '') {
             const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
@@ -311,7 +325,8 @@
             
             // Разделяем папки и файлы
             let folders = rootItems.filter(item => isFolder(item));
-            let rootFiles = rootItems.filter(item => !isFolder(item) && !EXCLUDE_ROOT_FILES.includes(item.name));
+            // === ИЗМЕНЕНИЕ: фильтрация корневых файлов по новым критериям ===
+            let rootFiles = rootItems.filter(item => isValidHtmlFile(item) && !EXCLUDE_ROOT_FILES.includes(item.name));
             
             // Фильтруем папки
             if (ALLOWED_FOLDERS) {
@@ -335,8 +350,9 @@
                 for (const file of rootFiles) {
                     const fileUrl = BASE_URL + encodeURIComponent(file.name);
                     const ext = getFileExt(file.name);
+                    // Убрали target="_blank" из HTML, обработка через JS ниже
                     html += `
-                        <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener">
+                        <a class="file-link" data-href="${fileUrl}" rel="noopener">
                             <span class="file-name">📄 ${escapeHtml(file.name)}</span>
                             <span class="file-ext">${escapeHtml(ext)}</span>
                         </a>
@@ -351,7 +367,8 @@
                 const folderContents = await fetchRepoContents(folder.path);
                 if (!folderContents || !Array.isArray(folderContents)) continue;
                 
-                const files = folderContents.filter(item => !isFolder(item) && item.name !== 'index.html');
+                // === ИЗМЕНЕНИЕ: фильтрация файлов в папке по новым критериям ===
+                const files = folderContents.filter(item => isValidHtmlFile(item));
                 if (files.length === 0) continue;
                 
                 files.sort((a, b) => a.name.localeCompare(b.name));
@@ -373,8 +390,9 @@
                 for (const file of files) {
                     const fileUrl = `${BASE_URL}${folder.name}/${encodeURIComponent(file.name)}`;
                     const ext = getFileExt(file.name);
+                    // Убрали target="_blank" из HTML, обработка через JS ниже
                     html += `
-                        <a class="file-link" href="${fileUrl}" target="_blank" rel="noopener">
+                        <a class="file-link" data-href="${fileUrl}" rel="noopener">
                             <span class="file-name">📄 ${escapeHtml(file.name)}</span>
                             <span class="file-ext">${escapeHtml(ext)}</span>
                         </a>
@@ -389,10 +407,27 @@
             }
             
             if (folders.length === 0 && rootFiles.length === 0) {
-                html = '<div class="empty-folder">📭 репозиторий пуст или нет доступа</div>';
+                html = '<div class="empty-folder">📭 репозиторий пуст или нет подходящих HTML-файлов</div>';
             }
             
             container.innerHTML = html;
+            
+            // === НОВЫЙ ОБРАБОТЧИК: принудительное открытие в новой вкладке ===
+            document.querySelectorAll('.file-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const url = link.dataset.href;
+                    if (url) {
+                        // window.open с _blank и параметрами безопасности
+                        // Это максимально приближено к "принудительному" открытию
+                        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+                        // Фолбэк: если браузер заблокировал, пробуем перейти напрямую
+                        if (!newWindow) {
+                            window.location.href = url;
+                        }
+                    }
+                });
+            });
             
             // Инициализируем аккордеоны (открываем первую папку по умолчанию)
             const headers = document.querySelectorAll('.folder-header');
