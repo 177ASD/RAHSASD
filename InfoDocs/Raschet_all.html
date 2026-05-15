@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Расчет потребности экспертов АСД (Полный реестр)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: {
+extend: {
+colors: {
+slate: {
+50: '#f8fafc',
+100: '#f1f5f9',
+200: '#e2e8f0',
+300: '#cbd5e1',
+400: '#94a3b8',
+500: '#64748b',
+600: '#475569',
+700: '#334155',
+800: '#1e293b',
+900: '#0f172a',
+},
+indigo: {
+50: '#eef2ff',
+100: '#e0e7ff',
+200: '#c7d2fe',
+300: '#a5b4fc',
+400: '#818cf8',
+500: '#6366f1',
+600: '#4f46e5',
+700: '#4338ca',
+800: '#3730a3',
+900: '#312e81',
+},
+danger: {
+50: '#fef2f2',
+100: '#fee2e2',
+600: '#dc2626',
+800: '#991b1b'
+},
+success: {
+50: '#f0fdf4',
+100: '#dcfce7',
+600: '#16a34a',
+800: '#166534'
+}
+},
+fontFamily: {
+sans: ['Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+}
+}
+}
+}
+</script>
+<style>
+body {
+font-family: 'Inter', system-ui, -apple-system, sans-serif;
+transition: background-color 0.3s, color 0.3s;
+}
+.official-card {
+background: white;
+border: 1px solid #cbd5e1;
+box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+transition: background-color 0.3s, border-color 0.3s;
+}
+.dark .official-card {
+background: #1e293b;
+border-color: #334155;
+box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.table-header {
+background-color: #f8fafc;
+color: #475569;
+font-weight: 600;
+text-transform: uppercase;
+font-size: 0.7rem;
+letter-spacing: 0.05em;
+border-bottom: 2px solid #e2e8f0;
+transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+.dark .table-header {
+background-color: #0f172a;
+color: #94a3b8;
+border-bottom-color: #334155;
+}
+.table-row {
+border-bottom: 1px solid #f1f5f9;
+transition: background-color 0.2s;
+}
+.dark .table-row {
+border-bottom-color: #334155;
+}
+.table-row:hover {
+background-color: #eef2ff;
+}
+.dark .table-row:hover {
+background-color: #334155;
+}
+.badge-deficit {
+display: inline-flex;
+align-items: center;
+padding: 2px 8px;
+border-radius: 4px;
+font-size: 0.75rem;
+font-weight: 600;
+background-color: #fef2f2;
+color: #991b1b;
+border: 1px solid #fecaca;
+}
+.dark .badge-deficit {
+background-color: #450a0a;
+color: #fca5a5;
+border-color: #7f1d1d;
+}
+.badge-surplus {
+display: inline-flex;
+align-items: center;
+padding: 2px 8px;
+border-radius: 4px;
+font-size: 0.75rem;
+font-weight: 600;
+background-color: #f0fdf4;
+color: #166534;
+border: 1px solid #bbf7d0;
+}
+.dark .badge-surplus {
+background-color: #052e16;
+color: #86efac;
+border-color: #14532d;
+}
+.search-input {
+border: 1px solid #cbd5e1;
+background-color: #ffffff;
+color: #0f172a;
+transition: all 0.2s;
+}
+.dark .search-input {
+background-color: #1e293b;
+border-color: #64748b;
+color: #ffffff;
+}
+.dark .search-input::placeholder {
+color: #94a3b8;
+}
+.search-input:focus {
+outline: none;
+border-color: #6366f1;
+box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+/*.dark .search-input:focus {
+border-color: #818cf8;
+box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+}*/
+.dark .search-input:focus {
+    background-color: #1e293b !important; /* Перебивает focus:bg-white */
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
+    color: #ffffff !important; /* Чёткий белый текст при вводе */
+}
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+width: 8px;
+height: 8px;
+}
+::-webkit-scrollbar-track {
+background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+background: #cbd5e1;
+border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+background: #94a3b8;
+}
+.dark ::-webkit-scrollbar-track {
+background: #1e293b;
+}
+.dark ::-webkit-scrollbar-thumb {
+background: #475569;
+}
+</style>
+</head>
+<body class="p-4 min-h-screen bg-slate-50 text-slate-700 dark:bg-slate-900 dark:text-slate-300">
+<div class="max-w-[1600px] mx-auto">
+<!-- Header & Controls -->
+<div class="official-card rounded-lg overflow-hidden mb-6">
+<div class="p-5 border-b border-slate-200 dark:border-slate-700">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+<div>
+<h1 class="text-xl font-bold text-slate-800 dark:text-white tracking-tight">Реестр расчета потребности в экспертах по субъектам РФ</h1>
+<p class="text-sm text-slate-500 mt-1">Данные актуальны на 15.05.2026 | Источник: РаПЭкс_gh.xlsx</p>
+</div>
+<div class="flex items-center gap-4">
+<!-- Theme Switcher -->
+<button id="themeToggle" class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white transition-colors text-sm font-medium">
+<span id="themeIcon">🌙</span>
+<span id="themeText">Тёмная тема</span>
+</button>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+</svg>
+</div>
+<input
+type="text"
+id="searchInput"
+class="search-input block w-full pl-10 pr-3 py-2.5 border rounded-md leading-5 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+placeholder="Поиск по Субъекту, Филиалу, ФО или Дефициту..."
+>
+</div>
+</div>
+</div>
+<!-- Table Container -->
+<div class="official-card rounded-lg overflow-hidden">
+<div class="overflow-x-auto max-h-[80vh]">
+<table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700" id="dataTable">
+<thead class="table-header sticky top-0 z-20 shadow-sm">
+<tr>
+<th scope="col" class="px-3 py-3 text-left w-10">№</th>
+<th scope="col" class="px-3 py-3 text-left w-16">ФО</th>
+<th scope="col" class="px-3 py-3 text-left">Субъект / Филиал</th>
+<th scope="col" class="px-3 py-3 text-center w-16">План</th>
+<th scope="col" class="px-3 py-3 text-center w-16">Факт</th>
+<th scope="col" class="px-3 py-3 text-center w-16">Канд.</th>
+<th scope="col" class="px-3 py-3 text-center w-20">Баланс (Ф-Р)</th>
+<th scope="col" class="px-3 py-3 text-center w-20 hidden xl:table-cell">Профицит (+)</th>
+<th scope="col" class="px-3 py-3 text-center w-20 hidden xl:table-cell">Дефицит (-)</th>
+<th scope="col" class="px-3 py-3 text-center w-16">Убытки</th>
+<th scope="col" class="px-3 py-3 text-center w-24">Площадь</th>
+<th scope="col" class="px-3 py-3 text-center w-16">Полей</th>
+<th scope="col" class="px-3 py-3 text-center w-16">Дорога</th>
+<th scope="col" class="px-3 py-3 text-center w-20">Смена</th>
+<th scope="col" class="px-3 py-3 text-left w-32">Параметры</th>
+</tr>
+</thead>
+<tbody class="bg-white dark:bg-slate-800 divide-y divide-slate-100 dark:divide-slate-700 text-sm">
+<!-- Rows will be populated by JS -->
+</tbody>
+</table>
+<!-- Empty State -->
+<div id="noResults" class="hidden p-10 text-center text-slate-500 dark:text-slate-400">
+<svg class="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>
+<p class="text-lg font-medium">Ничего не найдено</p>
+<p class="text-sm">Попробуйте изменить параметры поиска.</p>
+</div>
+</div>
+<!-- Footer -->
+<div class="bg-slate-50 dark:bg-slate-900 px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 flex justify-between items-center">
+<span>Всего записей: <strong id="rowCount">0</strong></span>
+<span>ASD ©2026·05·15</span>
+</div>
+</div>
+</div>
+<script>
+// Theme Toggle Logic
+const themeToggleBtn = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const themeText = document.getElementById('themeText');
+// Check system preference
+if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+document.documentElement.classList.add('dark');
+themeIcon.textContent = '☀️';
+themeText.textContent = 'Светлая тема';
+} else {
+document.documentElement.classList.remove('dark');
+themeIcon.textContent = '🌙';
+themeText.textContent = 'Тёмная тема';
+}
+themeToggleBtn.addEventListener('click', () => {
+document.documentElement.classList.toggle('dark');
+if (document.documentElement.classList.contains('dark')) {
+localStorage.theme = 'dark';
+themeIcon.textContent = '☀️';
+themeText.textContent = 'Светлая тема';
+} else {
+localStorage.theme = 'light';
+themeIcon.textContent = '🌙';
+themeText.textContent = 'Тёмная тема';
+}
+});
+// Data Population
+const tableBody = document.querySelector('#dataTable tbody');
+const data = [
+{no:1, fo:"СФО", subj:"Алтайский край", branch:"Алейское ОП (Алтайский); Алтайский; Бийское ОП (Алтайский); Кулундинское ОП (Алтайский)", plan:5, fact:2, cand:3, bal:"---", sur:"0", def:"0", loss:19, sq:"531.0", fields:"2,655", road:2.8, shift:5.2, params:"степь, горы, протяженная"},
+{no:2, fo:"ДФО", subj:"Амурская область", branch:"Амурский; Белогорское ОП (Амурский)", plan:1, fact:1, cand:2, bal:"2", sur:"2", def:"0", loss:0, sq:"149.7", fields:"749", road:2.8, shift:5.2, params:"протяженная"},
+{no:3, fo:"СЗФО", subj:"Архангельская область", branch:"Архангельский", plan:0, fact:1, cand:1, bal:"2", sur:"2", def:"0", loss:0, sq:"1.4", fields:"8", road:4.5, shift:3.5, params:"очень протяженная"},
+{no:4, fo:"ЮФО", subj:"Астраханская область", branch:"Астраханский", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:1, sq:"5.6", fields:"22", road:2.5, shift:5.5, params:"степная, дельта"},
+{no:5, fo:"ЦФО", subj:"Белгородская область", branch:"Белгородский", plan:2, fact:1, cand:2, bal:"1", sur:"1", def:"0", loss:16, sq:"250.2", fields:"1,390", road:1.5, shift:6.5, params:"компактная"},
+{no:6, fo:"ЦФО", subj:"Брянская область", branch:"Брянский", plan:1, fact:1, cand:0, bal:"---", sur:"0", def:"0", loss:2, sq:"145.2", fields:"807", road:2.0, shift:6.0, params:"средняя"},
+{no:7, fo:"ЦФО", subj:"Владимирская область", branch:"Владимирский", plan:0, fact:1, cand:1, bal:"2", sur:"2", def:"0", loss:7, sq:"15.4", fields:"91", road:2.2, shift:5.8, params:"средняя"},
+{no:8, fo:"ЮФО", subj:"Волгоградская область", branch:"Волгоградский", plan:5, fact:2, cand:3, bal:"---", sur:"0", def:"0", loss:73, sq:"705.2", fields:"2,821", road:2.8, shift:5.2, params:"протяженная степь"},
+{no:9, fo:"СЗФО", subj:"Вологодская область", branch:"Вологодский", plan:1, fact:2, cand:0, bal:"1", sur:"1", def:"0", loss:1, sq:"55.9", fields:"329", road:3.2, shift:4.8, params:"протяженная"},
+{no:10, fo:"ЦФО", subj:"Воронежская область", branch:"Воронежский; Таловское ОП (Воронежский)", plan:6, fact:0, cand:6, bal:"---", sur:"0", def:"0", loss:47, sq:"824.5", fields:"4,123", road:2.3, shift:5.7, params:"равнина, агрохолдинги"},
+{no:11, fo:"ДФО", subj:"Забайкальский край", branch:"Читинское ОП (Бурятский)", plan:1, fact:0, cand:1, bal:"---", sur:"0", def:"0", loss:35, sq:"102.9", fields:"572", road:2.8, shift:5.2, params:"протяженная"},
+{no:12, fo:"ЦФО", subj:"Ивановская область", branch:"Ивановское ОП (Костромской)", plan:0, fact:0, cand:2, bal:"2", sur:"2", def:"0", loss:1, sq:"18.9", fields:"111", road:2.0, shift:6.0, params:"компактная"},
+{no:13, fo:"СФО", subj:"Иркутская область", branch:"Иркутский; Тулунское ОП (Иркутский)", plan:3, fact:1, cand:2, bal:"---", sur:"0", def:"0", loss:5, sq:"156.5", fields:"869", road:4.7, shift:3.3, params:"очень протяженная"},
+{no:14, fo:"СКФО", subj:"Кабардино-Балкарская Республика", branch:"Кабардино-Балкарский", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:7, sq:"14.7", fields:"82", road:1.8, shift:6.2, params:"горная"},
+{no:15, fo:"ЮФО", subj:"Калининградская область", branch:"Калининградский", plan:1, fact:0, cand:1, bal:"---", sur:"0", def:"0", loss:17, sq:"110.1", fields:"612", road:1.5, shift:6.5, params:"компактная, эксклав"},
+{no:16, fo:"ЦФО", subj:"Калужская область", branch:"Калужский", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:3, sq:"15.0", fields:"88", road:2.0, shift:6.0, params:"средняя"},
+{no:17, fo:"ДФО", subj:"Камчатский край", branch:"Камчатское ОП (Хабаровский)", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:4.0, shift:4.0, params:"полуостров, вулканы"},
+{no:18, fo:"СКФО", subj:"Карачаево-Черкесская Республика", branch:"Карачаево-Черкесский", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:7, sq:"5.6", fields:"31", road:1.5, shift:6.5, params:"горная"},
+{no:19, fo:"СФО", subj:"Кемеровская область", branch:"Кемеровское ОП (Томский)", plan:1, fact:0, cand:1, bal:"---", sur:"0", def:"0", loss:16, sq:"74.6", fields:"414", road:2.8, shift:5.2, params:"горная часть"},
+{no:20, fo:"ПФО", subj:"Кировская область", branch:"Кировский", plan:1, fact:3, cand:0, bal:"2", sur:"2", def:"0", loss:9, sq:"82.1", fields:"483", road:2.8, shift:5.2, params:"протяженная"},
+{no:21, fo:"ЦФО", subj:"Костромская область", branch:"Костромской", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:0, sq:"1.0", fields:"6", road:2.5, shift:5.5, params:"лесная, средняя"},
+{no:22, fo:"ЮФО", subj:"Краснодарский край", branch:"Кавказское ОП (Краснодарский); Краснодарский; Северо-Кубанский; Черноморское ОП (Краснодарский)", plan:6, fact:4, cand:2, bal:"---", sur:"0", def:"0", loss:111, sq:"1,053.4", fields:"4,214", road:1.9, shift:6.1, params:"агрохолдинги, крупные поля"},
+{no:23, fo:"СФО", subj:"Красноярский край", branch:"Красноярский; Минусинское ОП (Красноярский); Солянское ОП (Красноярский)", plan:6, fact:1, cand:5, bal:"---", sur:"0", def:"0", loss:31, sq:"447.5", fields:"2,238", road:4.2, shift:3.8, params:"очень протяженная"},
+{no:24, fo:"УФО", subj:"Курганская область", branch:"Курганский; Шадринское ОП (Курганский)", plan:1, fact:1, cand:2, bal:"2", sur:"2", def:"0", loss:7, sq:"70.1", fields:"390", road:2.5, shift:5.5, params:"средняя"},
+{no:25, fo:"ЦФО", subj:"Курская область", branch:"Курский; Рыльское ОП (Курский)", plan:3, fact:2, cand:1, bal:"---", sur:"0", def:"0", loss:8, sq:"324.5", fields:"1,803", road:2.0, shift:6.0, params:"вытянута З-В"},
+{no:26, fo:"СЗФО", subj:"Ленинградская область", branch:"Ленинградский", plan:0, fact:1, cand:1, bal:"2", sur:"2", def:"0", loss:3, sq:"39.1", fields:"230", road:2.5, shift:5.5, params:"средняя"},
+{no:27, fo:"ЦФО", subj:"Липецкая область", branch:"Липецкий", plan:5, fact:0, cand:3, bal:"-2", sur:"0", def:"-2", loss:11, sq:"585.0", fields:"3,250", road:1.5, shift:6.5, params:"компактная"},
+{no:28, fo:"ДФО", subj:"Магаданская область", branch:"Магаданское ОП (Хабаровский)", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:0, sq:"0.0", fields:"---", road:4.5, shift:3.5, params:"Арктика, горы"},
+{no:29, fo:"ЦФО", subj:"Москва", branch:"Московское ОП (ЦА)", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:0, sq:"0.0", fields:"---", road:1.5, shift:6.5, params:"мегаполис"},
+{no:30, fo:"ЦФО", subj:"Московская область", branch:"Московское ОП (ЦА)", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:1, sq:"2.1", fields:"12", road:1.8, shift:6.2, params:"компактная"},
+{no:31, fo:"СЗФО", subj:"Мурманская область", branch:"Мурманское ОП (Архангельский)", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:3.5, shift:4.5, params:"Арктика"},
+{no:32, fo:"СЗФО", subj:"Новгородская область", branch:"Новгородское ОП (Псковский)", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:3, sq:"1.3", fields:"8", road:2.0, shift:6.0, params:"компактная"},
+{no:33, fo:"СФО", subj:"Новосибирская область", branch:"Баганское ОП (Новосибирский); Новосибирский", plan:2, fact:1, cand:1, bal:"---", sur:"0", def:"0", loss:23, sq:"216.6", fields:"1,083", road:2.5, shift:5.5, params:"протяженная С-Ю"},
+{no:34, fo:"СФО", subj:"Омская область", branch:"Омский", plan:10, fact:3, cand:3, bal:"-4", sur:"0", def:"-4", loss:116, sq:"1,091.8", fields:"7,279", road:2.5, shift:5.5, params:"равнина, фрагментация"},
+{no:35, fo:"ПФО", subj:"Оренбургская область", branch:"Бузулукское ОП (Оренбургский); Оренбургский", plan:2, fact:2, cand:0, bal:"---", sur:"0", def:"0", loss:16, sq:"187.4", fields:"750", road:3.2, shift:4.8, params:"протяженная степь"},
+{no:36, fo:"ЦФО", subj:"Орловская область", branch:"Орловский", plan:4, fact:0, cand:1, bal:"-3", sur:"0", def:"-3", loss:16, sq:"414.9", fields:"2,305", road:1.8, shift:6.2, params:"компактная"},
+{no:37, fo:"ПФО", subj:"Пензенская область", branch:"Пензенский", plan:3, fact:0, cand:0, bal:"-3", sur:"0", def:"-3", loss:17, sq:"300.4", fields:"1,669", road:1.8, shift:6.2, params:"компактная"},
+{no:38, fo:"ПФО", subj:"Пермский край", branch:"Пермский", plan:1, fact:2, cand:0, bal:"1", sur:"1", def:"0", loss:23, sq:"113.4", fields:"667", road:2.6, shift:5.4, params:"средняя"},
+{no:39, fo:"ДФО", subj:"Приморский край", branch:"Приморское ОП (Хабаровский)", plan:3, fact:0, cand:0, bal:"-3", sur:"0", def:"-3", loss:109, sq:"217.6", fields:"1,209", road:2.1, shift:5.9, params:"горы, побережье"},
+{no:40, fo:"СЗФО", subj:"Псковская область", branch:"Великолукское ОП (Псковский); Псковский", plan:0, fact:0, cand:3, bal:"3", sur:"3", def:"0", loss:1, sq:"0.6", fields:"4", road:2.5, shift:5.5, params:"протяженная"},
+{no:41, fo:"ЮФО", subj:"Республика Адыгея", branch:"Адыгейский", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:1, sq:"28.7", fields:"159", road:1.5, shift:6.5, params:"компактная, предгорье"},
+{no:42, fo:"СФО", subj:"Республика Алтай", branch:"Горно-Алтайское ОП (Алтайский)", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:0, sq:"0.7", fields:"4", road:3.0, shift:5.0, params:"горная"},
+{no:43, fo:"ПФО", subj:"Республика Башкортостан", branch:"Башкирский", plan:3, fact:1, cand:3, bal:"1", sur:"1", def:"0", loss:37, sq:"308.0", fields:"1,540", road:3.0, shift:5.0, params:"горы, степь, сложная"},
+{no:44, fo:"ДФО", subj:"Республика Бурятия", branch:"Бурятский", plan:0, fact:1, cand:1, bal:"2", sur:"2", def:"0", loss:2, sq:"28.4", fields:"158", road:3.0, shift:5.0, params:"горная, Байкал"},
+{no:45, fo:"СКФО", subj:"Республика Дагестан", branch:"Дагестанский", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:0, sq:"8.2", fields:"46", road:2.5, shift:5.5, params:"горная, побережье"},
+{no:46, fo:"СКФО", subj:"Республика Ингушетия", branch:"Ингушский", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:1, sq:"0.0", fields:"---", road:1.5, shift:6.5, params:"горная"},
+{no:47, fo:"ЮФО", subj:"Республика Калмыкия", branch:"Калмыцкое ОП (Астраханский)", plan:0, fact:2, cand:0, bal:"2", sur:"2", def:"0", loss:1, sq:"21.0", fields:"84", road:2.8, shift:5.2, params:"степная, протяженная"},
+{no:48, fo:"СЗФО", subj:"Республика Карелия", branch:"Карельское ОП (Ленинградский)", plan:0, fact:0, cand:2, bal:"2", sur:"2", def:"0", loss:0, sq:"1.3", fields:"8", road:3.5, shift:4.5, params:"протяженная, озера"},
+{no:49, fo:"СЗФО", subj:"Республика Коми", branch:"Сыктывкарское ОП (Кировский)", plan:0, fact:0, cand:2, bal:"2", sur:"2", def:"0", loss:0, sq:"0.0", fields:"---", road:4.0, shift:4.0, params:"протяженная, тайга"},
+{no:50, fo:"ЮФО", subj:"Республика Крым", branch:"Крымский", plan:1, fact:1, cand:0, bal:"---", sur:"0", def:"0", loss:16, sq:"138.0", fields:"690", road:2.0, shift:6.0, params:"полуостров"},
+{no:51, fo:"ПФО", subj:"Республика Марий Эл", branch:"Марийское ОП (Кировский)", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:3, sq:"16.4", fields:"96", road:2.0, shift:6.0, params:"лесная"},
+{no:52, fo:"ПФО", subj:"Республика Мордовия", branch:"Мордовское ОП (Нижегородский)", plan:2, fact:1, cand:0, bal:"-1", sur:"0", def:"-1", loss:26, sq:"241.6", fields:"1,342", road:2.0, shift:6.0, params:"компактная"},
+{no:53, fo:"ДФО", subj:"Республика Саха (Якутия)", branch:"Якутское ОП (ЦА)", plan:0, fact:0, cand:2, bal:"2", sur:"2", def:"0", loss:1, sq:"4.1", fields:"23", road:5.5, shift:2.5, params:"очень протяженная, Арктика"},
+{no:54, fo:"СКФО", subj:"Республика Северная Осетия - Алания", branch:"Северо-Осетинский", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:3, sq:"2.1", fields:"12", road:1.8, shift:6.2, params:"горная"},
+{no:55, fo:"ПФО", subj:"Республика Татарстан", branch:"Альметьевское ОП (Татарский); Татарский", plan:5, fact:2, cand:4, bal:"1", sur:"1", def:"0", loss:34, sq:"710.5", fields:"3,553", road:2.3, shift:5.7, params:"равнина, развитая сеть"},
+{no:56, fo:"СФО", subj:"Республика Тыва", branch:"Тувинский", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:11, sq:"2.0", fields:"11", road:3.5, shift:4.5, params:"горная, удаленная"},
+{no:57, fo:"СФО", subj:"Республика Хакасия", branch:"Хакасское ОП (Красноярский)", plan:0, fact:0, cand:3, bal:"3", sur:"3", def:"0", loss:3, sq:"16.5", fields:"92", road:2.5, shift:5.5, params:"горная"},
+{no:58, fo:"ЮФО", subj:"Ростовская область", branch:"Ростовский; Северо-Донецкий; Цимлянское ОП (Ростовский)", plan:9, fact:2, cand:7, bal:"---", sur:"0", def:"0", loss:71, sq:"1,215.0", fields:"6,075", road:2.6, shift:5.4, params:"протяженная степь"},
+{no:59, fo:"ЦФО", subj:"Рязанская область", branch:"Подвязьевское ОП (Рязанский); Рязанский", plan:2, fact:0, cand:4, bal:"2", sur:"2", def:"0", loss:11, sq:"254.1", fields:"1,412", road:2.2, shift:5.8, params:"средняя протяженность"},
+{no:60, fo:"ПФО", subj:"Самарская область", branch:"Самарский", plan:4, fact:0, cand:1, bal:"-3", sur:"0", def:"-3", loss:24, sq:"406.6", fields:"2,033", road:2.5, shift:5.5, params:"средняя протяженность"},
+{no:61, fo:"ПФО", subj:"Саратовская область", branch:"Саратовский", plan:4, fact:2, cand:3, bal:"1", sur:"1", def:"0", loss:42, sq:"474.9", fields:"2,159", road:2.9, shift:5.1, params:"протяженная степь"},
+{no:62, fo:"ДФО", subj:"Сахалинская область", branch:"Сахалинский", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:3.0, shift:5.0, params:"островная"},
+{no:63, fo:"УФО", subj:"Свердловская область", branch:"Свердловский", plan:2, fact:0, cand:1, bal:"-1", sur:"0", def:"-1", loss:10, sq:"155.1", fields:"862", road:2.8, shift:5.2, params:"Урал, протяженная"},
+{no:64, fo:"СКФО", subj:"Севастополь", branch:"Крымский", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:1.5, shift:6.5, params:"город, побережье"},
+{no:65, fo:"ЦФО", subj:"Смоленская область", branch:"Смоленский", plan:0, fact:0, cand:3, bal:"3", sur:"3", def:"0", loss:1, sq:"7.3", fields:"43", road:2.5, shift:5.5, params:"средняя"},
+{no:66, fo:"СКФО", subj:"Ставропольский край", branch:"Прикумское ОП (Ставропольский); Ставропольский", plan:9, fact:1, cand:8, bal:"---", sur:"0", def:"0", loss:84, sq:"1,047.3", fields:"5,237", road:2.0, shift:6.0, params:"предгорье, логистика"},
+{no:67, fo:"ЦФО", subj:"Тамбовская область", branch:"Тамбовский", plan:6, fact:1, cand:3, bal:"-2", sur:"0", def:"-2", loss:42, sq:"732.8", fields:"4,071", road:1.7, shift:6.3, params:"компактная, равнина"},
+{no:68, fo:"ЦФО", subj:"Тверская область", branch:"Нелидовское ОП (Смоленский); Тверское ОП (Смоленский)", plan:0, fact:0, cand:2, bal:"2", sur:"2", def:"0", loss:1, sq:"31.3", fields:"184", road:2.8, shift:5.2, params:"протяженная"},
+{no:69, fo:"СФО", subj:"Томская область", branch:"Томский", plan:1, fact:1, cand:0, bal:"---", sur:"0", def:"0", loss:18, sq:"93.0", fields:"517", road:3.5, shift:4.5, params:"протяженная, болота"},
+{no:70, fo:"ЦФО", subj:"Тульская область", branch:"Тульский", plan:1, fact:0, cand:1, bal:"---", sur:"0", def:"0", loss:4, sq:"125.9", fields:"741", road:1.9, shift:6.1, params:"компактная"},
+{no:71, fo:"УФО", subj:"Тюменская область", branch:"Ишимское ОП (Тюменский); Тюменский", plan:2, fact:2, cand:2, bal:"2", sur:"2", def:"0", loss:5, sq:"129.8", fields:"649", road:4.7, shift:3.3, params:"очень протяженная"},
+{no:72, fo:"ПФО", subj:"Удмуртская Республика", branch:"Удмуртский", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:3, sq:"28.5", fields:"168", road:2.2, shift:5.8, params:"средняя"},
+{no:73, fo:"ПФО", subj:"Ульяновская область", branch:"Ульяновский", plan:1, fact:2, cand:1, bal:"2", sur:"2", def:"0", loss:4, sq:"95.0", fields:"528", road:2.2, shift:5.8, params:"средняя"},
+{no:74, fo:"ДФО", subj:"Хабаровский край", branch:"Хабаровский", plan:0, fact:1, cand:4, bal:"5", sur:"5", def:"0", loss:0, sq:"8.3", fields:"46", road:3.2, shift:4.8, params:"протяженная"},
+{no:75, fo:"УФО", subj:"Ханты-Мансийский автономный округ - Югра", branch:"---", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:4.5, shift:3.5, params:"Арктика, болота"},
+{no:76, fo:"УФО", subj:"Челябинская область", branch:"Карталинское ОП (Челябинский); Челябинский", plan:0, fact:1, cand:2, bal:"3", sur:"3", def:"0", loss:2, sq:"11.4", fields:"63", road:2.5, shift:5.5, params:"средняя"},
+{no:77, fo:"СКФО", subj:"Чеченская Республика", branch:"Чеченский", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:2, sq:"26.4", fields:"147", road:2.0, shift:6.0, params:"предгорье"},
+{no:78, fo:"ПФО", subj:"Чувашская Республика", branch:"Чувашское ОП (Нижегородский)", plan:1, fact:0, cand:0, bal:"-1", sur:"0", def:"-1", loss:7, sq:"73.6", fields:"433", road:1.8, shift:6.2, params:"компактная"},
+{no:79, fo:"ДФО", subj:"Чукотский автономный округ", branch:"---", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:5.0, shift:3.0, params:"Арктика, очень удаленная"},
+{no:80, fo:"УФО", subj:"Ямало-Ненецкий автономный округ", branch:"---", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:5.0, shift:3.0, params:"Арктика, тундра"},
+{no:81, fo:"ЦФО", subj:"Ярославская область", branch:"Ярославское ОП (Костромской)", plan:0, fact:1, cand:0, bal:"1", sur:"1", def:"0", loss:3, sq:"4.6", fields:"27", road:2.2, shift:5.8, params:"средняя"},
+{no:82, fo:"Новые тер.", subj:"Донецкая Народная Республика", branch:"Донецкий", plan:0, fact:0, cand:2, bal:"2", sur:"2", def:"0", loss:0, sq:"0.0", fields:"---", road:0.0, shift:0.0, params:"---"},
+{no:83, fo:"Новые тер.", subj:"Запорожская область", branch:"Запорожское ОП (ЦА)", plan:0, fact:0, cand:0, bal:"---", sur:"0", def:"0", loss:0, sq:"0.0", fields:"---", road:0.0, shift:0.0, params:"---"},
+{no:84, fo:"Новые тер.", subj:"Луганская Народная Республика", branch:"Луганское ОП (ЦА)", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:0, sq:"0.0", fields:"---", road:0.0, shift:0.0, params:"---"},
+{no:85, fo:"Новые тер.", subj:"Херсонская область", branch:"Херсонское ОП (ЦА)", plan:0, fact:0, cand:1, bal:"1", sur:"1", def:"0", loss:0, sq:"0.0", fields:"---", road:0.0, shift:0.0, params:"---"}
+];
+const renderTable = (rows) => {
+tableBody.innerHTML = '';
+let visibleCount = 0;
+rows.forEach(row => {
+const tr = document.createElement('tr');
+tr.className = 'table-row';
+// Balance logic for coloring
+let balanceHtml = row.bal;
+let defClass = '';
+if (row.bal !== '---') {
+const num = parseInt(row.bal);
+if (num < 0) defClass = 'text-danger-600 dark:text-red-400 font-bold';
+else if (num > 0) defClass = 'text-success-600 dark:text-green-400 font-bold';
+}
+// Badge logic
+let defBadge = '-';
+if (row.def !== '0') defBadge = `<span class="badge-deficit">${row.def}</span>`;
+let surBadge = '-';
+if (row.sur !== '0') surBadge = `<span class="badge-surplus">${row.sur}</span>`;
+tr.innerHTML = `
+<td class="px-3 py-3 whitespace-nowrap text-slate-400">${row.no}</td>
+<td class="px-3 py-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-300">${row.fo}</td>
+<td class="px-3 py-3">
+<div class="font-semibold text-slate-800 dark:text-slate-200">${row.subj}</div>
+<div class="text-xs text-slate-500 dark:text-slate-400 mt-1">${row.branch}</div>
+</td>
+<td class="px-3 py-3 text-center font-bold text-slate-700 dark:text-slate-300">${row.plan}</td>
+<td class="px-3 py-3 text-center text-slate-600 dark:text-slate-400">${row.fact}</td>
+<td class="px-3 py-3 text-center text-slate-500 dark:text-slate-500">${row.cand}</td>
+<td class="px-3 py-3 text-center font-bold ${defClass}">${balanceHtml}</td>
+<td class="px-3 py-3 text-center hidden xl:table-cell">${surBadge}</td>
+<td class="px-3 py-3 text-center hidden xl:table-cell">${defBadge}</td>
+<td class="px-3 py-3 text-center text-slate-600 dark:text-slate-400">${row.loss}</td>
+<td class="px-3 py-3 text-center text-slate-600 dark:text-slate-400">${row.sq}</td>
+<td class="px-3 py-3 text-center text-slate-600 dark:text-slate-400">${row.fields}</td>
+<td class="px-3 py-3 text-center text-slate-600 dark:text-slate-400">${row.road}</td>
+<td class="px-3 py-3 text-center text-slate-600 dark:text-slate-400">${row.shift}</td>
+<td class="px-3 py-3 text-xs text-slate-500 dark:text-slate-400">${row.params}</td>
+`;
+tableBody.appendChild(tr);
+visibleCount++;
+});
+document.getElementById('rowCount').textContent = visibleCount;
+const noResults = document.getElementById('noResults');
+if (visibleCount === 0) noResults.classList.remove('hidden');
+else noResults.classList.add('hidden');
+};
+// Initial Render
+renderTable(data);
+// Search Logic
+document.getElementById('searchInput').addEventListener('keyup', function() {
+const filter = this.value.toLowerCase();
+const filtered = data.filter(row => {
+return (
+row.subj.toLowerCase().includes(filter) ||
+row.branch.toLowerCase().includes(filter) ||
+row.fo.toLowerCase().includes(filter) ||
+row.def.toLowerCase().includes(filter) ||
+row.params.toLowerCase().includes(filter)
+);
+});
+renderTable(filtered);
+});
+</script>
+</body>
+</html>
