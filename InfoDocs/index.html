@@ -180,7 +180,7 @@
             if (lowerName.includes('index')) return false;
             // Разрешаем только .html и .htm
             const ext = getFileExt(name).toLowerCase();
-            return ext === 'html' || ext === 'htm';
+            return ext === 'html';// || ext === 'htm';
         }
 
         async function fetchRepoContents(path = '') {
