@@ -294,7 +294,7 @@ body {
   <div class="header">
     <div>
       <h1>АТТЕСТАЦИЯ НЕЗАВИСИМЫХ ЭКСПЕРТОВ ФГБУ "РОСАГРОХИМСЛУЖБА"</h1>
-      <div class="date">По состоянию на 11.06.2026</div>
+      <div class="date">По состоянию на 15.06.2026</div>
     </div>
     <button class="theme-btn" onclick="toggleTheme()" title="Переключить тему">
       <span id="themeIcon">&#9788;</span>
@@ -302,12 +302,12 @@ body {
   </div>
 
   <div class="metrics">
-    <div class="metric"><div class="num">178</div><div class="lbl">Всего участников</div></div>
-    <div class="metric highlight"><div class="num">90</div><div class="lbl">Эксперты</div></div>
-    <div class="metric"><div class="num">88</div><div class="lbl">Кандидаты</div></div>
-    <div class="metric highlight"><div class="num">50.6%</div><div class="lbl">Доля экспертов от всех участников</div></div>
+    <div class="metric"><div class="num">181</div><div class="lbl">Всего участников</div></div>
+    <div class="metric highlight"><div class="num">91</div><div class="lbl">Эксперты</div></div>
+    <div class="metric"><div class="num">90</div><div class="lbl">Кандидаты</div></div>
+    <div class="metric highlight"><div class="num">50.3%</div><div class="lbl">Доля экспертов от всех участников</div></div>
     <div class="metric"><div class="num">102</div><div class="lbl">Участвует филиалов</div></div>
-    <div class="metric"><div class="num">63</div><div class="lbl">Филиалы с экспертами</div></div>
+    <div class="metric"><div class="num">64</div><div class="lbl">Филиалы с экспертами</div></div>
   </div>
 
   <div class="second-row">
@@ -322,12 +322,12 @@ body {
         <li><span class="rank">2</span><span class="branch">ВОЛГОГРАДСКАЯ ОБЛАСТЬ</span><span class="stats">4 эксперта<span class="cand">· 1 канд.</span></span></li>
         <li><span class="rank">3</span><span class="branch">РОСТОВСКАЯ ОБЛАСТЬ</span><span class="stats">4 эксперта<span class="cand">· 5 канд.</span></span></li>
         <li><span class="rank">4</span><span class="branch">ТЮМЕНСКАЯ ОБЛАСТЬ</span><span class="stats">4 эксперта<span class="cand">· 0 канд.</span></span></li>
-        <li><span class="rank">5</span><span class="branch">КИРОВСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
-        <li><span class="rank">6</span><span class="branch">ОМСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 3 канд.</span></span></li>
-        <li><span class="rank">7</span><span class="branch">БЕЛГОРОДСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+        <li><span class="rank">5</span><span class="branch">БЕЛГОРОДСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+        <li><span class="rank">6</span><span class="branch">РЕСПУБЛИКА ХАКАСИЯ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+        <li><span class="rank">7</span><span class="branch">ОМСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 3 канд.</span></span></li>
         <li><span class="rank">8</span><span class="branch">РЕСПУБЛИКА ТАТАРСТАН</span><span class="stats">3 эксперта<span class="cand">· 3 канд.</span></span></li>
-        <li><span class="rank">9</span><span class="branch">РЕСПУБЛИКА ХАКАСИЯ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
-        <li><span class="rank">10</span><span class="branch">ИРКУТСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+        <li><span class="rank">9</span><span class="branch">ИРКУТСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+        <li><span class="rank">10</span><span class="branch">КИРОВСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
       </ul>
     </div>
   </div>
@@ -335,11 +335,11 @@ body {
   <div class="week-dynamics">
     <div class="label">Динамика за отчетный период</div>
     <div class="bar-wrap">
-      <div class="bar-prev" style="width: 42.7%;">76</div>
-      <div class="bar-curr" style="width: 50.6%;">90</div>
-      <div class="bar-total">178</div>
+      <div class="bar-prev" style="width: 42.0%;">76</div>
+      <div class="bar-curr" style="width: 50.3%;">91</div>
+      <div class="bar-total">181</div>
     </div>
-    <div class="delta">▲ +14 экспертов</div>
+    <div class="delta">▲ +15 экспертов</div>
   </div>
 
   <div class="section-title">ОБЩАЯ ДИНАМИКА АТТЕСТАЦИИ</div>
@@ -366,7 +366,7 @@ const HISTORY = [
   { date: '06.05.26', exp: 58, cand: 82 },
   { date: '15.05.26', exp: 61, cand: 120 },
   { date: '28.05.26', exp: 76, cand: 103 },
-  { date: '09.06.26', exp: 90, cand: 88 }
+  { date: '15.06.26', exp: 91, cand: 90 }
 ];
 
 // ===== ТЕМА =====
@@ -501,8 +501,8 @@ const dynamicsLabelsPlugin = {
 
 // ===== РАСПРЕДЕЛЕНИЕ ПО ФО =====
 const foLabels = ['ПФО','СФО','ЮФО','ЦФО','СЗФО','УрФО','ДФО','СКФО','Нов. суб.'];
-const foExp =    [18,  15,  17,  15,   9,   6,   4,   5,    1   ];
-const foCand =   [12,  14,   8,  23,   5,   4,   9,  10,    3   ];
+const foExp =    [18,  15,  17,  15,   9,   6,   5,   5,    1   ];
+const foCand =   [12,  14,   8,  26,   5,   4,   8,  10,    3   ];
 const maxFO = Math.max(...foExp.map((e,i) => e + foCand[i]));
 
 const foCtx = document.getElementById('foChart').getContext('2d');
