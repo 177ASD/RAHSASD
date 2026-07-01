@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ПП № 327 - Проведение экспертизы в сфере сельхозстрахования</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient-start: #A8C4A5;
+            --bg-gradient-end: #E5A878;
+            --card: rgba(255, 255, 255, 0.92);
+            --card-hover: rgba(255, 255, 255, 0.97);
+            --accent-green: #6B8F6B;
+            --accent-brown: #7A6248;
+            --accent-orange: #C4783A;
+            --accent-burgundy: #8B3A4C;
+            --text-dark: #3D3428;
+            --text-muted: #8B7D6B;
+            --border: rgba(255, 255, 255, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            background-attachment: fixed;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            margin-bottom: 1px;
+            transition: all 0.2s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+        }
+
+        .sidebar-link.sub {
+            padding-left: 1.75rem;
+            font-size: 0.8rem;
+            opacity: 0.85;
+        }
+
+        .sidebar-link.highlight {
+            color: var(--accent-burgundy);
+            font-weight: 600;
+            background: rgba(139, 58, 76, 0.15);
+            text-shadow: none;
+        }
+
+        .sidebar-title {
+            color: white;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1rem 1rem 0.5rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-title:first-child {
+            margin-top: 0;
+        }
+
+        .content-card {
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .doc-header {
+            border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .doc-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.4;
+        }
+
+        .doc-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(107, 143, 107, 0.2);
+        }
+
+        .section-title-first {
+            margin-top: 0;
+        }
+
+        .doc-text {
+            line-height: 1.75;
+            text-align: justify;
+            margin-bottom: 0.75rem;
+        }
+
+        .doc-text-indented {
+            line-height: 1.75;
+            text-align: justify;
+            margin-bottom: 0.75rem;
+            text-indent: 1.5rem;
+        }
+
+        .definition-term {
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        .point-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-orange));
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .point-number.burgundy {
+            background: var(--accent-burgundy);
+        }
+
+        .point-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .point-header .point-number {
+            margin-top: 2px;
+        }
+
+        .doc-list {
+            margin: 0.75rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .doc-list li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .doc-list-nested {
+            margin: 0.5rem 0 0.5rem 1rem;
+            padding-left: 1rem;
+            list-style-type: none;
+        }
+
+        .doc-list-nested li::before {
+            content: "–";
+            color: var(--accent-green);
+            margin-right: 0.5rem;
+        }
+
+        .definitions-block {
+            padding-left: 1rem;
+            border-left: 2px solid var(--accent-orange);
+            margin: 1rem 0;
+        }
+
+        .definitions-block .doc-text {
+            margin-bottom: 1rem;
+        }
+
+        .sub-point {
+            margin-left: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .sub-point-letter {
+            font-weight: 500;
+            color: var(--accent-brown);
+            margin-right: 0.5rem;
+        }
+
+        .text-burgundy {
+            color: var(--accent-burgundy);
+            font-weight: 500;
+        }
+
+        .highlight-block-burgundy {
+            margin: 1rem 0;
+            padding: 1rem 1.25rem;
+            background: rgba(139, 58, 76, 0.04);
+            border-left: 3px solid var(--accent-burgundy);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .highlight-block-burgundy .sub-point-letter {
+            color: var(--accent-burgundy);
+        }
+
+        .highlight-block-burgundy .doc-list-nested li::before {
+            color: var(--accent-burgundy);
+            opacity: 0.6;
+        }
+
+        /* Подпункт а) полностью бордовый */
+        .sub-point-burgundy {
+            margin-left: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-burgundy);
+        }
+
+        .sub-point-burgundy .sub-point-letter {
+            color: var(--accent-burgundy);
+            font-weight: 600;
+        }
+
+        .sub-point-burgundy .doc-text {
+            color: var(--accent-burgundy);
+        }
+
+        .sub-point-burgundy .doc-list-nested li::before {
+            color: var(--accent-burgundy);
+        }
+
+        .sub-point-burgundy .doc-list-nested li {
+            color: var(--accent-burgundy);
+        }
+
+        .approved-label {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-block-title {
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-dark);
+        }
+
+        .signatory {
+            text-align: right;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(139, 115, 85, 0.15);
+        }
+
+        .signatory-name {
+            font-weight: 500;
+        }
+
+      /* Подпись внизу */
+.footer-signature {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    color: rgba(61, 52, 40, 0.2);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    z-index: 50;
+}
+
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 90;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 95;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .doc-text, .doc-text-indented {
+                text-align: left;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <div class="footer-signature">ASD © 2026</div>
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+        <!-- Сайдбар -->
+        <aside id="sidebar" class="sidebar w-72 flex-shrink-0 custom-scrollbar overflow-y-auto" style="height: 100vh; position: sticky; top: 0;">
+            <nav class="p-3">
+                <div class="sidebar-title">Постановление</div>
+                <a href="#resolution" class="sidebar-link active">Постановление № 327</a>
+                <a href="#res-p1" class="sidebar-link sub">п. 1 Утверждение</a>
+                <a href="#res-p2" class="sidebar-link sub">п. 2 Отмена актов</a>
+                <a href="#res-p3" class="sidebar-link sub">п. 3 Свидетельства</a>
+                <a href="#res-p4" class="sidebar-link sub">п. 4 Вступление в силу</a>
+
+                <div class="sidebar-title">Правила экспертизы</div>
+                <a href="#rules" class="sidebar-link">Общие положения</a>
+                <a href="#rules-p1" class="sidebar-link sub">п. 1 Назначение</a>
+                <a href="#rules-p2" class="sidebar-link sub">п. 2 Понятия</a>
+                <a href="#rules-proc" class="sidebar-link">Проведение экспертизы</a>
+                <a href="#rules-p3" class="sidebar-link sub">п. 3-7 Порядок</a>
+                <a href="#rules-p8" class="sidebar-link sub">п. 8-10 Обследование</a>
+                <a href="#rules-p11" class="sidebar-link sub">п. 11-15 Заключение</a>
+
+                <div class="sidebar-title">Требования к экспертам</div>
+                <a href="#req" class="sidebar-link">Общие положения</a>
+                <a href="#req-p1" class="sidebar-link sub">п. 1 Назначение</a>
+                <a href="#req-p2" class="sidebar-link sub">п. 2 Понятия</a>
+                <a href="#req-att" class="sidebar-link">Аттестация</a>
+                <a href="#req-p3" class="sidebar-link sub highlight">п. 3 Требования</a>
+                <a href="#req-p4" class="sidebar-link sub">п. 4-7 Документы</a>
+                <a href="#req-p8" class="sidebar-link sub">п. 8-12 Порядок</a>
+                <a href="#req-annul" class="sidebar-link">Аннулирование</a>
+                <a href="#req-p13" class="sidebar-link sub">п. 13-17 Основания</a>
+            </nav>
+        </aside>
+
+        <!-- Контент -->
+        <main class="flex-1 p-4 md:p-6 lg:p-8">
+            <div class="max-w-3xl mx-auto">
+                <div class="content-card p-6 md:p-8 animate-in">
+
+                    <!-- ПОСТАНОВЛЕНИЕ -->
+                    <header id="resolution" class="doc-header">
+                        <p class="approved-label">ПРАВИТЕЛЬСТВО РОССИЙСКОЙ ФЕДЕРАЦИИ</p>
+                        <h1 class="doc-title">ПОСТАНОВЛЕНИЕ от 9 марта 2022 г. № 327</h1>
+                        <p class="doc-subtitle">О проведении экспертизы в целях подтверждения факта наступления страхового случая и определения размера причиненного страхователю ущерба по договору сельскохозяйственного страхования</p>
+                    </header>
+
+                    <p class="doc-text-indented">В соответствии со статьей 5 Федерального закона "О государственной поддержке в сфере сельскохозяйственного страхования и о внесении изменений в Федеральный закон "О развитии сельского хозяйства" Правительство Российской Федерации постановляет:</p>
+
+                    <section id="res-p1">
+                        <div class="point-header">
+                            <span class="point-number">1</span>
+                            <p class="doc-text" style="margin:0;">Утвердить прилагаемые:</p>
+                        </div>
+                        <ul class="doc-list">
+                            <li>Правила проведения экспертизы в целях подтверждения факта наступления страхового случая и определения размера причиненного страхователю ущерба по договору сельскохозяйственного страхования;</li>
+                            <li>требования к независимым экспертам, привлекаемым для проведения экспертизы в целях подтверждения факта наступления страхового случая и определения размера причиненного страхователю ущерба по договору сельскохозяйственного страхования, в том числе условия и порядок их аттестации.</li>
+                        </ul>
+                    </section>
+
+                    <section id="res-p2">
+                        <div class="point-header">
+                            <span class="point-number">2</span>
+                            <p class="doc-text" style="margin:0;">Признать утратившими силу:</p>
+                        </div>
+                        <ul class="doc-list">
+                            <li>постановление Правительства Российской Федерации от 30 декабря 2011 г. № 1205 "О проведении экспертизы в целях подтверждения факта наступления страхового случая и определения размера причиненного страхователю ущерба по договору сельскохозяйственного страхования" (Собрание законодательства Российской Федерации, 2012, № 3, ст. 423);</li>
+                            <li>постановление Правительства Российской Федерации от 12 ноября 2012 г. № 1158 "О внесении изменений в требования к независимым экспертам..." (Собрание законодательства Российской Федерации, 2012, № 47, ст. 6507);</li>
+                            <li>постановление Правительства Российской Федерации от 3 сентября 2014 г. № 893 "О внесении изменений в постановление Правительства Российской Федерации от 30 декабря 2011 г. № 1205" (Собрание законодательства Российской Федерации, 2014, № 37, ст. 4952);</li>
+                            <li>постановление Правительства Российской Федерации от 27 сентября 2018 г. № 1143 "О внесении изменений в постановление Правительства Российской Федерации от 30 декабря 2011 г. № 1205" (Собрание законодательства Российской Федерации, 2018, № 41, ст. 6239);</li>
+                            <li>постановление Правительства Российской Федерации от 8 июня 2019 г. № 742 "О внесении изменений в Правила проведения экспертизы..." (Собрание законодательства Российской Федерации, 2019, № 25, ст. 3251).</li>
+                        </ul>
+                    </section>
+
+                    <section id="res-p3">
+                        <div class="point-header">
+                            <span class="point-number">3</span>
+                        </div>
+                        <p class="doc-text-indented">Свидетельства об аттестации, выданные в соответствии с постановлением Правительства Российской Федерации от 30 декабря 2011 г. № 1205 и действующие на дату вступления в силу настоящего постановления, сохраняют свое действие до истечения срока, на который они были выданы, и подлежат внесению Министерством сельского хозяйства Российской Федерации в единый реестр независимых экспертов.</p>
+                    </section>
+
+                    <section id="res-p4">
+                        <div class="point-header">
+                            <span class="point-number">4</span>
+                        </div>
+                        <p class="doc-text-indented">Настоящее постановление вступает в силу с 1 сентября 2022 г. Правила, утвержденные настоящим постановлением, и требования, утвержденные настоящим постановлением, действуют в течение 6 лет со дня вступления в силу настоящего постановления.</p>
+                        <div class="signatory">
+                            <p class="doc-subtitle">Председатель Правительства<br>РОССИЙСКОЙ ФЕДЕРАЦИИ</p>
+                            <p class="signatory-name" style="margin-top: 0.5rem;">М.Мишустин</p>
+                        </div>
+                    </section>
+
+                    <!-- ПРАВИЛА -->
+                    <section id="rules" style="margin-top: 3rem;">
+                        <p class="approved-label">УТВЕРЖДЕНЫ<br>постановлением Правительства<br>Российской Федерации<br>от 9 марта 2022 г. № 327</p>
+                        <h2 class="section-title section-title-first">ПРАВИЛА проведения экспертизы</h2>
+
+                        <section id="rules-p1">
+                            <div class="point-header">
+                                <span class="point-number">1</span>
+                            </div>
+                            <p class="doc-text-indented">Настоящие Правила устанавливают порядок проведения экспертизы с привлечением независимых экспертов в целях подтверждения факта наступления страхового случая и определения причин утраты (гибели) урожая сельскохозяйственной культуры, посадок многолетних насаждений, сельскохозяйственных животных и (или) объектов товарной аквакультуры (товарного рыбоводства) и размера причиненного страхователю ущерба по договору сельскохозяйственного страхования, если при страховании осуществляется оказание государственной поддержки.</p>
+                        </section>
+
+                        <section id="rules-p2">
+                            <div class="point-header">
+                                <span class="point-number">2</span>
+                                <p class="doc-text" style="margin:0;">Понятия, используемые в настоящих Правилах, означают следующее:</p>
+                            </div>
+                            <div class="definitions-block">
+                                <p class="doc-text"><span class="definition-term">"аттестующий орган"</span> - Министерство сельского хозяйства Российской Федерации;</p>
+                                <p class="doc-text"><span class="definition-term">"независимый эксперт"</span> - физическое лицо, аттестованное аттестующим органом в соответствии с требованиями к независимым экспертам, и внесенное в единый реестр независимых экспертов;</p>
+                                <p class="doc-text"><span class="definition-term">"обследование объектов страхования"</span> - квалифицированная оценка состояния посевов (посадок) сельскохозяйственных культур, посадок многолетних насаждений, сельскохозяйственных животных и (или) объектов товарной аквакультуры по месту их нахождения;</p>
+                                <p class="doc-text"><span class="definition-term">"объект страхования"</span> - урожай сельскохозяйственных культур, посадки многолетних насаждений, сельскохозяйственные животные и (или) объекты товарной аквакультуры;</p>
+                                <p class="doc-text"><span class="definition-term">"страхователь"</span> - сельскохозяйственный товаропроизводитель, указанный в пункте 8 статьи 2 Федерального закона "О государственной поддержке в сфере сельскохозяйственного страхования...";</p>
+                                <p class="doc-text"><span class="definition-term">"страховщик"</span> - страховая организации, указанная в пункте 9 статьи 2 Федерального закона "О государственной поддержке в сфере сельскохозяйственного страхования...";</p>
+                                <p class="doc-text"><span class="definition-term">"экспертиза"</span> - квалифицированное исследование представленных страховщиком и страхователем соответствующих документов, информации и материалов, полученных в том числе в результате мониторинга с использованием авиационных и космических средств...</p>
+                            </div>
+                        </section>
+
+                        <h3 id="rules-proc" class="section-title">Проведение экспертизы</h3>
+
+                        <section id="rules-p3">
+                            <div class="point-header">
+                                <span class="point-number">3</span>
+                            </div>
+                            <p class="doc-text-indented">Экспертиза проводится страховщиком с привлечением независимого эксперта при наступлении событий, предусмотренных статьей 8 Федерального закона "О государственной поддержке в сфере сельскохозяйственного страхования...", и в случае наличия разногласий между сторонами договора сельскохозяйственного страхования.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">4</span>
+                            </div>
+                            <p class="doc-text-indented">Страховщик при наличии уведомления от страхователя о наличии разногласий обязан организовать проведение экспертизы в срок, не превышающий 5 рабочих дней со дня получения соответствующего уведомления.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">5</span>
+                            </div>
+                            <p class="doc-text-indented">Экспертиза проводится на основании договора, заключенного между страховщиком и независимым экспертом.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">6</span>
+                            </div>
+                            <p class="doc-text-indented">Страховщик направляет страхователю уведомление о сроках проведения экспертизы с описанием ее предмета (объекта).</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">7</span>
+                            </div>
+                            <p class="doc-text-indented">Оплата услуг независимого эксперта по договору производится за счет страховщика.</p>
+                        </section>
+
+                        <section id="rules-p8">
+                            <div class="point-header">
+                                <span class="point-number">8</span>
+                            </div>
+                            <p class="doc-text-indented">Страховщик не вправе привлекать для проведения экспертизы независимого эксперта, являющегося учредителем, акционером, участником, работником страховщика или страхователем. При наличии заинтересованности в результатах экспертизы независимый эксперт обязан сообщить страховщику и страхователю о невозможности своего участия.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">9</span>
+                                <p class="doc-text" style="margin:0;">Независимый эксперт:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>а) сообщает о невозможности своего участия в случае наличия обстоятельств, указанных в пункте 8 настоящих Правил;</li>
+                                <li>б) обеспечивает сохранность документов и материалов, полученных в ходе проведения экспертизы;</li>
+                                <li>в) руководствуется при проведении экспертизы методиками определения страховой стоимости и размера утраты;</li>
+                                <li>г) не разглашает конфиденциальную информацию, полученную в ходе проведения экспертизы.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">10</span>
+                            </div>
+                            <p class="doc-text-indented">Обследование объектов страхования проводится независимым экспертом при наличии их на месте нахождения. О месте и времени проведения обследования независимый эксперт уведомляет страховщика и страхователя за 3 рабочих дня до дня проведения обследования.</p>
+                        </section>
+
+                        <section id="rules-p11">
+                            <div class="point-header">
+                                <span class="point-number">11</span>
+                                <p class="doc-text" style="margin:0;">На основании проведенной экспертизы независимый эксперт составляет экспертное заключение, в котором указываются:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>а) место и дата составления экспертного заключения;</li>
+                                <li>б) основание для проведения экспертизы;</li>
+                                <li>в) фамилия, имя, отчество (при наличии) независимого эксперта;</li>
+                                <li>г) предмет (объект) экспертизы;</li>
+                                <li>д) перечень документов, информации и материалов;</li>
+                                <li>е) содержание и результаты обследования, выводы по предмету экспертизы и их обоснование.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">12</span>
+                            </div>
+                            <p class="doc-text-indented">Выводы в экспертном заключении излагаются в виде ответов на поставленные вопросы. Экспертное заключение подписывается независимым экспертом.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">13</span>
+                            </div>
+                            <p class="doc-text-indented">К экспертному заключению прилагаются копии представленных документов, которые являются его неотъемлемой частью.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">14</span>
+                            </div>
+                            <p class="doc-text-indented">Экспертное заключение составляется в 3 экземплярах. Копия экспертного заключения в течение 3 рабочих дней со дня его подписания направляется независимым экспертом в аттестующий орган.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">15</span>
+                            </div>
+                            <p class="doc-text-indented">При проведении экспертизы в рамках судопроизводства положения настоящих Правил не применяются.</p>
+                        </section>
+                    </section>
+
+                    <!-- ТРЕБОВАНИЯ -->
+                    <section id="req" style="margin-top: 3rem;">
+                        <p class="approved-label">УТВЕРЖДЕНЫ<br>постановлением Правительства<br>Российской Федерации<br>от 9 марта 2022 г. № 327</p>
+                        <h2 class="section-title section-title-first">ТРЕБОВАНИЯ к независимым экспертам</h2>
+
+                        <section id="req-p1">
+                            <div class="point-header">
+                                <span class="point-number">1</span>
+                            </div>
+                            <p class="doc-text-indented">В настоящем документе устанавливаются требования к независимым экспертам, привлекаемым для проведения экспертизы в целях подтверждения факта наступления страхового случая и определения размера причиненного страхователю ущерба по договору сельскохозяйственного страхования (далее - независимый эксперт), в том числе условия и порядок аттестации независимых экспертов.</p>
+                        </section>
+
+                        <section id="req-p2">
+                            <div class="point-header">
+                                <span class="point-number">2</span>
+                                <p class="doc-text" style="margin:0;">Понятия, используемые в настоящем документе, означают следующее:</p>
+                            </div>
+                            <div class="definitions-block">
+                                <p class="doc-text"><span class="definition-term">"аттестационная комиссия"</span> - комиссия, формируемая в установленном аттестующим органом порядке и наделенная полномочиями для проведения аттестации независимых экспертов. Состав и положение об аттестационной комиссии утверждаются аттестующим органом;</p>
+                                <p class="doc-text"><span class="definition-term">"аттестационные требования"</span> - совокупность требований к профессиональному образованию, стажу работы и знанию законодательства Российской Федерации;</p>
+                                <p class="doc-text"><span class="definition-term">"аттестация"</span> - процедура, по результатам которой принимается решение об аттестации и о внесении записи о независимом эксперте в единый реестр независимых экспертов;</p>
+                                <p class="doc-text"><span class="definition-term">"аттестующий орган"</span> - Министерство сельского хозяйства Российской Федерации;</p>
+                                <p class="doc-text"><span class="definition-term">"единый реестр независимых экспертов"</span> - единый реестр независимых экспертов, который размещен на официальном сайте аттестующего органа;</p>
+                                <p class="doc-text"><span class="definition-term">"единый портал"</span> - федеральная государственная информационная система "Единый портал государственных и муниципальных услуг (функций)";</p>
+                                <p class="doc-text"><span class="definition-term">"кандидат в независимые эксперты"</span> - физическое лицо, претендующее на прохождение аттестации;</p>
+                                <p class="doc-text"><span class="definition-term">"личный кабинет"</span> - единый личный кабинет кандидата в независимые эксперты на едином портале.</p>
+                            </div>
+                        </section>
+
+                        <h3 id="req-att" class="section-title">Аттестационные требования</h3>
+
+                        <!-- ПУНКТ 3 - ВЫДЕЛЕН БОРДОВЫМ -->
+                        <section id="req-p3">
+                            <div class="point-header">
+                                <span class="point-number burgundy">3</span>
+                                <p class="doc-text text-burgundy" style="margin:0;">Независимый эксперт должен отвечать следующим аттестационным требованиям:</p>
+                            </div>
+
+                            <div class="highlight-block-burgundy">
+                                <!-- Подпункт а) - ПОЛНОСТЬЮ БОРДОВЫЙ -->
+                                <div class="sub-point-burgundy">
+                                    <p class="doc-text"><span class="sub-point-letter">а)</span> для проведения экспертизы в области растениеводства:</p>
+                                    <ul class="doc-list-nested">
+                                        <li>наличие высшего образования по одной из специальностей: "агрохимия и агропочвоведение", "агрономия", "почвоведение", "садоводство", "технология производства и переработки сельскохозяйственной продукции", "защита растений", "плодоовощеводство и виноградарство", "селекция и генетика сельскохозяйственных культур" либо наличие ученых степеней кандидата или доктора сельскохозяйственных или биологических наук;</li>
+                                        <li>наличие стажа работы не менее 5 лет по соответствующим специальностям;</li>
+                                        <li>знание законодательства Российской Федерации, регулирующего отношения в сфере страхового дела и в области растениеводства;</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Подпункты б) и в) - обычный стиль -->
+                                <div class="sub-point">
+                                    <p class="doc-text"><span class="sub-point-letter">б)</span> для проведения экспертизы в области животноводства:</p>
+                                    <ul class="doc-list-nested">
+                                        <li>наличие высшего образования по одной из специальностей: "зоотехния", "ветеринарно-санитарная экспертиза", "ветеринария";</li>
+                                        <li>наличие стажа работы не менее 5 лет по соответствующим специальностям;</li>
+                                        <li>знание законодательства Российской Федерации, регулирующего отношения в сфере страхового дела и в области животноводства;</li>
+                                    </ul>
+                                </div>
+
+                                <div class="sub-point">
+                                    <p class="doc-text"><span class="sub-point-letter">в)</span> для проведения экспертизы в области товарной аквакультуры (товарного рыбоводства):</p>
+                                    <ul class="doc-list-nested">
+                                        <li>наличие высшего образования по одной из специальностей: "водные биоресурсы и аквакультура", "зоотехния", "ветеринарно-санитарная экспертиза", "ветеринария", "биология";</li>
+                                        <li>наличие стажа работы не менее 5 лет по соответствующим специальностям;</li>
+                                        <li>знание законодательства Российской Федерации, регулирующего отношения в сфере страхового дела и в области аквакультуры (рыбоводства).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section id="req-p4">
+                            <div class="point-header">
+                                <span class="point-number">4</span>
+                                <p class="doc-text" style="margin:0;">Решение об аттестации принимается:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>в автоматизированном режиме на основании документов, направленных в форме электронных документов с использованием личного кабинета;</li>
+                                <li>заочно на основании документов, представленных на бумажном носителе кандидатом в независимые эксперты в аттестационную комиссию.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">5</span>
+                                <p class="doc-text" style="margin:0;">Перечень документов, необходимых для аттестации в электронной форме:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>а) заявление кандидата о прохождении аттестации с указанием области экспертизы;</li>
+                                <li>б) заявление о согласии на размещение персональных данных в едином реестре;</li>
+                                <li>в) заверенная копия документа о высшем образовании;</li>
+                                <li>г) заверенная копия документа о трудовой деятельности и трудовом стаже;</li>
+                                <li>д) заполненное тестовое задание.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">6</span>
+                                <p class="doc-text" style="margin:0;">Перечень документов, необходимых для аттестации заочно на бумажном носителе:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>а) заявление о прохождении аттестации по установленной форме;</li>
+                                <li>б) заявление о согласии на размещение персональных данных;</li>
+                                <li>в) заверенная копия документа, удостоверяющего личность;</li>
+                                <li>г) заверенная копия документа о высшем образовании;</li>
+                                <li>д) заверенная копия документа о трудовой деятельности и стаже;</li>
+                                <li>е) заполненное и подписанное тестовое задание.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">7</span>
+                            </div>
+                            <p class="doc-text-indented">Перечень вопросов тестового задания, утвержденный аттестующим органом, размещается на официальном сайте аттестующего органа.</p>
+                        </section>
+
+                        <section id="req-p8">
+                            <div class="point-header">
+                                <span class="point-number">8</span>
+                                <p class="doc-text" style="margin:0;">По результатам рассмотрения документов принимается решение об аттестации либо об отказе в аттестации.</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>Срок проведения аттестации в электронной форме - не более 10 рабочих дней со дня регистрации заявления.</li>
+                                <li>Срок проведения аттестации заочно - не более 60 календарных дней со дня регистрации заявления.</li>
+                                <li>Уведомление о результатах направляется кандидату в течение 2 рабочих дней (электронно) или 10 рабочих дней (письменно) со дня принятия решения.</li>
+                                <li>В случае аттестации одновременно с уведомлением направляется выписка из единого реестра независимых экспертов.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">9</span>
+                            </div>
+                            <p class="doc-text-indented">Выписка из единого реестра независимых экспертов формируется в виде электронного документа в автоматическом режиме. На выписку должен быть нанесен двухмерный штриховой код.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">10</span>
+                                <p class="doc-text" style="margin:0;">Основаниями для отказа в аттестации являются:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>а) несоответствие кандидата требованиям к образованию и стажу работы;</li>
+                                <li>б) несоответствие кандидата требованиям к знанию законодательства.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">11</span>
+                            </div>
+                            <p class="doc-text-indented">Аттестующий орган ведет единый реестр независимых экспертов по форме и в порядке, которые установлены Министерством цифрового развития, связи и массовых коммуникаций Российской Федерации. Внесение записи производится на основании результатов прохождения аттестации.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">12</span>
+                            </div>
+                            <p class="doc-text-indented">Результат аттестации действителен в течение 5 лет со дня внесения записи в единый реестр. Уведомление об истечении срока действия аттестации осуществляется за 1 месяц до истечения срока.</p>
+                        </section>
+
+                        <h3 id="req-annul" class="section-title">Аннулирование аттестации</h3>
+
+                        <section id="req-p13">
+                            <div class="point-header">
+                                <span class="point-number">13</span>
+                                <p class="doc-text" style="margin:0;">Аннулирование записи об аттестованном независимом эксперте осуществляется по следующим основаниям:</p>
+                            </div>
+                            <ul class="doc-list">
+                                <li>а) установление факта представления недостоверных сведений;</li>
+                                <li>б) установление в судебном порядке факта составления ложного экспертного заключения или неоднократное нарушение законодательства при проведении экспертизы;</li>
+                                <li>в) получение заявления от независимого эксперта о добровольном исключении его из единого реестра.</li>
+                            </ul>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">14</span>
+                            </div>
+                            <p class="doc-text-indented">Запись об аттестации аннулируется решением аттестующего органа. В единый реестр вносится соответствующая запись с указанием даты аннулирования.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">15</span>
+                            </div>
+                            <p class="doc-text-indented">При обнаружении оснований аттестующий орган запрашивает у независимого эксперта письменные объяснения. Срок представления объяснений - не менее 30 дней со дня направления запроса. В случае если от эксперта не поступило объяснение в течение 60 дней, запись о его аттестации аннулируется.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">16</span>
+                            </div>
+                            <p class="doc-text-indented">Аттестующий орган извещает независимого эксперта о решении аннулировать запись о его аттестации в течение 10 рабочих дней со дня принятия соответствующего решения.</p>
+                        </section>
+
+                        <section>
+                            <div class="point-header">
+                                <span class="point-number">17</span>
+                            </div>
+                            <p class="doc-text-indented">Исключение сведений о независимом эксперте из единого реестра осуществляется аттестующим органом в течение 7 рабочих дней со дня принятия соответствующего решения.</p>
+                        </section>
+
+                        <!-- Подпись -->
+                       
+
+                    </section>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Открыть меню">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+
+        mobileMenuBtn.addEventListener('click', openSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        const sections = document.querySelectorAll('section[id], header[id], h2[id], h3[id]');
+
+        const observerOptions = {
+            rootMargin: '-10% 0px -80% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.id;
+                    sidebarLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').slice(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
