@@ -287,7 +287,7 @@ font-size: 0.85rem;
 <div class="header">
 <div>
 <h1>АТТЕСТАЦИЯ НЕЗАВИСИМЫХ ЭКСПЕРТОВ ФГБУ "РОСАГРОХИМСЛУЖБА"</h1>
-<div class="date">По состоянию на 24.07.2026</div>
+<div class="date">По состоянию на 31.07.2026</div>
 </div>
 <button class="theme-btn" onclick="toggleTheme()" title="Переключить тему">
 <span id="themeIcon">&#9788;</span>
@@ -295,11 +295,11 @@ font-size: 0.85rem;
 </div>
 <div class="metrics">
 <div class="metric"><div class="num">172</div><div class="lbl">Всего участников</div></div>
-<div class="metric highlight"><div class="num">113</div><div class="lbl">Эксперты</div></div>
-<div class="metric"><div class="num">59</div><div class="lbl">Кандидаты</div></div>
-<div class="metric highlight"><div class="num">65.7%</div><div class="lbl">Доля экспертов от всех участников</div></div>
+<div class="metric highlight"><div class="num">116</div><div class="lbl">Эксперты</div></div>
+<div class="metric"><div class="num">56</div><div class="lbl">Кандидаты</div></div>
+<div class="metric highlight"><div class="num">67.4%</div><div class="lbl">Доля экспертов от всех участников</div></div>
 <div class="metric"><div class="num">90</div><div class="lbl">Участвует филиалов</div></div>
-<div class="metric"><div class="num">69</div><div class="lbl">Филиалы с экспертами</div></div>
+<div class="metric"><div class="num">70</div><div class="lbl">Филиалы с экспертами</div></div>
 </div>
 <div class="second-row">
 <div class="block">
@@ -316,20 +316,20 @@ font-size: 0.85rem;
 <li><span class="rank">5</span><span class="branch">РЕСПУБЛИКА ТАТАРСТАН</span><span class="stats">4 эксперта<span class="cand">· 2 канд.</span></span></li>
 <li><span class="rank">6</span><span class="branch">ТАМБОВСКАЯ ОБЛАСТЬ</span><span class="stats">4 эксперта<span class="cand">· 0 канд.</span></span></li>
 <li><span class="rank">7</span><span class="branch">ТЮМЕНСКАЯ ОБЛАСТЬ</span><span class="stats">4 эксперта<span class="cand">· 0 канд.</span></span></li>
-<li><span class="rank">8</span><span class="branch">БЕЛГОРОДСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
-<li><span class="rank">9</span><span class="branch">ВОРОНЕЖСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 4 канд.</span></span></li>
-<li><span class="rank">10</span><span class="branch">ИРКУТСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+<li><span class="rank">8</span><span class="branch">АЛТАЙСКИЙ КРАЙ</span><span class="stats">3 эксперта<span class="cand">· 1 канд.</span></span></li>
+<li><span class="rank">9</span><span class="branch">БЕЛГОРОДСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 0 канд.</span></span></li>
+<li><span class="rank">10</span><span class="branch">ВОРОНЕЖСКАЯ ОБЛАСТЬ</span><span class="stats">3 эксперта<span class="cand">· 4 канд.</span></span></li>
 </ul>
 </div>
 </div>
 <div class="week-dynamics">
 <div class="label">Динамика за отчетный период</div>
 <div class="bar-wrap">
-<div class="bar-prev" style="width: 62.1%;">108</div>
-<div class="bar-curr" style="width: 65.7%;">113</div>
+<div class="bar-prev" style="width: 65.7%;">113</div>
+<div class="bar-curr" style="width: 67.4%;">116</div>
 <div class="bar-total">172</div>
 </div>
-<div class="delta">▲ +5 экспертов</div>
+<div class="delta">▲ +3 эксперта</div>
 </div>
 <div class="section-title">ОБЩАЯ ДИНАМИКА АТТЕСТАЦИИ</div>
 <div class="chart-box"><canvas id="dynChart"></canvas></div>
@@ -339,7 +339,7 @@ font-size: 0.85rem;
 </div>
 <script>
 // ===== ИСТОРИЯ ДАННЫХ =====
-const HISTORY = [{"date": "09.12.25", "exp": 27, "cand": 117}, {"date": "29.12.25", "exp": 34, "cand": 108}, {"date": "12.01.26", "exp": 34, "cand": 108}, {"date": "27.01.26", "exp": 37, "cand": 104}, {"date": "06.04.26", "exp": 41, "cand": 104}, {"date": "21.04.26", "exp": 53, "cand": 90}, {"date": "06.05.26", "exp": 58, "cand": 82}, {"date": "28.05.26", "exp": 76, "cand": 103}, {"date": "15.06.26", "exp": 91, "cand": 90}, {"date": "29.06.26", "exp": 98, "cand": 83}, {"date": "03.07.26", "exp": 103, "cand": 73}, {"date": "10.07.26", "exp": 107, "cand": 67}, {"date": "17.07.26", "exp": 108, "cand": 66}, {"date": "24.07.26", "exp": 113, "cand": 59}];
+const HISTORY = [{"date": "09.12.25", "exp": 27, "cand": 117}, {"date": "29.12.25", "exp": 34, "cand": 108}, {"date": "12.01.26", "exp": 34, "cand": 108}, {"date": "27.01.26", "exp": 37, "cand": 104}, {"date": "06.04.26", "exp": 41, "cand": 104}, {"date": "21.04.26", "exp": 53, "cand": 90}, {"date": "06.05.26", "exp": 58, "cand": 82}, {"date": "28.05.26", "exp": 76, "cand": 103}, {"date": "15.06.26", "exp": 91, "cand": 90}, {"date": "29.06.26", "exp": 98, "cand": 83}, {"date": "03.07.26", "exp": 103, "cand": 73}, {"date": "10.07.26", "exp": 107, "cand": 67}, {"date": "17.07.26", "exp": 108, "cand": 66}, {"date": "24.07.26", "exp": 113, "cand": 59}, {"date": "31.07.26", "exp": 116, "cand": 56}];
 // ===== ТЕМА =====
 function toggleTheme() {
 const html = document.documentElement;
@@ -461,9 +461,9 @@ ctx.restore();
 }
 };
 // ===== РАСПРЕДЕЛЕНИЕ ПО ФО =====
-const foLabels = ["ЦФО", "ПФО", "ЮФО", "СФО", "СКФО", "СЗФО", "УрФО", "ДФО", "Нов. суб."];
-const foExp    = [23, 22, 20, 16, 10, 9, 6, 6, 1];
-const foCand   = [17, 6, 4, 11, 2, 3, 8, 7, 1];
+const foLabels = ["ЦФО", "ПФО", "ЮФО", "СФО", "СКФО", "СЗФО", "ДФО", "УрФО", "Нов. суб."];
+const foExp    = [24, 23, 20, 17, 10, 9, 6, 6, 1];
+const foCand   = [16, 5, 4, 10, 2, 3, 8, 7, 1];
 const maxFO = Math.max(...foExp.map((e,i) => e + foCand[i]));
 const foCtx = document.getElementById('foChart').getContext('2d');
 window.foChartInst = new Chart(foCtx, {
