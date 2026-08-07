@@ -383,10 +383,10 @@ margin-top: 10px; font-style: italic;
     </button>
 </div>
 <div class="nav-buttons">
-<button onclick="showSection('entry')" class="active" id="btn-entry">📝 Внесение данных</button>
-<button onclick="showSection('contracts')" id="btn-contracts">📋 Договоры</button>
-<button onclick="showSection('experts')" id="btn-experts">👥 Эксперты</button>
-<button onclick="showSection('backup')" id="btn-backup">💾 Резервная копия</button>
+<button onclick="showSection('entry')" class="active" id="btn-entry">Внесение данных</button>
+<button onclick="showSection('contracts')" id="btn-contracts">Договоры</button>
+<button onclick="showSection('experts')" id="btn-experts">Эксперты</button>
+<button onclick="showSection('backup')" id="btn-backup">Резервная копия</button>
 </div>
 <div id="section-entry" class="section active">
 <h3>Внесение данных о выезде</h3>
@@ -551,12 +551,12 @@ margin-top: 10px; font-style: italic;
 </table>
 </div>
 <div id="section-backup" class="section">
-<h3>💾 Резервное копирование и восстановление</h3>
+<h3> Резервное копирование и восстановление</h3>
 <div class="filial-block">
-<span>📍 Текущий филиал:</span>
+<span> Текущий филиал:</span>
 <span class="filial-name" id="currentFilialDisplay">не выбран</span>
 <span class="filial-info" id="currentFilialDetails"></span>
-<button class="btn-ghost" onclick="changeFilialName()">✏️ Изменить</button>
+<button class="btn-ghost" onclick="changeFilialName()"> Изменить</button>
 </div>
 <div class="warning-box">
 ⚠️ <strong>Важно:</strong> Данные автоматически сохраняются в браузере при каждом изменении.
@@ -822,7 +822,7 @@ modal.style.display = 'block';
 modal.id = 'filialModal';
 modal.innerHTML = `
 <div class="modal-content" style="width: 600px; max-width: 95%;">
-<h3>📍 Выбор филиала</h3>
+<h3> Выбор филиала</h3>
 <div class="form-field" style="margin-bottom: 20px;">
 <label>Выберите филиал из справочника:</label>
 <select id="filialSelectModal" style="width: 100%; padding: 10px; font-size: 14px;">
@@ -857,7 +857,7 @@ modal.innerHTML = `
 </p>
 <div style="text-align: right; margin-top: 20px;">
 <button class="btn-ghost" onclick="closeFilialConfirmModal('cancel')">Отмена</button>
-<button class="btn-secondary" onclick="closeFilialConfirmModal('change')">✏️ Изменить</button>
+<button class="btn-secondary" onclick="closeFilialConfirmModal('change')"> Изменить</button>
 <button class="btn-primary" onclick="closeFilialConfirmModal('ok')">OK</button>
 </div>
 </div>
