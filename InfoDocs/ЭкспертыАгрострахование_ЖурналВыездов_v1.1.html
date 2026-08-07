@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Учет выездов экспертов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+--base-color: #5F7C34;
+--bg-gradient-start: #3d5a1f;
+--bg-gradient-mid: #7a9b4a;
+--bg-gradient-end: #f4f1e8;
+--glass-bg: rgba(255, 255, 255, 0.55);
+--glass-border: rgba(255, 255, 255, 0.3);
+--glass-shadow: rgba(95, 124, 52, 0.15);
+--text-primary: #2c3e1f;
+--text-secondary: #5a6b4a;
+--accent-primary: #5F7C34;
+--accent-secondary: #8fb355;
+--accent-warm: #e8c547;
+--accent-danger: #c96b5e;
+--accent-info: #6a9bb8;
+--table-header: rgba(95, 124, 52, 0.9);
+--table-row-alt: rgba(255, 255, 255, 0.3);
+--modal-bg: rgba(255, 255, 255, 0.88);
+--input-bg: rgba(255, 255, 255, 0.7);
+--input-border: rgba(95, 124, 52, 0.3);
+--footer-text: rgba(44, 62, 31, 0.4);
+}
+[data-theme="dark"] {
+--base-color: #8fb355;
+--bg-gradient-start: #0a140a;
+--bg-gradient-mid: #1a2e1a;
+--bg-gradient-end: #2d4a2d;
+--glass-bg: rgba(30, 50, 35, 0.55);
+--glass-border: rgba(143, 179, 85, 0.2);
+--glass-shadow: rgba(0, 0, 0, 0.35);
+--text-primary: #e8f5e9;
+--text-secondary: #a5d6a7;
+--accent-primary: #8fb355;
+--accent-secondary: #aed581;
+--accent-warm: #ffd54f;
+--accent-danger: #ef9a9a;
+--accent-info: #90caf9;
+--table-header: rgba(143, 179, 85, 0.3);
+--table-row-alt: rgba(255, 255, 255, 0.05);
+--modal-bg: rgba(20, 40, 28, 0.92);
+--input-bg: rgba(255, 255, 255, 0.08);
+--input-border: rgba(143, 179, 85, 0.3);
+--footer-text: rgba(232, 245, 233, 0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+min-height: 100vh;
+background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 40%, var(--bg-gradient-end) 100%);
+background-attachment: fixed;
+color: var(--text-primary);
+padding: 20px;
+padding-bottom: 60px;
+transition: background 0.6s ease, color 0.4s ease;
+line-height: 1.5;
+}
+.container { max-width: 1200px; margin: 0 auto; animation: fadeIn 0.8s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.header {
+display: flex; justify-content: space-between; align-items: center;
+margin-bottom: 25px; padding: 22px 28px;
+background: var(--glass-bg); backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+border-radius: 20px; box-shadow: 0 8px 32px var(--glass-shadow);
+}
+.header h1 { font-size: 24px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.5px; }
+.header h1::before { content: "🌾 "; }
+.theme-toggle {
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%;
+    background: transparent;  /* убираем подложку */
+    border: none;              /* убираем рамку */
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 22px;           /* делаем значок крупнее */
+    transition: all 0.3s ease;
+    color: var(--text-primary); /* контрастный цвет из темы */
+}
+.header-warning {
+    flex: 1;
+    text-align: right;
+    font-size: 8px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    padding: 0 20px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+@media (max-width: 400px) {
+    .header-warning {
+        display: none; /* На узких экранах скрываем предупреждение */
+    }
+}
+.theme-toggle:hover { 
+    transform: rotate(20deg) scale(1.2); 
+    color: var(--accent-warm); /* золотистый при наведении */
+}
+
+.theme-toggle:active {
+    transform: rotate(0deg) scale(0.95);
+}
+.nav-buttons button {
+    flex: 1; min-width: 140px; padding: 11px 18px; border: none;
+    border-radius: 12px; cursor: pointer; font-size: 13px; font-weight: 600;
+    font-family: inherit; transition: all 0.3s ease; background: transparent;
+    color: var(--text-primary);
+}
+.nav-buttons button.active {
+background: var(--accent-primary); color: white;
+box-shadow: 0 4px 15px rgba(95, 124, 52, 0.4);
+}
+.nav-buttons button:not(.active):hover {
+background: var(--glass-bg); color: var(--text-primary); transform: translateY(-2px);
+}
+.section {
+display: none; background: var(--glass-bg); backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
+border-radius: 20px; padding: 28px; box-shadow: 0 8px 32px var(--glass-shadow);
+animation: slideIn 0.4s ease;
+}
+.section.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.section h3 { font-size: 19px; font-weight: 600; margin-bottom: 18px; color: var(--text-primary); }
+.form-grid { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: 14px; margin-bottom: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-field { display: flex; flex-direction: column; }
+.form-field label {
+margin-bottom: 5px; font-weight: 500; color: var(--text-secondary);
+font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.form-field input, .form-field select, .form-field textarea {
+width: 100%; padding: 10px 14px; background: var(--input-bg);
+border: 1px solid var(--input-border); border-radius: 10px;
+color: var(--text-primary); font-family: inherit; font-size: 14px;
+transition: all 0.3s ease; backdrop-filter: blur(10px);
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+outline: none; border-color: var(--accent-primary);
+box-shadow: 0 0 0 3px rgba(95, 124, 52, 0.15);
+}
+.form-field textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+.form-field .sub-action { margin-top: 5px; }
+.full-width { grid-column: 1 / -1; }
+.info-box {
+background: rgba(106, 155, 184, 0.15); border-left: 3px solid var(--accent-info);
+padding: 12px 16px; margin: 12px 0; border-radius: 8px;
+font-size: 13px; color: var(--text-primary); backdrop-filter: blur(10px);
+}
+.warning-box {
+background: rgba(232, 197, 71, 0.2); border-left: 3px solid var(--accent-warm);
+padding: 12px 16px; margin: 12px 0; border-radius: 8px;
+font-size: 13px; color: #A5A293; backdrop-filter: blur(10px);
+}
+.success-box {
+background: rgba(95, 124, 52, 0.15); border-left: 3px solid var(--accent-primary);
+padding: 12px 16px; margin: 12px 0; border-radius: 8px;
+font-size: 13px; color: var(--text-primary); backdrop-filter: blur(10px);
+}
+button {
+padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer;
+font-size: 13px; font-weight: 500; font-family: inherit;
+transition: all 0.3s ease; margin-top: 10px; margin-right: 8px;
+}
+.btn-primary { background: var(--accent-primary); color: white; box-shadow: 0 4px 15px rgba(95, 124, 52, 0.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(95, 124, 52, 0.4); }
+.btn-secondary { background: var(--accent-warm); color: #5a4a00; box-shadow: 0 4px 15px rgba(232, 197, 71, 0.3); }
+.btn-secondary:hover { transform: translateY(-2px); }
+.btn-add { background: var(--accent-info); color: white; font-size: 12px; padding: 6px 12px; margin: 0; }
+.btn-add:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(106, 155, 184, 0.4); }
+.btn-edit { background: var(--accent-warm); color: #5a4a00; padding: 5px 10px; font-size: 12px; margin: 0 4px 0 0; }
+.btn-edit:hover { transform: translateY(-1px); }
+.btn-danger { background: var(--accent-danger); color: white; padding: 5px 10px; font-size: 12px; margin: 0; }
+.btn-danger:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(201, 107, 94, 0.4); }
+.btn-ghost {
+background: var(--glass-bg); color: var(--text-primary);
+border: 1px solid var(--glass-border); backdrop-filter: blur(10px);
+}
+.btn-ghost:hover { background: var(--accent-secondary); color: white; transform: translateY(-2px); }
+table {
+width: 100%; border-collapse: separate; border-spacing: 0;
+margin-top: 18px; background: var(--glass-bg); border-radius: 12px;
+overflow: hidden; backdrop-filter: blur(10px);
+}
+th {
+background: var(--table-header); color: white; padding: 12px 14px;
+text-align: left; font-weight: 500; font-size: 12px;
+text-transform: uppercase; letter-spacing: 0.5px;
+}
+td {
+padding: 10px 14px; border-bottom: 1px solid var(--glass-border);
+font-size: 13px; color: var(--text-primary);
+}
+tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.2s ease; }
+tbody tr:nth-child(even) { background: var(--table-row-alt); }
+tbody tr:hover { background: rgba(95, 124, 52, 0.1); }
+.modal {
+display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4);
+backdrop-filter: blur(8px); animation: fadeIn 0.3s ease;
+}
+.modal-content {
+background: var(--modal-bg); backdrop-filter: blur(30px);
+-webkit-backdrop-filter: blur(30px); margin: 6% auto; padding: 30px;
+border: 1px solid var(--glass-border); width: 520px; max-width: 90%;
+border-radius: 20px; box-shadow: 0 20px 60px var(--glass-shadow);
+animation: scaleIn 0.3s ease;
+}
+@keyframes scaleIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modal-content h3 { margin-bottom: 18px; color: var(--text-primary); }
+.close {
+color: var(--text-secondary); float: right; font-size: 26px;
+font-weight: 300; cursor: pointer; transition: all 0.2s ease;
+line-height: 1;
+}
+.close:hover { color: var(--accent-danger); transform: rotate(90deg); }
+.save-status { text-align: right; font-size: 11px; color: var(--text-secondary); margin-top: 8px; font-style: italic; opacity: 0.7; }
+.save-status::before { content: "✓ "; color: var(--accent-primary); }
+.auto-save-status {
+display: inline-block; padding: 4px 10px;
+background: rgba(95, 124, 52, 0.15); border-radius: 10px;
+font-size: 11px; color: var(--accent-primary); margin-left: 10px;
+}
+.auto-save-status.inactive { background: rgba(201, 107, 94, 0.15); color: var(--accent-danger); }
+footer {
+position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 20px;
+text-align: right; font-size: 11px; color: var(--footer-text);
+font-weight: 300; letter-spacing: 0.3px; pointer-events: none;
+}
+.stats-panel {
+display: flex;
+gap: 18px;
+align-items: center;
+flex-wrap: wrap;
+padding: 14px 22px;
+background: var(--glass-bg);
+backdrop-filter: blur(15px);
+-webkit-backdrop-filter: blur(15px);
+border: 1px solid var(--glass-border);
+border-radius: 12px;
+margin: 15px 0 18px 0;
+}
+.stats-item {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.stats-label {
+font-size: 13px;
+color: var(--text-secondary);
+font-weight: 500;
+}
+.stats-value {
+background: var(--input-bg);
+border: 1px solid var(--input-border);
+border-radius: 8px;
+padding: 6px 14px;
+font-size: 14px;
+font-weight: 600;
+color: var(--text-primary);
+min-width: 50px;
+text-align: center;
+backdrop-filter: blur(10px);
+}
+.stats-value.highlight {
+background: rgba(232, 197, 71, 0.25);
+border-color: rgba(232, 197, 71, 0.4);
+color: #5a4a00;
+}
+[data-theme="dark"] .stats-value.highlight {
+color: #ffd54f;
+}
+.filial-block {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 10px 16px;
+background: rgba(106, 155, 184, 0.12);
+border-left: 3px solid var(--accent-info);
+border-radius: 8px;
+margin-bottom: 14px;
+font-size: 13px;
+flex-wrap: wrap;
+}
+.filial-block strong {
+color: var(--text-primary);
+}
+.filial-block .filial-info {
+color: var(--text-secondary);
+font-size: 12px;
+}
+.filial-block .filial-name {
+color: var(--accent-primary);
+font-weight: 600;
+margin: 0 5px;
+}
+.filial-block button {
+margin: 0;
+padding: 4px 10px;
+font-size: 11px;
+}
+.filter-panel {
+background: var(--glass-bg); backdrop-filter: blur(15px);
+border: 1px solid var(--glass-border); border-radius: 12px;
+padding: 18px; margin: 20px 0;
+}
+.filter-panel h4 {
+font-size: 14px; margin-bottom: 12px; color: var(--text-primary);
+}
+.filter-row {
+display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;
+}
+.filter-field { flex: 1; min-width: 150px; }
+.filter-field label {
+display: block; margin-bottom: 5px; font-size: 12px;
+color: var(--text-secondary); font-weight: 500;
+}
+.filter-field input[type="date"], .filter-field input[type="checkbox"] {
+padding: 8px 12px; border: 1px solid var(--input-border);
+border-radius: 8px; background: var(--input-bg);
+color: var(--text-primary); font-family: inherit;
+}
+.checkbox-wrapper {
+display: flex; align-items: center; gap: 8px;
+padding: 8px 0;
+}
+.checkbox-wrapper input[type="checkbox"] {
+width: 18px; height: 18px; cursor: pointer;
+}
+.checkbox-wrapper label {
+cursor: pointer; font-size: 13px; color: var(--text-primary);
+font-weight: 500;
+}
+.filter-info {
+font-size: 12px; color: var(--text-secondary);
+margin-top: 10px; font-style: italic;
+}
+@media (max-width: 900px) {
+.form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+.stats-panel { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+@media (max-width: 768px) {
+.header { flex-direction: column; gap: 15px; text-align: center; }
+.header h1 { font-size: 20px; }
+.nav-buttons { flex-direction: column; }
+.nav-buttons button { min-width: 100%; }
+.modal-content { margin: 10% auto; padding: 20px; }
+.filter-row { flex-direction: column; }
+.filter-field { min-width: 100%; }
+}
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--accent-secondary); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+    <h1 style="flex-shrink: 0;">Учет выездов экспертов (утилита в стадии тестирования)</h1>
+    <div class="header-warning">
+        Для стабильной работы сервиса рекомендуется использовать браузеры на движке CHROMIUM <br>
+		(GOOGLE CHROME, MICROSOFT EDGE, Яндекс Браузер, OPERA, BRAVE, VIVALDI).<br>
+        В других браузерах некоторые функции могут работать некорректно.
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+        <span id="themeIcon"></span>
+    </button>
+</div>
+<div class="nav-buttons">
+<button onclick="showSection('entry')" class="active" id="btn-entry">📝 Внесение данных</button>
+<button onclick="showSection('contracts')" id="btn-contracts">📋 Договоры</button>
+<button onclick="showSection('experts')" id="btn-experts">👥 Эксперты</button>
+<button onclick="showSection('backup')" id="btn-backup">💾 Резервная копия</button>
+</div>
+<div id="section-entry" class="section active">
+<h3>Внесение данных о выезде</h3>
+<form id="exitForm" onsubmit="return false;">
+<div class="form-grid">
+    <div class="form-field">
+        <label>Дата заявки</label>
+        <input type="date" id="requestDate" required>
+    </div>
+    <div class="form-field">
+        <label>№ Заявки</label>
+        <input type="text" id="requestNumber" required placeholder="Например: З-123">
+    </div>
+    <div class="form-field">
+        <label>Дата выезда</label>
+        <input type="date" id="exitDate" required>
+    </div>
+</div>
+<div class="form-grid-3">
+<div class="form-field">
+<label>№ Договора</label>
+<select id="contractSelect" required>
+<option value="">— Выберите договор —</option>
+</select>
+<button type="button" class="btn-add sub-action" onclick="openContractModal()">+ Новый договор</button>
+</div>
+<div class="form-field">
+<label>ФИО эксперта</label>
+<select id="expertSelect" required>
+<option value="">— Выберите эксперта —</option>
+</select>
+<button type="button" class="btn-add sub-action" onclick="openExpertModal()">+ Новый эксперт</button>
+</div>
+<div></div>
+</div>
+<div class="form-grid-3">
+<div class="form-field">
+<label>Объем работ (Га) </label>
+<input type="number" id="volume" min="0" step="0.1" required placeholder="Например: 150.5">
+</div>
+<div class="form-field">
+<label>Стоимость (₽) </label>
+<input type="number" id="cost" min="0" step="100" required placeholder="Например: 45000">
+</div>
+<div></div>
+</div>
+<div class="form-grid" style="grid-template-columns: 1fr;">
+<div class="form-field full-width">
+<label>Примечания, комментарии</label>
+<textarea id="notes" placeholder="Дополнительная информация по выезду (при необходимости)"></textarea>
+</div>
+</div>
+<div style="margin-top: 15px;">
+<button type="button" class="btn-primary" onclick="addEntry()"> Внести запись в реестр</button>
+<button type="button" class="btn-ghost" onclick="clearForm()">🗑 Очистить форму</button>
+</div>
+</form>
+<div class="filter-panel" style="padding: 14px 18px;">
+    <div style="display: flex; align-items: center; gap: 14px; flex-wrap: nowrap; overflow-x: auto;">
+        <!-- Даты -->
+        <div class="filter-field" style="min-width: 130px; flex-shrink: 0;">
+            <label style="font-size: 11px;">Дата с</label>
+            <input type="date" id="filterDateFrom" style="padding: 6px 10px;">
+        </div>
+        <div class="filter-field" style="min-width: 130px; flex-shrink: 0;">
+            <label style="font-size: 11px;">Дата по</label>
+            <input type="date" id="filterDateTo" style="padding: 6px 10px;">
+        </div>
+        <!-- Чекбокс -->
+        <div class="checkbox-wrapper" style="margin: 0; padding: 0 0 8px 0; flex-shrink: 0;">
+            <input type="checkbox" id="filterWeek" onchange="toggleDateInputs()">
+            <label for="filterWeek" style="font-size: 12px;">За неделю</label>
+        </div>
+        <!-- Кнопка выгрузки -->
+        <button class="btn-secondary" onclick="exportToExcel()" style="margin: 0; padding: 8px 16px; font-size: 12px; flex-shrink: 0;">Выгрузить в .xlsx</button>
+        <!-- Warning -->
+        <div class="warning-box" style="flex: 1; min-width: 250px; margin: 0; padding: 8px 12px; font-size: 12px; flex-shrink: 0;">
+            ️ Отчет направляется на agrostrah@rosah.ru каждую пятницу до 17:00. Отсутствие отчета означает отсутствие выездов.
+        </div>
+        <!-- Кнопка удаления (прижата вправо) -->
+        <button class="btn-danger" onclick="clearAllEntries()" style="margin: 0; padding: 8px 14px; font-size: 12px; flex-shrink: 0; margin-left: auto;">Удалить все записи из базы</button>
+    </div>
+    <!-- Подсказка под датами -->
+    <div class="filter-info" style="margin-top: 6px; font-size: 11px;">
+        Укажите период или выберите «За неделю»
+    </div>
+</div>
+    
+  
+<div class="stats-panel">
+<div class="stats-item">
+<span class="stats-label">Всего:</span>
+<span class="stats-label">выездов</span>
+<span class="stats-value highlight" id="statTrips">0</span>
+</div>
+<div class="stats-item">
+<span class="stats-label">осмотрено (Га)</span>
+<span class="stats-value" id="statArea">0</span>
+</div>
+<div class="stats-item">
+<span class="stats-label">Общая стоимость (₽)</span>
+<span class="stats-value" id="statCost">0</span>
+</div>
+</div>
+<table id="entriesTable">
+<thead>
+<tr>
+<th>Дата выезда</th>
+<th>№ Заявки</th>
+<th>Дата заявки</th>
+<th>№ Договора</th>
+<th>Объем (га)</th>
+<th>Стоимость (₽)</th>
+<th>Эксперт</th>
+<th>Примечания</th>
+<th>Действия</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<div class="save-status" id="saveStatus">
+Данные сохранены автоматически
+<span class="auto-save-status" id="autoSaveIndicator" style="display:none;">Автосохранение в папку: активно</span>
+</div>
+</div>
+<div id="section-contracts" class="section">
+<h3> Справочник договоров</h3>
+<div class="info-box">
+Здесь хранятся все договоры вашего филиала. Добавляйте новые договоры при заключении.
+</div>
+<button class="btn-primary" onclick="openContractModal()">➕ Добавить договор</button>
+<table id="contractsTable">
+<thead>
+<tr>
+<th>№ Договора</th>
+<th>Заказчик</th>
+<th>Дата заключения</th>
+<th>Статус</th>
+<th>Действия</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+<div id="section-experts" class="section">
+<h3>👥 Справочник экспертов</h3>
+<div class="info-box">
+💡 Здесь хранятся данные об экспертах вашего филиала.
+</div>
+<button class="btn-primary" onclick="openExpertModal()">➕ Добавить эксперта</button>
+<table id="expertsTable">
+<thead>
+<tr>
+<th>ФИО</th>
+<th>Должность</th>
+<th>Телефон</th>
+<th>Статус</th>
+<th>Действия</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+<div id="section-backup" class="section">
+<h3>💾 Резервное копирование и восстановление</h3>
+<div class="filial-block">
+<span>📍 Текущий филиал:</span>
+<span class="filial-name" id="currentFilialDisplay">не выбран</span>
+<span class="filial-info" id="currentFilialDetails"></span>
+<button class="btn-ghost" onclick="changeFilialName()">✏️ Изменить</button>
+</div>
+<div class="warning-box">
+⚠️ <strong>Важно:</strong> Данные автоматически сохраняются в браузере при каждом изменении.
+Однако при очистке кэша или смене компьютера данные будут потеряны.
+Чтобы этого избежать, регулярно создавайте резервные копии!
+</div>
+<h4 style="margin-top: 22px; margin-bottom: 12px;">📂 Автосохранение в папку</h4>
+<p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
+Выберите папку один раз — и утилита будет <strong>автоматически</strong> обновлять файл <code>backup_auto.json</code> при каждом изменении данных.
+</p>
+<button class="btn-primary" onclick="pickBackupFolder()" id="btnPickFolder">📁 Выбрать папку для автосохранения</button>
+<button class="btn-ghost" onclick="disableAutoBackup()" id="btnDisableAuto" style="display:none;">Отключить автосохранение</button>
+<div id="autoSaveInfo" class="success-box" style="display:none; margin-top: 15px;"></div>
+<h4 style="margin-top: 28px; margin-bottom: 12px;"> Ручной экспорт</h4>
+<p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
+Сохраните полную резервную копию (договоры + эксперты + записи) в один JSON-файл.
+</p>
+<button class="btn-secondary" onclick="exportFullBackup()"> Создать резервную копию</button>
+<h4 style="margin-top: 28px; margin-bottom: 12px;">📤 Импорт данных</h4>
+<p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">
+Восстановите все данные из ранее сохраненной резервной копии.
+</p>
+<input type="file" id="importBackup" accept=".json" onchange="importFullBackup(event)" style="padding: 10px;">
+<div class="info-box" style="margin-top: 28px;">
+<strong>📊 Статистика хранилища:</strong><br>
+• Договоров: <span id="statsContracts">0</span><br>
+• Экспертов: <span id="statsExperts">0</span><br>
+• Записей о выездах: <span id="statsEntries">0</span><br>
+• Последний бэкап: <span id="statsLastBackup">не создавался</span>
+</div>
+</div>
+</div>
+<div id="contractModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeContractModal()">&times;</span>
+<h3 id="contractModalTitle">➕ Новый договор</h3>
+<form id="contractForm" onsubmit="return false;">
+<div class="form-field">
+<label>№ Договора</label>
+<input type="text" id="newContractId" required placeholder="Например: 123/АС">
+</div>
+<div class="form-field">
+<label>Заказчик</label>
+<select id="newContractCompany" required onchange="checkOtherCompany(this.value)">
+<option value="ООО «Абсолют Страхование»">ООО «Абсолют Страхование»</option>
+<option value="АО «АльфаСтрахование»">АО «АльфаСтрахование»</option>
+<option value="САО «ВСК»">САО «ВСК»</option>
+<option value="СПАО «Ингосстрах»">СПАО «Ингосстрах»</option>
+<option value="САО «РЕСО-Гарантия»">САО «РЕСО-Гарантия»</option>
+<option value="ПАО СК «Росгосстрах»">ПАО СК «Росгосстрах»</option>
+<option value="АО СК «РСХБ-Страхование»">АО СК «РСХБ-Страхование»</option>
+<option value="ООО СК «Сбербанк страхование»">ООО СК «Сбербанк страхование»</option>
+<option value="АО «СОГАЗ»">АО «СОГАЗ»</option>
+<option value="ООО «СК «Согласие»">ООО «СК «Согласие»</option>
+<option value="ПАО «САК «Энергогарант»">ПАО «САК «Энергогарант»</option>
+<option value="ООО АНЭ «ОЦЭКС»">ООО АНЭ «ОЦЭКС»</option>
+<option value="Другой">Другой</option>
+</select>
+</div>
+<!-- ИЗМЕНЕНО: Поле для ввода названия другой компании (скрыто по умолчанию) -->
+<div class="form-field" id="otherCompanyField" style="display: none;">
+<label>Название страховой компании</label>
+<input type="text" id="otherCompanyName" placeholder="Введите название компании">
+</div>
+<div class="form-field">
+<label>Дата заключения</label>
+<input type="date" id="newContractDate" required>
+</div>
+<div class="form-field">
+<label>Статус</label>
+<select id="newContractStatus">
+<option value="active">Действует</option>
+<option value="closed">Завершен</option>
+</select>
+</div>
+<div style="margin-top: 18px;">
+<button type="button" class="btn-primary" onclick="saveContract()"> Сохранить</button>
+<button type="button" class="btn-ghost" onclick="closeContractModal()">Отмена</button>
+</div>
+</form>
+</div>
+</div>
+<div id="expertModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeExpertModal()">&times;</span>
+<h3 id="expertModalTitle">➕ Новый эксперт</h3>
+<form id="expertForm" onsubmit="return false;">
+<div class="form-field">
+<label>ФИО</label>
+<input type="text" id="newExpertName" required placeholder="Например: Иванов И.И.">
+</div>
+<div class="form-field">
+<label>Должность</label>
+<input type="text" id="newExpertPosition" required placeholder="Например: Старший эксперт">
+</div>
+<div class="form-field">
+<label>Телефон</label>
+<input type="tel" id="newExpertPhone" required placeholder="Например: +7-913-123-45-67">
+</div>
+<div class="form-field">
+<label>Статус</label>
+<select id="newExpertStatus">
+<option value="active">Активен</option>
+<option value="inactive">Неактивен</option>
+</select>
+</div>
+<div style="margin-top: 18px;">
+<button type="button" class="btn-primary" onclick="saveExpert()"> Сохранить</button>
+<button type="button" class="btn-ghost" onclick="closeExpertModal()">Отмена</button>
+</div>
+</form>
+</div>
+</div>
+<footer>
+ФГБУ «РосАгрохимслужба» & ASD © <span id="footerDate"></span>
+</footer>
+<script>
+let entries = JSON.parse(localStorage.getItem('entries')) || [];
+let contracts = JSON.parse(localStorage.getItem('contracts')) || [];
+let experts = JSON.parse(localStorage.getItem('experts')) || [];
+let editingContractIndex = -1;
+let editingExpertIndex = -1;
+let editingEntryIndex = -1;
+let backupDirHandle = null;
+let autoBackupEnabled = false;
+let autoSaveTimer = null;
+// ===== СПРАВОЧНИК ФИЛИАЛОВ (из ФСФо.csv) =====
+const filialsData = [
+{filial: "Адыгейский", subject: "Республика Адыгея", fo: "Южный"},
+{filial: "Алейское ОП (Алтайский)", subject: "Алтайский край", fo: "Сибирский"},
+{filial: "Алтайский", subject: "Алтайский край", fo: "Сибирский"},
+{filial: "Альметьевское ОП (Татарский)", subject: "Республика Татарстан", fo: "Приволжский"},
+{filial: "Амурский", subject: "Амурская область", fo: "Дальневосточный"},
+{filial: "Архангельский", subject: "Архангельская область", fo: "Северо-Западный"},
+{filial: "Астраханский", subject: "Астраханская область", fo: "Южный"},
+{filial: "Баганское ОП (Новосибирский)", subject: "Новосибирская область", fo: "Сибирский"},
+{filial: "Башкирский", subject: "Республика Башкортостан", fo: "Приволжский"},
+{filial: "Белгородский", subject: "Белгородская область", fo: "Центральный"},
+{filial: "Белогорское ОП (Амурский)", subject: "Амурская область", fo: "Дальневосточный"},
+{filial: "Бийское ОП (Алтайский)", subject: "Алтайский край", fo: "Сибирский"},
+{filial: "Брянский", subject: "Брянская область", fo: "Центральный"},
+{filial: "Бузулукское ОП (Оренбургский)", subject: "Оренбургская область", fo: "Приволжский"},
+{filial: "Бурятский", subject: "Республика Бурятия", fo: "Дальневосточный"},
+{filial: "Великолукское ОП (Псковский)", subject: "Псковская область", fo: "Северо-Западный"},
+{filial: "Владимирский", subject: "Владимирская область", fo: "Центральный"},
+{filial: "Волгоградский", subject: "Волгоградская область", fo: "Южный"},
+{filial: "Вологодский", subject: "Вологодская область", fo: "Северо-Западный"},
+{filial: "Воронежский", subject: "Воронежская область", fo: "Центральный"},
+{filial: "Горно-Алтайское ОП (Алтайский)", subject: "Республика Алтай", fo: "Сибирский"},
+{filial: "Дагестанский", subject: "Республика Дагестан", fo: "Северо-Кавказский"},
+{filial: "Донецкий", subject: "Донецкая Народная Республика", fo: "Новые субъекты РФ"},
+{filial: "Запорожское ОП (ЦА)", subject: "Запорожская область", fo: "Новые субъекты РФ"},
+{filial: "Ивановское ОП (Костромской)", subject: "Ивановская область", fo: "Центральный"},
+{filial: "Ингушский", subject: "Республика Ингушетия", fo: "Северо-Кавказский"},
+{filial: "Иркутский", subject: "Иркутская область", fo: "Сибирский"},
+{filial: "Ишимское ОП (Тюменский)", subject: "Тюменская область", fo: "Уральский"},
+{filial: "Кабардино-Балкарский", subject: "Кабардино-Балкарская Республика", fo: "Северо-Кавказский"},
+{filial: "Кавказское ОП (Краснодарский)", subject: "Краснодарский край", fo: "Южный"},
+{filial: "Калининградский", subject: "Калининградская область", fo: "Северо-Западный"},
+{filial: "Калмыцкое ОП (Астраханский)", subject: "Республика Калмыкия", fo: "Южный"},
+{filial: "Калужский", subject: "Калужская область", fo: "Центральный"},
+{filial: "Камчатское ОП (Хабаровский)", subject: "Камчатский край", fo: "Дальневосточный"},
+{filial: "Карачаево-Черкесский", subject: "Карачаево-Черкесская Республика", fo: "Северо-Кавказский"},
+{filial: "Карельское ОП (Ленинградский)", subject: "Республика Карелия", fo: "Северо-Западный"},
+{filial: "Карталинское ОП (Челябинский)", subject: "Челябинская область", fo: "Уральский"},
+{filial: "Кемеровское ОП (Томский)", subject: "Кемеровская область - Кузбасс", fo: "Сибирский"},
+{filial: "Кировский", subject: "Кировская область", fo: "Приволжский"},
+{filial: "Костромской", subject: "Костромская область", fo: "Центральный"},
+{filial: "Краснодарский", subject: "Краснодарский край", fo: "Южный"},
+{filial: "Красноярский", subject: "Красноярский край", fo: "Сибирский"},
+{filial: "Крымский", subject: "Республика Крым", fo: "Южный"},
+{filial: "Кулундинское ОП (Алтайский)", subject: "Алтайский край", fo: "Сибирский"},
+{filial: "Курганский", subject: "Курганская область", fo: "Уральский"},
+{filial: "Курский", subject: "Курская область", fo: "Центральный"},
+{filial: "Ленинградский", subject: "Ленинградская область", fo: "Северо-Западный"},
+{filial: "Липецкий", subject: "Липецкая область", fo: "Центральный"},
+{filial: "Луганское ОП (ЦА)", subject: "Луганская Народная Республика", fo: "Новые субъекты РФ"},
+{filial: "Магаданское ОП (Хабаровский)", subject: "Магаданская область", fo: "Дальневосточный"},
+{filial: "Марийское ОП (Кировский)", subject: "Республика Марий Эл", fo: "Приволжский"},
+{filial: "Минусинское ОП (Красноярский)", subject: "Красноярский край", fo: "Сибирский"},
+{filial: "Мордовское ОП (Нижегородский)", subject: "Республика Мордовия", fo: "Приволжский"},
+{filial: "Московское ОП (ЦА)", subject: "Москва", fo: "Центральный"},
+{filial: "Мурманское ОП (Архангельский)", subject: "Мурманская область", fo: "Северо-Западный"},
+{filial: "Нелидовское ОП (Смоленский)", subject: "Тверская область", fo: "Центральный"},
+{filial: "Нижегородский", subject: "Нижегородская область", fo: "Приволжский"},
+{filial: "Новгородское ОП (Псковский)", subject: "Новгородская область", fo: "Северо-Западный"},
+{filial: "Новосибирский", subject: "Новосибирская область", fo: "Сибирский"},
+{filial: "Омский", subject: "Омская область", fo: "Сибирский"},
+{filial: "Оренбургский", subject: "Оренбургская область", fo: "Приволжский"},
+{filial: "Орловский", subject: "Орловская область", fo: "Центральный"},
+{filial: "Пензенский", subject: "Пензенская область", fo: "Приволжский"},
+{filial: "Пермский", subject: "Пермский край", fo: "Приволжский"},
+{filial: "Подвязьевское ОП (Рязанский)", subject: "Рязанская область", fo: "Центральный"},
+{filial: "Прикумское ОП (Ставропольский)", subject: "Ставропольский край", fo: "Северо-Кавказский"},
+{filial: "Приморское ОП (Хабаровский)", subject: "Приморский край", fo: "Дальневосточный"},
+{filial: "Псковский", subject: "Псковская область", fo: "Северо-Западный"},
+{filial: "Ростовский", subject: "Ростовская область", fo: "Южный"},
+{filial: "Рыльское ОП (Курский)", subject: "Курская область", fo: "Центральный"},
+{filial: "Рязанский", subject: "Рязанская область", fo: "Центральный"},
+{filial: "Самарский", subject: "Самарская область", fo: "Приволжский"},
+{filial: "Саратовский", subject: "Саратовская область", fo: "Приволжский"},
+{filial: "Сахалинский", subject: "Сахалинская область", fo: "Дальневосточный"},
+{filial: "Свердловский", subject: "Свердловская область", fo: "Уральский"},
+{filial: "Северо-Донецкий", subject: "Ростовская область", fo: "Южный"},
+{filial: "Северо-Кубанский", subject: "Краснодарский край", fo: "Южный"},
+{filial: "Северо-Осетинский", subject: "Республика Северная Осетия - Алания", fo: "Северо-Кавказский"},
+{filial: "Смоленский", subject: "Смоленская область", fo: "Центральный"},
+{filial: "Солянское ОП (Красноярский)", subject: "Красноярский край", fo: "Сибирский"},
+{filial: "Ставропольский", subject: "Ставропольский край", fo: "Северо-Кавказский"},
+{filial: "Сыктывкарское ОП (Кировский)", subject: "Республика Коми", fo: "Северо-Западный"},
+{filial: "Таловское ОП (Воронежский)", subject: "Воронежская область", fo: "Центральный"},
+{filial: "Тамбовский", subject: "Тамбовская область", fo: "Центральный"},
+{filial: "Тарское ОП (Омский)", subject: "Омская область", fo: "Сибирский"},
+{filial: "Татарский", subject: "Республика Татарстан", fo: "Приволжский"},
+{filial: "Тверское ОП (Смоленский)", subject: "Тверская область", fo: "Центральный"},
+{filial: "Томский", subject: "Томская область", fo: "Сибирский"},
+{filial: "Тувинский", subject: "Республика Тыва", fo: "Сибирский"},
+{filial: "Тулунское ОП (Иркутский)", subject: "Иркутская область", fo: "Сибирский"},
+{filial: "Тульский", subject: "Тульская область", fo: "Центральный"},
+{filial: "Тюменский", subject: "Тюменская область", fo: "Уральский"},
+{filial: "Удмуртский", subject: "Удмуртская Республика", fo: "Приволжский"},
+{filial: "Ульяновский", subject: "Ульяновская область", fo: "Приволжский"},
+{filial: "Хабаровский", subject: "Хабаровский край", fo: "Дальневосточный"},
+{filial: "Хакасское ОП (Красноярский)", subject: "Республика Хакасия", fo: "Сибирский"},
+{filial: "Херсонское ОП (ЦА)", subject: "Херсонская область", fo: "Новые субъекты РФ"},
+{filial: "Цимлянское ОП (Ростовский)", subject: "Ростовская область", fo: "Южный"},
+{filial: "Челябинский", subject: "Челябинская область", fo: "Уральский"},
+{filial: "Черноморское ОП (Краснодарский)", subject: "Краснодарский край", fo: "Южный"},
+{filial: "Чеченский", subject: "Чеченская Республика", fo: "Северо-Кавказский"},
+{filial: "Читинское ОП (Бурятский)", subject: "Забайкальский край", fo: "Дальневосточный"},
+{filial: "Чувашское ОП (Нижегородский)", subject: "Чувашская Республика - Чувашия", fo: "Приволжский"},
+{filial: "Шадринское ОП (Курганский)", subject: "Курганская область", fo: "Уральский"},
+{filial: "Якутское ОП (ЦА)", subject: "Республика Саха (Якутия)", fo: "Дальневосточный"},
+{filial: "Ярославское ОП (Костромской)", subject: "Ярославская область", fo: "Центральный"}
+].sort((a, b) => a.filial.localeCompare(b.filial));
+function formatDate(dateString) {
+if (!dateString) return '';
+const date = new Date(dateString);
+const day = String(date.getDate()).padStart(2, '0');
+const month = String(date.getMonth() + 1).padStart(2, '0');
+const year = date.getFullYear();
+return `${day}.${month}.${year}`;
+}
+// ===== НОВАЯ ФУНКЦИЯ: Проверка выбора "Другой" =====
+function checkOtherCompany(value) {
+const otherField = document.getElementById('otherCompanyField');
+if (value === 'Другой') {
+otherField.style.display = 'block';
+document.getElementById('otherCompanyName').required = true;
+} else {
+otherField.style.display = 'none';
+document.getElementById('otherCompanyName').required = false;
+}
+}
+// ===== УПРАВЛЕНИЕ НАЗВАНИЕМ ФИЛИАЛА (ИСПРАВЛЕНО) =====
+async function getFilialData() {
+const saved = localStorage.getItem('filialName');
+if (!saved) {
+return new Promise((resolve) => {
+const modal = document.createElement('div');
+modal.className = 'modal';
+modal.style.display = 'block';
+modal.id = 'filialModal';
+modal.innerHTML = `
+<div class="modal-content" style="width: 600px; max-width: 95%;">
+<h3>📍 Выбор филиала</h3>
+<div class="form-field" style="margin-bottom: 20px;">
+<label>Выберите филиал из справочника:</label>
+<select id="filialSelectModal" style="width: 100%; padding: 10px; font-size: 14px;">
+<option value="">— Выберите филиал —</option>
+${filialsData.map(f => `<option value="${f.filial}">${f.filial}</option>`).join('')}
+</select>
+</div>
+<div style="text-align: right;">
+<button class="btn-ghost" onclick="closeFilialModal(null)">Отмена</button>
+<button class="btn-primary" onclick="confirmFilialSelection()">Выбрать</button>
+</div>
+</div>
+`;
+document.body.appendChild(modal);
+window._filialResolve = resolve;
+});
+} else {
+const filialData = filialsData.find(f => f.filial === saved);
+if (filialData) {
+return new Promise((resolve) => {
+const modal = document.createElement('div');
+modal.className = 'modal';
+modal.style.display = 'block';
+modal.id = 'filialConfirmModal';
+modal.innerHTML = `
+<div class="modal-content" style="width: 600px; max-width: 95%;">
+<h3>✓ Подтвердите действие</h3>
+<p style="margin: 15px 0; line-height: 1.6;">
+<strong>Филиал:</strong> ${filialData.filial}<br>
+<strong>ФО:</strong> ${filialData.fo}<br>
+<strong>Субъект:</strong> ${filialData.subject}
+</p>
+<div style="text-align: right; margin-top: 20px;">
+<button class="btn-ghost" onclick="closeFilialConfirmModal('cancel')">Отмена</button>
+<button class="btn-secondary" onclick="closeFilialConfirmModal('change')">✏️ Изменить</button>
+<button class="btn-primary" onclick="closeFilialConfirmModal('ok')">OK</button>
+</div>
+</div>
+`;
+document.body.appendChild(modal);
+window.closeFilialConfirmModal = function(action) {
+const modal = document.getElementById('filialConfirmModal');
+if (modal) {
+modal.style.display = 'none';
+setTimeout(() => {
+if (modal.parentNode) {
+modal.parentNode.removeChild(modal);
+}
+}, 100);
+}
+if (action === 'ok') {
+resolve(filialData);
+} else if (action === 'change') {
+localStorage.removeItem('filialName');
+localStorage.removeItem('filialSubject');
+localStorage.removeItem('filialFO');
+resolve(getFilialData());
+} else {
+resolve(null);
+}
+};
+});
+} else {
+localStorage.removeItem('filialName');
+localStorage.removeItem('filialSubject');
+localStorage.removeItem('filialFO');
+return getFilialData();
+}
+}
+}
+function closeFilialModal(result) {
+const modal = document.getElementById('filialModal');
+if (modal) {
+modal.style.display = 'none';
+setTimeout(() => {
+if (modal.parentNode) {
+modal.parentNode.removeChild(modal);
+}
+}, 100);
+}
+if (window._filialResolve) {
+window._filialResolve(result);
+window._filialResolve = null;
+}
+}
+function confirmFilialSelection() {
+const select = document.getElementById('filialSelectModal');
+const selectedFilial = select.value;
+if (!selectedFilial) {
+alert('Пожалуйста, выберите филиал из списка');
+return;
+}
+const filialData = filialsData.find(f => f.filial === selectedFilial);
+if (filialData) {
+localStorage.setItem('filialName', selectedFilial);
+localStorage.setItem('filialSubject', filialData.subject);
+localStorage.setItem('filialFO', filialData.fo);
+updateFilialDisplay();
+closeFilialModal(filialData);
+}
+}
+async function changeFilialName() {
+localStorage.removeItem('filialName');
+localStorage.removeItem('filialSubject');
+localStorage.removeItem('filialFO');
+updateFilialDisplay();
+const filialData = await getFilialData();
+if (filialData) {
+alert(`✓ Филиал изменен:
+${filialData.filial}
+${filialData.subject}
+${filialData.fo}`);
+}
+}
+function updateFilialDisplay() {
+const name = localStorage.getItem('filialName');
+const subject = localStorage.getItem('filialSubject');
+const fo = localStorage.getItem('filialFO');
+const display = document.getElementById('currentFilialDisplay');
+const details = document.getElementById('currentFilialDetails');
+if (display) {
+display.textContent = name || 'не выбран';
+}
+if (details) {
+if (subject && fo) {
+details.textContent = `(${fo}, ${subject})`;
+} else {
+details.textContent = '';
+}
+}
+}
+document.addEventListener('DOMContentLoaded', async function() {
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☼' : '☾';
+const today = new Date();
+const dateStr = `${today.getFullYear()}·${String(today.getMonth()+1).padStart(2,'0')}·${String(today.getDate()).padStart(2,'0')}`;
+document.getElementById('footerDate').textContent = dateStr;
+document.getElementById('exitDate').valueAsDate = today;
+document.getElementById('requestDate').valueAsDate = today;
+document.getElementById('requestDate').addEventListener('change', updateExitDateMin);
+document.getElementById('exitDate').addEventListener('change', updateRequestDateMax);
+updateExitDateMin();
+updateContractSelect();
+updateExpertSelect();
+updateContractsTable();
+updateExpertsTable();
+updateEntriesTable();
+updateStatsPanel();
+updateFilialDisplay();
+updateStats();
+if (!('showDirectoryPicker' in window)) {
+document.getElementById('btnPickFolder').disabled = true;
+document.getElementById('btnPickFolder').textContent = ' Браузер не поддерживает автосохранение (нужен Chrome/Edge)';
+document.getElementById('btnPickFolder').style.opacity = '0.6';
+}
+});
+function toggleTheme() {
+const current = document.documentElement.getAttribute('data-theme');
+const newTheme = current === 'dark' ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', newTheme);
+document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☼' : '☾';
+localStorage.setItem('theme', newTheme);
+}
+function showSection(section) {
+document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+document.querySelectorAll('.nav-buttons button').forEach(b => b.classList.remove('active'));
+document.getElementById('section-' + section).classList.add('active');
+document.getElementById('btn-' + section).classList.add('active');
+if (section === 'backup') {
+updateStats();
+updateFilialDisplay();
+}
+}
+function saveData() {
+localStorage.setItem('contracts', JSON.stringify(contracts));
+localStorage.setItem('experts', JSON.stringify(experts));
+localStorage.setItem('entries', JSON.stringify(entries));
+localStorage.setItem('lastSave', new Date().toISOString());
+const status = document.getElementById('saveStatus');
+const now = new Date();
+const timeStr = now.toLocaleTimeString('ru-RU');
+status.childNodes[0].nodeValue = `Сохранено: ${timeStr} `;
+if (autoBackupEnabled && backupDirHandle) {
+clearTimeout(autoSaveTimer);
+autoSaveTimer = setTimeout(autoBackupToFolder, 1500);
+}
+}
+async function pickBackupFolder() {
+try {
+backupDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+autoBackupEnabled = true;
+localStorage.setItem('autoBackupEnabled', 'true');
+document.getElementById('btnDisableAuto').style.display = 'inline-block';
+document.getElementById('autoSaveInfo').style.display = 'block';
+document.getElementById('autoSaveInfo').innerHTML =
+`✅ Автосохранение активно. Папка: <strong>${backupDirHandle.name}</strong><br>
+Файл <code>backup_auto.json</code> обновляется автоматически при каждом изменении.`;
+const indicator = document.getElementById('autoSaveIndicator');
+indicator.style.display = 'inline-block';
+indicator.classList.remove('inactive');
+indicator.textContent = 'Автосохранение в папку: активно';
+await autoBackupToFolder();
+alert('✓ Папка выбрана. Автосохранение активировано!');
+} catch (err) {
+if (err.name !== 'AbortError') {
+alert('Ошибка: ' + err.message);
+}
+}
+}
+async function autoBackupToFolder() {
+if (!backupDirHandle || !autoBackupEnabled) return;
+try {
+const backup = {
+version: '1.0',
+exportDate: new Date().toISOString(),
+contracts: contracts,
+experts: experts,
+entries: entries
+};
+const fileHandle = await backupDirHandle.getFileHandle('backup_auto.json', { create: true });
+const writable = await fileHandle.createWritable();
+await writable.write(JSON.stringify(backup, null, 2));
+await writable.close();
+localStorage.setItem('lastBackup', new Date().toISOString());
+console.log('Автосохранение выполнено:', new Date().toLocaleTimeString());
+} catch (err) {
+console.error('Ошибка автосохранения:', err);
+if (err.name === 'NotFoundError' || err.name === 'NotAllowedError') {
+disableAutoBackup();
+alert('Папка для автосохранения стала недоступна. Выберите папку заново.');
+}
+}
+}
+function disableAutoBackup() {
+autoBackupEnabled = false;
+backupDirHandle = null;
+localStorage.removeItem('autoBackupEnabled');
+document.getElementById('btnDisableAuto').style.display = 'none';
+document.getElementById('autoSaveInfo').style.display = 'none';
+const indicator = document.getElementById('autoSaveIndicator');
+indicator.classList.add('inactive');
+indicator.textContent = 'Автосохранение: отключено';
+indicator.style.display = 'inline-block';
+}
+function updateContractSelect() {
+const select = document.getElementById('contractSelect');
+const currentValue = select.value;
+select.innerHTML = '<option value="">— Выберите договор —</option>';
+contracts.filter(c => c.status === 'active').forEach(contract => {
+const option = document.createElement('option');
+option.value = contract.id;
+option.textContent = `${contract.id} | ${contract.company}`;
+select.appendChild(option);
+});
+if (currentValue) select.value = currentValue;
+}
+function updateExpertSelect() {
+const select = document.getElementById('expertSelect');
+const currentValue = select.value;
+select.innerHTML = '<option value="">— Выберите эксперта —</option>';
+experts.filter(e => e.status === 'active').forEach(expert => {
+const option = document.createElement('option');
+option.value = expert.name;
+option.textContent = expert.name;
+select.appendChild(option);
+});
+if (currentValue) select.value = currentValue;
+}
+// ИЗМЕНЕНО: Добавлен сброс поля "Другая" при открытии модального окна
+function openContractModal(editIndex = -1) {
+editingContractIndex = editIndex;
+const title = document.getElementById('contractModalTitle');
+// Сбрасываем поле "Другая"
+document.getElementById('otherCompanyField').style.display = 'none';
+document.getElementById('otherCompanyName').value = '';
+document.getElementById('otherCompanyName').required = false;
+if (editIndex >= 0) {
+title.textContent = '️ Редактирование договора';
+const c = contracts[editIndex];
+document.getElementById('newContractId').value = c.id;
+document.getElementById('newContractCompany').value = c.company;
+document.getElementById('newContractDate').value = c.date;
+document.getElementById('newContractStatus').value = c.status;
+// Если компания не в списке, показываем поле
+const select = document.getElementById('newContractCompany');
+if (!Array.from(select.options).some(opt => opt.value === c.company)) {
+document.getElementById('otherCompanyField').style.display = 'block';
+document.getElementById('otherCompanyName').value = c.company;
+document.getElementById('otherCompanyName').required = true;
+}
+} else {
+title.textContent = '➕ Новый договор';
+document.getElementById('contractForm').reset();
+}
+document.getElementById('contractModal').style.display = 'block';
+}
+function closeContractModal() {
+document.getElementById('contractModal').style.display = 'none';
+document.getElementById('contractForm').reset();
+editingContractIndex = -1;
+}
+// ИЗМЕНЕНО: Обработка "Другой" при сохранении договора
+function saveContract() {
+let companyId = document.getElementById('newContractCompany').value;
+// Если выбрана "Другая", берем введенное название
+if (companyId === 'Другой') {
+const otherName = document.getElementById('otherCompanyName').value.trim();
+if (!otherName) {
+alert('Введите название страховой компании!');
+return;
+}
+companyId = otherName;
+// Добавляем новую компанию в список, если её там ещё нет
+const select = document.getElementById('newContractCompany');
+const exists = Array.from(select.options).some(opt => opt.value === otherName);
+if (!exists) {
+const option = document.createElement('option');
+option.value = otherName;
+option.textContent = otherName;
+select.insertBefore(option, select.lastElementChild);
+}
+}
+const contract = {
+id: document.getElementById('newContractId').value.trim(),
+company: companyId,
+date: document.getElementById('newContractDate').value,
+status: document.getElementById('newContractStatus').value
+};
+if (!contract.id) {
+alert('Введите номер договора!');
+return;
+}
+if (editingContractIndex < 0 && contracts.some(c => c.id === contract.id)) {
+alert('Договор с таким номером уже существует!');
+return;
+}
+if (editingContractIndex >= 0) {
+contracts[editingContractIndex] = contract;
+alert('✓ Договор обновлен!');
+} else {
+contracts.push(contract);
+document.getElementById('contractSelect').value = contract.id;
+alert('✓ Договор добавлен!');
+}
+saveData();
+updateContractSelect();
+updateContractsTable();
+closeContractModal();
+}
+function editContract(index) {
+openContractModal(index);
+}
+function deleteContract(index) {
+if (confirm('Удалить этот договор?')) {
+contracts.splice(index, 1);
+saveData();
+updateContractSelect();
+updateContractsTable();
+}
+}
+function openExpertModal(editIndex = -1) {
+editingExpertIndex = editIndex;
+const title = document.getElementById('expertModalTitle');
+if (editIndex >= 0) {
+title.textContent = '✏️ Редактирование эксперта';
+const e = experts[editIndex];
+document.getElementById('newExpertName').value = e.name;
+document.getElementById('newExpertPosition').value = e.position;
+document.getElementById('newExpertPhone').value = e.phone;
+document.getElementById('newExpertStatus').value = e.status;
+} else {
+title.textContent = ' Новый эксперт';
+document.getElementById('expertForm').reset();
+}
+document.getElementById('expertModal').style.display = 'block';
+}
+function closeExpertModal() {
+document.getElementById('expertModal').style.display = 'none';
+document.getElementById('expertForm').reset();
+editingExpertIndex = -1;
+}
+function saveExpert() {
+const expert = {
+id: editingExpertIndex >= 0 ? experts[editingExpertIndex].id : Date.now(),
+name: document.getElementById('newExpertName').value.trim(),
+position: document.getElementById('newExpertPosition').value.trim(),
+phone: document.getElementById('newExpertPhone').value.trim(),
+status: document.getElementById('newExpertStatus').value
+};
+if (!expert.name || !expert.position) {
+alert('Заполните все обязательные поля!');
+return;
+}
+if (editingExpertIndex >= 0) {
+experts[editingExpertIndex] = expert;
+alert('✓ Данные эксперта обновлены!');
+} else {
+experts.push(expert);
+document.getElementById('expertSelect').value = expert.name;
+alert('✓ Эксперт добавлен!');
+}
+saveData();
+updateExpertSelect();
+updateExpertsTable();
+closeExpertModal();
+}
+function editExpert(index) {
+openExpertModal(index);
+}
+function deleteExpert(index) {
+if (confirm('Удалить этого эксперта?')) {
+experts.splice(index, 1);
+saveData();
+updateExpertSelect();
+updateExpertsTable();
+}
+}
+function updateContractsTable() {
+const tbody = document.querySelector('#contractsTable tbody');
+tbody.innerHTML = '';
+if (contracts.length === 0) {
+tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-secondary);">Нет договоров. Добавьте первый.</td></tr>';
+return;
+}
+contracts.forEach((contract, index) => {
+const row = tbody.insertRow();
+row.innerHTML = `
+<td>${contract.id}</td>
+<td>${contract.company}</td>
+<td>${formatDate(contract.date)}</td>
+<td>${contract.status === 'active' ? '✅ Действует' : ' Завершен'}</td>
+<td>
+<button class="btn-edit" onclick="editContract(${index})">️ Изменить</button>
+<button class="btn-danger" onclick="deleteContract(${index})"> Удалить</button>
+</td>
+`;
+});
+}
+function updateExpertsTable() {
+const tbody = document.querySelector('#expertsTable tbody');
+tbody.innerHTML = '';
+if (experts.length === 0) {
+tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-secondary);">Нет экспертов. Добавьте первого.</td></tr>';
+return;
+}
+experts.forEach((expert, index) => {
+const row = tbody.insertRow();
+row.innerHTML = `
+<td>${expert.name}</td>
+<td>${expert.position}</td>
+<td>${expert.phone}</td>
+<td>${expert.status === 'active' ? '✅ Активен' : '❌ Неактивен'}</td>
+<td>
+<button class="btn-edit" onclick="editExpert(${index})">✏️ Изменить</button>
+<button class="btn-danger" onclick="deleteExpert(${index})"> Удалить</button>
+</td>
+`;
+});
+}
+function addEntry() {
+const exitDate = document.getElementById('exitDate').value;
+const requestNumber = document.getElementById('requestNumber').value.trim();
+const requestDate = document.getElementById('requestDate').value;
+const contract = document.getElementById('contractSelect').value;
+const volume = parseFloat(document.getElementById('volume').value);
+const cost = parseFloat(document.getElementById('cost').value);
+const expert = document.getElementById('expertSelect').value;
+const notes = document.getElementById('notes').value.trim();
+if (!exitDate || !requestNumber || !requestDate || !contract || !volume || !cost || !expert) {
+alert('Заполните все обязательные поля!');
+return;
+}
+if (exitDate < requestDate) {
+alert('❌ Дата выезда не может быть раньше даты заявки!');
+document.getElementById('exitDate').focus();
+return;
+}
+if (editingEntryIndex >= 0) {
+entries[editingEntryIndex] = {
+exitDate,
+requestNumber,
+requestDate,
+contract,
+volume,
+cost,
+expert,
+notes
+};
+editingEntryIndex = -1;
+alert('✓ Запись обновлена!');
+} else {
+entries.push({
+exitDate,
+requestNumber,
+requestDate,
+contract,
+volume,
+cost,
+expert,
+notes
+});
+alert('✓ Запись добавлена!');
+}
+saveData();
+updateEntriesTable();
+updateStatsPanel();
+clearForm();
+}
+function updateStatsPanel() {
+const trips = entries.length;
+const area = entries.reduce((sum, e) => sum + (parseFloat(e.volume) || 0), 0);
+const cost = entries.reduce((sum, e) => sum + (parseFloat(e.cost) || 0), 0);
+document.getElementById('statTrips').textContent = trips;
+document.getElementById('statArea').textContent = area.toLocaleString('ru-RU', { maximumFractionDigits: 1 });
+document.getElementById('statCost').textContent = cost.toLocaleString('ru-RU');
+}
+function updateEntriesTable() {
+const tbody = document.querySelector('#entriesTable tbody');
+tbody.innerHTML = '';
+if (entries.length === 0) {
+tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:var(--text-secondary);">Нет записей. Добавьте первую.</td></tr>';
+return;
+}
+entries.forEach((entry, index) => {
+const row = tbody.insertRow();
+row.innerHTML = `
+<td>${formatDate(entry.exitDate)}</td>
+<td>${entry.requestNumber}</td>
+<td>${formatDate(entry.requestDate)}</td>
+<td>${entry.contract}</td>
+<td>${entry.volume}</td>
+<td>${entry.cost.toLocaleString('ru-RU')}</td>
+<td>${entry.expert}</td>
+<td style="font-size:12px; color:var(--text-secondary); max-width:200px;">${entry.notes || '—'}</td>
+<td>
+<button class="btn-edit" onclick="editEntry(${index})">✏️</button>
+<button class="btn-danger" onclick="deleteEntry(${index})">🗑</button>
+</td>
+`;
+});
+}
+function editEntry(index) {
+const entry = entries[index];
+document.getElementById('exitDate').value = entry.exitDate;
+document.getElementById('requestNumber').value = entry.requestNumber;
+document.getElementById('requestDate').value = entry.requestDate;
+document.getElementById('contractSelect').value = entry.contract;
+document.getElementById('volume').value = entry.volume;
+document.getElementById('cost').value = entry.cost;
+document.getElementById('expertSelect').value = entry.expert;
+document.getElementById('notes').value = entry.notes || '';
+editingEntryIndex = index;
+updateExitDateMin();
+updateRequestDateMax();
+document.getElementById('exitForm').scrollIntoView({ behavior: 'smooth' });
+}
+function deleteEntry(index) {
+entries.splice(index, 1);
+saveData();
+updateEntriesTable();
+updateStatsPanel();
+}
+function clearForm() {
+document.getElementById('exitForm').reset();
+document.getElementById('exitDate').valueAsDate = new Date();
+document.getElementById('requestDate').valueAsDate = new Date();
+editingEntryIndex = -1;
+}
+function clearAllEntries() {
+if (entries.length === 0) {
+alert('Нет записей для удаления');
+return;
+}
+if (confirm(`Удалить все ${entries.length} записей?`)) {
+entries = [];
+saveData();
+updateEntriesTable();
+updateStatsPanel();
+}
+}
+function updateExitDateMin() {
+const requestDate = document.getElementById('requestDate').value;
+const exitDateField = document.getElementById('exitDate');
+if (requestDate) {
+exitDateField.min = requestDate;
+if (exitDateField.value && exitDateField.value < requestDate) {
+exitDateField.value = requestDate;
+}
+} else {
+exitDateField.min = '';
+}
+}
+function updateRequestDateMax() {
+const exitDate = document.getElementById('exitDate').value;
+const requestDateField = document.getElementById('requestDate');
+if (exitDate) {
+requestDateField.max = exitDate;
+if (requestDateField.value && requestDateField.value > exitDate) {
+requestDateField.value = exitDate;
+}
+} else {
+requestDateField.max = '';
+}
+}
+function toggleDateInputs() {
+const weekCheckbox = document.getElementById('filterWeek');
+const dateFrom = document.getElementById('filterDateFrom');
+const dateTo = document.getElementById('filterDateTo');
+const filterInfo = document.getElementById('filterInfo');
+if (weekCheckbox.checked) {
+dateFrom.disabled = true;
+dateTo.disabled = true;
+const today = new Date();
+const sevenDaysAgo = new Date(today);
+sevenDaysAgo.setDate(today.getDate() - 6);
+dateFrom.valueAsDate = sevenDaysAgo;
+dateTo.valueAsDate = today;
+filterInfo.textContent = `Период: ${formatDate(sevenDaysAgo)} - ${formatDate(today)} (7 дней)`;
+} else {
+dateFrom.disabled = false;
+dateTo.disabled = false;
+filterInfo.textContent = 'Укажите период или выберите «За неделю» для автоматического расчета';
+}
+}
+async function exportToExcel() {
+if (entries.length === 0) {
+alert('Нет данных для выгрузки!');
+return;
+}
+const filialData = await getFilialData();
+if (!filialData) {
+return;
+}
+const weekCheckbox = document.getElementById('filterWeek');
+const dateFrom = document.getElementById('filterDateFrom').value;
+const dateTo = document.getElementById('filterDateTo').value;
+let filteredEntries = entries;
+let periodText = 'все_записи';
+if (weekCheckbox.checked && dateFrom && dateTo) {
+filteredEntries = entries.filter(e => {
+const entryDate = new Date(e.exitDate);
+const fromDate = new Date(dateFrom);
+const toDate = new Date(dateTo);
+toDate.setHours(23, 59, 59, 999);
+return entryDate >= fromDate && entryDate <= toDate;
+});
+const fromDateStr = new Date(dateFrom).toLocaleDateString('ru-RU').replace(/\./g, '-');
+const toDateStr = new Date(dateTo).toLocaleDateString('ru-RU').replace(/\./g, '-');
+periodText = `${fromDateStr}_${toDateStr}`;
+} else if (dateFrom && dateTo) {
+filteredEntries = entries.filter(e => {
+const entryDate = new Date(e.exitDate);
+const fromDate = new Date(dateFrom);
+const toDate = new Date(dateTo);
+toDate.setHours(23, 59, 59, 999);
+return entryDate >= fromDate && entryDate <= toDate;
+});
+const fromDateStr = new Date(dateFrom).toLocaleDateString('ru-RU').replace(/\./g, '-');
+const toDateStr = new Date(dateTo).toLocaleDateString('ru-RU').replace(/\./g, '-');
+periodText = `${fromDateStr}_${toDateStr}`;
+}
+if (filteredEntries.length === 0) {
+alert('Нет записей за выбранный период!');
+return;
+}
+const ws_data = [
+['Фед.округ', 'Субъект', 'Филиал', 'Дата выезда', '№ Заявки', 'Дата заявки', '№ Договора', 'Заказчик', 'Дата заключения', 'Объем (га)', 'Стоимость (₽)', 'ФИО эксперта', 'Примечания']
+];
+filteredEntries.forEach(entry => {
+const contract = contracts.find(c => c.id === entry.contract);
+const insuranceCompany = contract ? contract.company : '';
+const contractDate = contract ? formatDate(contract.date) : '';
+ws_data.push([
+filialData.fo,
+filialData.subject,
+filialData.filial,
+formatDate(entry.exitDate),
+entry.requestNumber,
+formatDate(entry.requestDate),
+entry.contract,
+insuranceCompany,
+contractDate,
+entry.volume,
+entry.cost,
+entry.expert,
+entry.notes || ''
+]);
+});
+const ws = XLSX.utils.aoa_to_sheet(ws_data);
+ws['!cols'] = [
+{ wch: 18 },
+{ wch: 25 },
+{ wch: 25 },
+{ wch: 12 },
+{ wch: 15 },
+{ wch: 12 },
+{ wch: 18 },
+{ wch: 25 },
+{ wch: 12 },
+{ wch: 12 },
+{ wch: 15 },
+{ wch: 25 },
+{ wch: 40 }
+];
+const wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, ws, "Выезды");
+const fileName = `Отчет_${filialData.filial.replace(/[^\wа-яА-ЯёЁ]+/g, '_')}_${periodText}.xlsx`;
+XLSX.writeFile(wb, fileName);
+}
+function exportFullBackup() {
+const backup = {
+version: '1.0',
+exportDate: new Date().toISOString(),
+contracts: contracts,
+experts: experts,
+entries: entries
+};
+const dataStr = JSON.stringify(backup, null, 2);
+const blob = new Blob([dataStr], {type: 'application/json'});
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+const dateStr = new Date().toISOString().split('T')[0];
+a.download = `backup_${dateStr}.json`;
+a.click();
+URL.revokeObjectURL(url);
+localStorage.setItem('lastBackup', new Date().toISOString());
+updateStats();
+alert('✓ Резервная копия создана!');
+}
+function importFullBackup(event) {
+const file = event.target.files[0];
+if (!file) return;
+if (!confirm('Внимание! Импорт заменит ВСЕ текущие данные. Продолжить?')) {
+event.target.value = '';
+return;
+}
+const reader = new FileReader();
+reader.onload = function(e) {
+try {
+const backup = JSON.parse(e.target.result);
+if (!backup.contracts || !backup.experts) {
+throw new Error('Неверный формат файла');
+}
+contracts = backup.contracts || [];
+experts = backup.experts || [];
+entries = backup.entries || [];
+saveData();
+updateContractSelect();
+updateExpertSelect();
+updateContractsTable();
+updateExpertsTable();
+updateEntriesTable();
+updateStatsPanel();
+updateStats();
+alert('✓ Данные успешно восстановлены!');
+} catch (err) {
+alert('❌ Ошибка при импорте: ' + err.message);
+}
+event.target.value = '';
+};
+reader.readAsText(file);
+}
+function updateStats() {
+document.getElementById('statsContracts').textContent = contracts.length;
+document.getElementById('statsExperts').textContent = experts.length;
+document.getElementById('statsEntries').textContent = entries.length;
+const lastBackup = localStorage.getItem('lastBackup');
+if (lastBackup) {
+const d = new Date(lastBackup);
+document.getElementById('statsLastBackup').textContent =
+d.toLocaleDateString('ru-RU') + ' ' + d.toLocaleTimeString('ru-RU');
+} else {
+document.getElementById('statsLastBackup').textContent = 'не создавался';
+}
+}
+window.onclick = function(event) {
+if (event.target.classList.contains('modal')) {
+event.target.style.display = 'none';
+}
+}
+</script>
+</body>
+</html>
