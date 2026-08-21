@@ -387,14 +387,16 @@ ctx.textAlign = 'right';
 ctx.textBaseline = 'middle';
 ctx.fillText(valExp, rightEdgeExp, centerY);
 ctx.restore();
-const rightX = barCand.x - 2;
-ctx.save();
-ctx.fillStyle = '#ffffff';
-ctx.font = 'bold 11px Segoe UI';
-ctx.textAlign = 'right';
-ctx.textBaseline = 'middle';
-ctx.fillText(valCand, rightX, centerY);
-ctx.restore();
+if (valCand > 0) {
+    const rightX = barCand.x - 2;
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 11px Segoe UI';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(valCand, rightX, centerY);
+    ctx.restore();
+}
 }
 }
 };
