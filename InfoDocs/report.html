@@ -340,6 +340,7 @@ font-size: 0.85rem;
 <script>
 // ===== ИСТОРИЯ ДАННЫХ =====
 const HISTORY = [{"date": "09.12.25", "exp": 27, "cand": 117}, {"date": "29.12.25", "exp": 34, "cand": 108}, {"date": "12.01.26", "exp": 34, "cand": 108}, {"date": "27.01.26", "exp": 37, "cand": 104}, {"date": "06.04.26", "exp": 41, "cand": 104}, {"date": "21.04.26", "exp": 53, "cand": 90}, {"date": "06.05.26", "exp": 58, "cand": 82}, {"date": "28.05.26", "exp": 76, "cand": 103}, {"date": "15.06.26", "exp": 91, "cand": 90}, {"date": "29.06.26", "exp": 98, "cand": 83}, {"date": "03.07.26", "exp": 103, "cand": 73}, {"date": "10.07.26", "exp": 107, "cand": 67}, {"date": "17.07.26", "exp": 108, "cand": 66}, {"date": "24.07.26", "exp": 113, "cand": 59}, {"date": "31.07.26", "exp": 116, "cand": 56}, {"date": "07.08.26", "exp": 119, "cand": 51}, {"date": "14.08.26", "exp": 120, "cand": 49}, {"date": "21.08.26", "exp": 126, "cand": 36}];
+
 // ===== ТЕМА =====
 function toggleTheme() {
 const html = document.documentElement;
@@ -362,6 +363,7 @@ if (localStorage.getItem('theme') === 'dark') {
 document.documentElement.setAttribute('data-theme', 'dark');
 document.getElementById('themeIcon').innerHTML = '&#9790;';
 }
+
 // ===== ПЛАГИН ДЛЯ ПОДПИСЕЙ ПО ФО =====
 const foLabelsPlugin = {
 id: 'foLabels',
@@ -396,6 +398,7 @@ ctx.restore();
 }
 }
 };
+
 // ===== ПЛАГИН ДЛЯ ПОДПИСЕЙ НА ДИНАМИКЕ =====
 const dynamicsLabelsPlugin = {
 id: 'dynamicsLabels',
@@ -439,10 +442,14 @@ ctx.restore();
 }
 }
 if (meta2) {
-const dataset = chart.data.datasets[2];
+const expData = chart.data.datasets[0].data;
+const candData = chart.data.datasets[1].data;
 for (let i = 0; i < meta2.data.length; i++) {
 const point = meta2.data[i];
-const val = dataset.data[i];
+const expVal = expData[i];
+const candVal = candData[i];
+const total = expVal + candVal;
+const pct = total > 0 ? Math.round((expVal / total) * 100) : 0;
 ctx.save();
 ctx.fillStyle = 'rgba(255,255,255,0.95)';
 const rx = point.x - 14;
@@ -454,16 +461,17 @@ ctx.fillStyle = '#F9A825';
 ctx.font = 'bold 10px Segoe UI';
 ctx.textAlign = 'center';
 ctx.textBaseline = 'middle';
-ctx.fillText(Math.round(val) + '%', point.x, point.y - 14);
+ctx.fillText(pct + '%', point.x, point.y - 14);
 ctx.restore();
 }
 }
 }
 };
+
 // ===== РАСПРЕДЕЛЕНИЕ ПО ФО =====
 const foLabels = ["ЦФО", "ПФО", "СФО", "ЮФО", "СЗФО", "СКФО", "ДФО", "УрФО", "Нов. суб."];
-const foExp    = [24, 24, 21, 19, 12, 10, 8, 7, 1];
-const foCand   = [13, 2, 5, 4, 0, 1, 5, 6, 0];
+const foExp = [24, 24, 21, 19, 12, 10, 8, 7, 1];
+const foCand = [13, 2, 5, 4, 0, 1, 5, 6, 0];
 const maxFO = Math.max(...foExp.map((e,i) => e + foCand[i]));
 const foCtx = document.getElementById('foChart').getContext('2d');
 window.foChartInst = new Chart(foCtx, {
@@ -504,6 +512,7 @@ y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight:
 }
 }
 });
+
 // ===== ДИНАМИКА =====
 const dates = HISTORY.map(h => h.date);
 const exp = HISTORY.map(h => h.exp);
@@ -519,11 +528,11 @@ datasets: [
 { label: 'Эксперты', data: exp, backgroundColor: '#556F2E', stack: 'stack', order: 2 },
 { label: 'Кандидаты', data: cand, backgroundColor: '#BDBDBD', stack: 'stack', order: 3 },
 {
-type: 'line', label: '% экспертов', data: pct,
+type: 'line', label: '% экспертов', data: exp,
 borderColor: '#F9A825', backgroundColor: '#F9A825',
 borderWidth: 3, pointRadius: 6,
 pointBackgroundColor: '#ffffff', pointBorderColor: '#F9A825', pointBorderWidth: 2.5,
-yAxisID: 'y1', order: 1, tension: 0.3
+order: 1, tension: 0.3
 }
 ]
 },
@@ -537,12 +546,32 @@ legend: {
 position: 'bottom',
 labels: { usePointStyle: true, padding: 20, font: { size: 12, weight: '600' }, boxWidth: 12, boxHeight: 12 }
 },
-tooltip: { enabled: true, mode: 'index', intersect: false }
+tooltip: {
+  enabled: true,
+  mode: 'index',
+  intersect: false,
+  callbacks: {
+    label: function(context) {
+      let label = context.dataset.label || '';
+      if (label) label += ': ';
+      if (context.datasetIndex === 2) {
+        // Для линии % экспертов вычисляем процент
+        const expVal = context.chart.data.datasets[0].data[context.dataIndex];
+        const candVal = context.chart.data.datasets[1].data[context.dataIndex];
+        const total = expVal + candVal;
+        const pct = total > 0 ? Math.round((expVal / total) * 100) : 0;
+        label += pct + '%';
+      } else {
+        label += context.parsed.y;
+      }
+      return label;
+    }
+  }
+}
 },
 scales: {
 x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 } },
-y: { stacked: true, beginAtZero: true, max: 220, grid: { color: '#f0f0f0' }, ticks: { display: false } },
-y1: { position: 'right', beginAtZero: true, max: 100, grid: { drawOnChartArea: false }, ticks: { display: false } }
+y: { stacked: true, beginAtZero: true, max: 220, grid: { color: '#f0f0f0' }, ticks: { display: false } }
 }
 }
 });
