@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Анализ состава участников семинара</title>
+<!-- Tailwind CSS (CDN для автономной работы) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- SheetJS for Excel parsing (CDN для автономной работы) -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@300;400;500&display=swap');
+:root {
+/* Soft Natural Palette */
+--bg-gradient-start: #f7f9f7;
+--bg-gradient-end: #eef2f0;
+--color-primary: #5d7052;     /* Muted Olive */
+--color-secondary: #8da399;   /* Sage Green */
+--color-accent: #d4a373;      /* Soft Sand */
+--color-blue: #a3b1c6;        /* Muted Sky */
+--color-text: #2c3e30;        /* Dark Forest Green */
+--color-text-light: #6b7a6e;
+--glass-bg: rgba(255, 255, 255, 0.7);
+--glass-border: rgba(255, 255, 255, 0.8);
+--shadow-soft: 0 8px 32px -12px rgba(93, 112, 82, 0.15);
+}
+body {
+font-family: 'Inter', sans-serif;
+background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+color: var(--color-text);
+margin: 0;
+padding: 0;
+height: 100vh;
+width: 100vw;
+overflow: hidden;
+display: flex;
+justify-content: center;
+align-items: center;
+user-select: none;
+}
+h1, h2, h3, .kpi-value {
+font-family: 'Montserrat', sans-serif;
+}
+.dashboard-container {
+width: 100%;
+height: 100%;
+max-width: 1400px;
+aspect-ratio: 1.414;
+padding: 2rem;
+box-sizing: border-box;
+display: grid;
+grid-template-rows: auto 1fr auto;
+gap: 1.5rem;
+position: relative;
+}
+@media print {
+body { background: white; -webkit-print-color-adjust: exact; }
+.dashboard-container { width: 100%; height: 100%; max-width: none; aspect-ratio: auto; padding: 1cm; }
+.no-print { display: none !important; }
+#footer-trigger { display: none !important; }
+}
+.card {
+background: var(--glass-bg);
+backdrop-filter: blur(12px);
+-webkit-backdrop-filter: blur(12px);
+border: 1px solid var(--glass-border);
+border-radius: 16px;
+box-shadow: var(--shadow-soft);
+padding: 1.5rem;
+display: flex;
+flex-direction: column;
+transition: transform 0.3s ease;
+}
+.fade-in {
+opacity: 0;
+animation: fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+.fade-in { animation: none; opacity: 1; }
+}
+/* KPI Boxes */
+.kpi-box {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+border: 1px solid var(--color-secondary);
+border-radius: 12px;
+background: rgba(255,255,255,0.4);
+height: 100%;
+text-align: center;
+padding: 1rem;
+}
+.kpi-label { font-size: 0.8rem; font-weight: 600; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.kpi-number { font-size: 3rem; font-weight: 700; color: var(--color-primary); line-height: 1; }
+/* Charts Common */
+.chart-container {
+flex: 1;
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+}
+/* Pie Chart Styles */
+.pie-wrapper {
+position: relative;
+width: 200px;
+height: 200px;
+}
+svg.pie-chart {
+width: 100%;
+height: 100%;
+overflow: visible;
+}
+path.pie-segment {
+transition: d 1s ease-out, fill 0.3s;
+stroke: #fff;
+stroke-width: 2px;
+}
+path.pie-segment:hover {
+filter: brightness(0.95);
+transform-origin: center;
+transform: scale(1.02);
+}
+.legend-list {
+display: flex;
+flex-direction: column;
+gap: 0.8rem;
+margin-left: 1.5rem;
+}
+.legend-item {
+display: flex;
+align-items: center;
+font-size: 0.85rem;
+color: var(--color-text);
+}
+.legend-dot {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+margin-right: 8px;
+flex-shrink: 0;
+box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.legend-label {
+flex-grow: 1;
+padding-right: 10px;
+}
+.legend-percent {
+font-weight: 700;
+color: var(--color-primary);
+flex-shrink: 0;
+}
+/* Bar Chart (Dynamics) */
+.bar-chart-container {
+display: flex;
+align-items: flex-end;
+justify-content: flex-start;
+width: 100%;
+height: 70%;
+padding-bottom: 10px;
+border-bottom: 1px solid #d1dace;
+padding-left: 2%;
+padding-right: 2%;
+gap: 4px;
+}
+.bar-group {
+display: flex;
+flex-direction: column;
+align-items: center;
+height: 100%;
+justify-content: flex-end;
+flex: 1;
+min-width: 0;
+}
+.bar-val {
+font-weight: bold;
+font-size: 0.85rem;
+color: var(--color-text);
+margin-bottom: 4px;
+opacity: 0;
+transform: translateY(5px);
+transition: all 0.5s ease;
+white-space: nowrap;
+}
+.bar {
+width: 100%;
+max-width: 40px;
+background: var(--color-primary);
+border-radius: 4px 4px 0 0;
+height: 0;
+transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+position: relative;
+opacity: 0.8;
+}
+.bar-label {
+margin-top: 6px;
+font-size: 0.65rem;
+font-weight: 600;
+color: var(--color-text-light);
+text-align: center;
+white-space: nowrap;
+transform: rotate(-45deg);
+transform-origin: top center;
+margin-left: -10px;
+width: 120%;
+}
+/* Horizontal Bars for Positions */
+.h-bar-row {
+display: grid;
+grid-template-columns: 160px 1fr 70px;
+align-items: center;
+gap: 12px;
+margin-bottom: 10px;
+width: 100%;
+}
+.h-bar-label {
+font-size: 0.8rem;
+font-weight: 600;
+color: var(--color-text);
+text-align: right;
+line-height: 1.2;
+}
+.h-bar-track {
+background: #eef2f0;
+height: 20px;
+border-radius: 0 10px 10px 0;
+overflow: hidden;
+position: relative;
+display: flex;
+align-items: center;
+}
+.h-bar-fill {
+height: 100%;
+background: var(--color-secondary);
+width: 0;
+transition: width 1.2s ease-out;
+border-radius: 0 10px 10px 0;
+min-width: 2px;
+}
+.h-bar-stat {
+font-size: 0.75rem;
+font-weight: 700;
+color: var(--color-primary);
+text-align: left;
+white-space: nowrap;
+}
+/* Highlight List for Branches > 1 */
+.highlight-list {
+margin-top: 1rem;
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+justify-content: center;
+}
+.branch-badge {
+background: #fff;
+border: 1px solid var(--color-secondary);
+color: var(--color-primary);
+padding: 4px 12px;
+border-radius: 20px;
+font-size: 0.75rem;
+font-weight: 600;
+display: flex;
+align-items: center;
+gap: 6px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.branch-count {
+background: var(--color-primary);
+color: white;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.65rem;
+}
+/* Hidden File Input */
+#fileInput { display: none; }
+/* Secret Trigger Style */
+#footer-trigger {
+cursor: default;
+transition: all 0.3s ease;
+display: inline-block;
+padding: 2px 4px;
+border-radius: 4px;
+}
+#footer-trigger:hover {
+background-color: rgba(93, 112, 82, 0.1);
+color: var(--color-primary);
+opacity: 0.8;
+cursor: pointer;
+}
+#footer-trigger:hover::after {
+content: "📂 Загрузить данные";
+position: absolute;
+bottom: 20px;
+left: 0;
+font-size: 10px;
+background: var(--color-text);
+color: white;
+padding: 4px 8px;
+border-radius: 4px;
+white-space: nowrap;
+opacity: 0.7;
+pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+<!-- Header -->
+<header class="flex justify-between items-end fade-in">
+<div>
+<h1 class="text-2xl md:text-3xl font-bold text-[var(--color-text)] tracking-tight">Анализ состава участников семинара</h1>
+<p class="text-[var(--color-text-light)] text-sm mt-1 font-medium">Новосибирск, 08 сентября 2026 г.</p>
+</div>
+</header>
+<!-- Main Grid -->
+<main class="grid grid-cols-12 gap-6 h-full">
+<!-- Left Column: KPIs -->
+<div class="col-span-3 flex flex-col gap-4 fade-in delay-1">
+<div class="kpi-box">
+<span class="kpi-label">Всего участников</span>
+<span class="kpi-number counter" data-target="0">0</span>
+<span class="text-xs text-[var(--color-text-light)] mt-1">(чел)</span>
+</div>
+<div class="kpi-box">
+<span class="kpi-label">Всего филиалов/ОП</span>
+<span class="kpi-number counter" data-target="0">0</span>
+<span class="text-xs text-[var(--color-text-light)] mt-1">(субъектов)</span>
+</div>
+</div>
+<!-- Center Top: Status Distribution (Pie) -->
+<div class="col-span-4 card fade-in delay-2">
+<h3 class="text-lg font-semibold text-[var(--color-text)] mb-2 text-center">По статусу участника</h3>
+<div class="chart-container">
+<div class="pie-wrapper">
+<svg class="pie-chart" viewBox="0 0 100 100" id="pie-status"></svg>
+</div>
+<div class="legend-list" id="legend-status"></div>
+</div>
+</div>
+<!-- Right Top: Positions Hierarchy -->
+<div class="col-span-5 card fade-in delay-2">
+<h3 class="text-lg font-semibold text-[var(--color-text)] mb-4 text-center">По иерархии должностей</h3>
+<div class="chart-container flex-col justify-center px-2" id="pos-chart-container"></div>
+</div>
+<!-- Bottom Left: Dynamics -->
+<div class="col-span-7 card fade-in delay-3">
+<h3 class="text-lg font-semibold text-[var(--color-text)] mb-2 text-center">Динамика регистрации</h3>
+<div class="chart-container flex-col">
+<div class="bar-chart-container" id="bar-chart-container"></div>
+<div class="w-full text-center mt-2 text-xs text-[var(--color-text-light)] italic">
+Количество регистраций по дням
+</div>
+</div>
+</div>
+<!-- Bottom Right: Branches Representation (Pie) -->
+<div class="col-span-5 card fade-in delay-3">
+<h3 class="text-lg font-semibold text-[var(--color-text)] mb-2 text-center">Количество участников от филиалов/ОП</h3>
+<div class="chart-container">
+<div class="pie-wrapper">
+<svg class="pie-chart" viewBox="0 0 100 100" id="pie-branch"></svg>
+</div>
+<div class="flex flex-col h-full justify-center pl-4">
+<div class="legend-list" id="legend-branch"></div>
+<!-- Highlight List: Branches with > 1 participant -->
+<div class="mt-4 pt-4 border-t border-[var(--color-secondary)]/30 w-full">
+<p class="text-xs font-bold text-[var(--color-primary)] mb-2 uppercase">Филиалы/ОП (&gt;1 чел):</p>
+<div class="highlight-list" id="branch-highlight"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="text-[10px] fade-in delay-4 pt-2 flex justify-between relative">
+<!-- Secret Trigger Area -->
+<span id="footer-trigger" style="opacity: 0.3; font-size: 0.65rem;" title="Загрузить файл Excel">
+ASD ©<span id="footer-date">2026·09·03</span>
+</span>
+<input type="file" id="fileInput" accept=".xlsx, .xls">
+<span></span>
+</footer>
+</div>
+<script>
+// Default Demo Data (UPDATED WITH NEW EXCEL DATA - Новосибирск, 08.09.2026)
+let globalData = [
+{ branch: "Томский", role: "начальник отдела мониторинга", status: "Эксперт", date: "2026-08-24" },
+{ branch: "Карталинское ОП", role: "начальник отдела ХАИ", status: "Эксперт", date: "2026-08-24" },
+{ branch: "Челябинский", role: "начальник отдела", status: "Эксперт", date: "2026-08-24" },
+{ branch: "Алтайский", role: "Начальник отдела", status: "Кандидат", date: "2026-08-24" },
+{ branch: "Кулундинское ОП", role: "заместитель директора", status: "Эксперт", date: "2026-08-24" },
+{ branch: "Хакасское ОП", role: "Заведубщий лабораторией обследования почв", status: "Эксперт", date: "2026-08-25" },
+{ branch: "Тюменский", role: "Начальник отдела государственного мониторинга земель", status: "Эксперт", date: "2026-08-26" },
+{ branch: "Шадринское ОП", role: "Заместитель директора филиала", status: "Эксперт", date: "2026-08-26" },
+{ branch: "Шадринское ОП", role: "заместитель директора филиала", status: "Эксперт", date: "2026-08-26" },
+{ branch: "Кемеровское ОП", role: "Почвовед", status: "Кандидат", date: "2026-08-26" },
+{ branch: "Красноярский", role: "Начальник отдела оценки состояния и мониторинга плодородия почв", status: "Эксперт", date: "2026-08-27" },
+{ branch: "Иркутский", role: "Директор филиала", status: "Эксперт", date: "2026-08-28" },
+{ branch: "Новосибирский", role: "Заместитель директора по производственно-полевой деятельности", status: "Кандидат", date: "2026-08-28" },
+{ branch: "Баганское ОП", role: "Руководитель обособленного подразделения", status: "Эксперт", date: "2026-08-28" },
+{ branch: "Свердловский", role: "директор филиала", status: "Эксперт", date: "2026-08-31" },
+{ branch: "Новосибирский", role: "Директор", status: "Кандидат", date: "2026-08-31" },
+{ branch: "Новосибирский", role: "заместитель директора", status: "Специалист", date: "2026-08-31" },
+{ branch: "Новосибирский", role: "Вед. агрохимик", status: "Кандидат", date: "2026-09-01" },
+{ branch: "Омский", role: "Директор", status: "Эксперт", date: "2026-09-01" },
+{ branch: "Тулунское ОП", role: "Заместитель директора филиала", status: "Эксперт", date: "2026-09-02" }
+];
+
+// Colors Palette (Soft Natural)
+const colors = {
+status: {
+"Эксперт": "#5d7052",    // Olive
+"Кандидат": "#8da399",   // Sage
+"Специалист": "#a3b1c6"  // Muted Blue
+},
+branchSize: {
+"1": "#d1dace",          // Light Grey
+"2": "#8da399",          // Sage
+"3+": "#5d7052"          // Dark Olive
+},
+pos: {
+"Директор филиала": "#5d7052",
+"Зам. директора филиала": "#8da399",
+"Начальник отдела": "#a3b1c6",
+"Ведущий агрохимик": "#d4a373",
+"Прочие": "#cbd5e1"
+}
+};
+
+// Fixed Order for Positions
+const posCategories = [
+"Директор филиала",
+"Зам. директора филиала",
+"Начальник отдела",
+"Ведущий агрохимик",
+"Прочие"
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+const now = new Date();
+const dateStr = now.toLocaleDateString('ru-RU');
+const footerDate = now.toISOString().split('T')[0].replace(/-/g, '·');
+document.getElementById('footer-date').textContent = footerDate;
+
+// === ПРОВЕРКА СОХРАНЕННЫХ ДАННЫХ ===
+const savedData = localStorage.getItem('seminarDashboardData_NS20260908');
+if (savedData) {
+try {
+const parsed = JSON.parse(savedData);
+if (Array.isArray(parsed) && parsed.length > 0) {
+globalData = parsed;
+console.log('Данные загружены из локального хранилища');
+}
+} catch (e) {
+console.error('Ошибка чтения сохраненных данных:', e);
+}
+}
+// ==================================
+processAndRender(globalData);
+
+// SECRET TRIGGER LOGIC
+const trigger = document.getElementById('footer-trigger');
+const fileInput = document.getElementById('fileInput');
+trigger.addEventListener('click', () => {
+fileInput.click();
+});
+fileInput.addEventListener('change', handleFileSelect, false);
+});
+
+function handleFileSelect(evt) {
+const file = evt.target.files[0];
+if (!file) return;
+
+const reader = new FileReader();
+reader.onload = function(e) {
+const data = new Uint8Array(e.target.result);
+const workbook = XLSX.read(data, {type: 'array'});
+const sheetName = workbook.SheetNames.find(n => n.includes('Sheet') || n.includes('RegList')) || workbook.SheetNames[0];
+const worksheet = workbook.Sheets[sheetName];
+const json = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+
+const parsedData = json.map(row => {
+const branch = row['Название филиала'] || row['Филиал'] || row['Branch'] || '';
+const role = row['Должность'] || row['Position'] || row['Role'] || '';
+const status = row['Вы участвуете как'] || row['Статус участника'] || row['Status'] || '';
+
+let dateVal = row['Время создания'] || row['Время регистрации'] || row['Date'] || new Date();
+let dateStr = "";
+if (dateVal instanceof Date) {
+dateStr = dateVal.toISOString().split('T')[0];
+} else if (typeof dateVal === 'string') {
+if(!isNaN(Date.parse(dateVal))) {
+dateStr = new Date(dateVal).toISOString().split('T')[0];
+} else {
+dateStr = new Date().toISOString().split('T')[0];
+}
+} else {
+dateStr = new Date().toISOString().split('T')[0];
+}
+
+return {
+branch: branch.trim(),
+role: role.trim(),
+status: status.trim(),
+date: dateStr
+};
+}).filter(item => {
+return item.branch && item.branch.length > 1 && item.role && item.role.length > 2;
+});
+
+if (parsedData.length === 0) {
+alert("Не удалось найти данные в файле.");
+return;
+}
+
+globalData = parsedData;
+processAndRender(parsedData);
+
+try {
+localStorage.setItem('seminarDashboardData_NS20260908', JSON.stringify(parsedData));
+} catch (e) {
+console.warn('Не удалось сохранить данные в localStorage:', e);
+}
+
+evt.target.value = '';
+};
+reader.readAsArrayBuffer(file);
+}
+
+function processAndRender(data) {
+// 1. KPIs
+const totalPeople = data.length;
+const uniqueBranches = [...new Set(data.map(d => d.branch))].length;
+animateCounter(document.querySelector('.kpi-box:nth-child(1) .counter'), totalPeople);
+animateCounter(document.querySelector('.kpi-box:nth-child(2) .counter'), uniqueBranches);
+
+// 2. Status Distribution
+const statusCounts = {};
+data.forEach(d => {
+const s = d.status || "Не указан";
+statusCounts[s] = (statusCounts[s] || 0) + 1;
+});
+renderPieChart('pie-status', 'legend-status', statusCounts, totalPeople, colors.status, false, ["Эксперт", "Кандидат", "Специалист"]);
+
+// 3. Position Hierarchy
+const posCounts = {};
+posCategories.forEach(cat => posCounts[cat] = 0);
+
+data.forEach(d => {
+const role = d.role.toLowerCase();
+let category = 'Прочие';
+
+// Классификация должностей (с учётом опечаток типа "Заведубщий")
+if ((role.includes('директор') && !role.includes('зам') && !role.includes('ген')) || role === 'директор') {
+category = 'Директор филиала';
+} else if (role.includes('зам') || role.includes('ген')) {
+category = 'Зам. директора филиала';
+} else if (role.includes('начальник') || role.includes('нач.') || role.includes('завед') || role.includes('руководитель')) {
+category = 'Начальник отдела';
+} else if (role.includes('агрохимик')) {
+category = 'Ведущий агрохимик';
+}
+
+if (posCounts.hasOwnProperty(category)) {
+posCounts[category]++;
+} else {
+posCounts['Прочие']++;
+}
+});
+
+renderHorizBars('pos-chart-container', posCounts, totalPeople);
+
+// 4. Dynamics
+const dateCounts = {};
+data.forEach(d => {
+const dateObj = new Date(d.date);
+const label = dateObj.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit'});
+dateCounts[label] = (dateCounts[label] || 0) + 1;
+});
+
+const sortedDates = Object.keys(dateCounts).sort((a,b) => {
+const da = a.split('.').reverse().join('-');
+const db = b.split('.').reverse().join('-');
+return da.localeCompare(db);
+});
+
+renderBarChart('bar-chart-container', sortedDates, dateCounts);
+
+// 5. Branch Sizes & Highlights
+const branchCounts = {};
+data.forEach(d => { branchCounts[d.branch] = (branchCounts[d.branch] || 0) + 1; });
+
+const sizeGroups = { "1": 0, "2": 0, "3+": 0 };
+const highlights = [];
+
+Object.entries(branchCounts).forEach(([name, count]) => {
+if (count === 1) sizeGroups["1"]++;
+else if (count === 2) sizeGroups["2"]++;
+else sizeGroups["3+"]++;
+
+if (count > 1) highlights.push({ name, count });
+});
+
+renderPieChart('pie-branch', 'legend-branch', sizeGroups, uniqueBranches, colors.branchSize, true);
+renderHighlights('branch-highlight', highlights);
+}
+
+// --- Rendering Functions ---
+function renderPieChart(svgId, legendId, dataObj, total, colorMap, isBranchSize = false, fixedOrder = null) {
+const svg = document.getElementById(svgId);
+const legend = document.getElementById(legendId);
+svg.innerHTML = '';
+legend.innerHTML = '';
+
+let cumulativePercent = 0;
+let keys = fixedOrder ? fixedOrder.filter(k => dataObj[k] > 0) : Object.keys(dataObj);
+
+keys.forEach(key => {
+const value = dataObj[key];
+if (value === 0) return;
+
+const percent = value / total;
+const startAngle = cumulativePercent * 360;
+const endAngle = (cumulativePercent + percent) * 360;
+cumulativePercent += percent;
+
+const x1 = 50 + 40 * Math.cos(Math.PI * startAngle / 180);
+const y1 = 50 + 40 * Math.sin(Math.PI * startAngle / 180);
+const x2 = 50 + 40 * Math.cos(Math.PI * endAngle / 180);
+const y2 = 50 + 40 * Math.sin(Math.PI * endAngle / 180);
+
+const largeArcFlag = percent > 0.5 ? 1 : 0;
+const pathData = `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+
+const color = colorMap[key] || '#ccc';
+const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+path.setAttribute("d", pathData);
+path.setAttribute("fill", color);
+path.setAttribute("class", "pie-segment");
+path.style.transformOrigin = "50px 50px";
+path.style.transform = "scale(0)";
+setTimeout(() => path.style.transform = "scale(1)", 100);
+svg.appendChild(path);
+
+const item = document.createElement('div');
+item.className = 'legend-item';
+const percentText = `${Math.round(percent*100)}%`;
+let label = key;
+
+if(isBranchSize) {
+if(key==="1") label = "1 участник";
+if(key==="2") label = "2 участника";
+if(key==="3+") label = "3+ участника";
+}
+
+item.innerHTML = `
+<div class="legend-dot" style="background:${color}"></div>
+<span class="legend-label">${label}</span>
+<span class="legend-percent">${percentText}</span>
+`;
+legend.appendChild(item);
+});
+}
+
+function renderHorizBars(containerId, dataObj, total) {
+const container = document.getElementById(containerId);
+let footer = container.querySelector('.text-xs');
+if(!footer) {
+footer = document.createElement('div');
+footer.className = 'w-full text-center mt-2 text-xs text-[var(--color-text-light)] italic';
+footer.textContent = '% от общего числа';
+}
+
+container.innerHTML = '';
+
+posCategories.forEach(key => {
+const value = dataObj[key] || 0;
+const percent = total > 0 ? Math.round((value / total) * 100) : 0;
+const color = colors.pos[key] || '#cbd5e1';
+
+const row = document.createElement('div');
+row.className = 'h-bar-row';
+row.innerHTML = `
+<div class="h-bar-label">${key}</div>
+<div class="h-bar-track">
+<div class="h-bar-fill" style="background:${color}; width: 0%" data-width="${percent}%"></div>
+</div>
+<div class="h-bar-stat">${percent}% (${value})</div>
+`;
+container.appendChild(row);
+});
+container.appendChild(footer);
+
+setTimeout(() => {
+document.querySelectorAll('.h-bar-fill').forEach(bar => {
+bar.style.width = bar.getAttribute('data-width');
+});
+}, 100);
+}
+
+function renderBarChart(containerId, labels, dataObj) {
+const container = document.getElementById(containerId);
+container.innerHTML = '';
+
+const maxVal = Math.max(...Object.values(dataObj), 1);
+
+labels.forEach((label, idx) => {
+const val = dataObj[label];
+const heightPercent = (val / maxVal) * 100;
+
+const group = document.createElement('div');
+group.className = 'bar-group';
+group.innerHTML = `
+<div class="bar-val" id="bval-${idx}">${val}</div>
+<div class="bar" id="bar-${idx}" data-height="${heightPercent}%"></div>
+<div class="bar-label">${label}</div>
+`;
+container.appendChild(group);
+
+setTimeout(() => {
+document.getElementById(`bar-${idx}`).style.height = `${heightPercent}%`;
+const lbl = document.getElementById(`bval-${idx}`);
+lbl.style.opacity = '1';
+lbl.style.transform = 'translateY(0)';
+}, 200 + (idx * 50));
+});
+}
+
+function renderHighlights(containerId, list) {
+const container = document.getElementById(containerId);
+container.innerHTML = '';
+
+if (list.length === 0) {
+container.innerHTML = '<span class="text-xs text-gray-400">Нет филиалов с количеством > 1</span>';
+return;
+}
+
+list.forEach(item => {
+const badge = document.createElement('div');
+badge.className = 'branch-badge';
+badge.innerHTML = `
+<span>${item.name}</span>
+<div class="branch-count">${item.count}</div>
+`;
+container.appendChild(badge);
+});
+}
+
+function animateCounter(element, target) {
+element.textContent = '0';
+const duration = 1500;
+const stepTime = Math.abs(Math.floor(duration / target));
+let current = 0;
+const timer = setInterval(() => {
+current++;
+element.textContent = current;
+if (current >= target) clearInterval(timer);
+}, stepTime > 30 ? 30 : stepTime);
+}
+</script>
+</body>
+</html>
