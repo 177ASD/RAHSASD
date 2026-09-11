@@ -390,7 +390,7 @@ ctx.restore();
 if (valCand > 0) {
     const rightX = barCand.x - 2;
     ctx.save();
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = '#ffffff';  // ← белый
     ctx.font = 'bold 11px Segoe UI';
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
@@ -435,7 +435,7 @@ if (val >= 10) {
 const x = barCand.x;
 const y = barCand.y + (barCand.base - barCand.y) * 0.2;
 ctx.save();
-ctx.fillStyle = '#ffffff';
+ctx.fillStyle = '#727272';
 ctx.font = 'bold 12px Segoe UI';
 ctx.textAlign = 'center';
 ctx.textBaseline = 'middle';
@@ -444,28 +444,22 @@ ctx.restore();
 }
 }
 if (meta2) {
-const expData = chart.data.datasets[0].data;
-const candData = chart.data.datasets[1].data;
-for (let i = 0; i < meta2.data.length; i++) {
-const point = meta2.data[i];
-const expVal = expData[i];
-const candVal = candData[i];
-const total = expVal + candVal;
-const pct = total > 0 ? Math.round((expVal / total) * 100) : 0;
-ctx.save();
-ctx.fillStyle = 'rgba(255,255,255,0.95)';
-const rx = point.x - 14;
-const ry = point.y - 22;
-ctx.beginPath();
-ctx.roundRect(rx, ry, 28, 16, 4);
-ctx.fill();
-ctx.fillStyle = '#F9A825';
-ctx.font = 'bold 10px Segoe UI';
-ctx.textAlign = 'center';
-ctx.textBaseline = 'middle';
-ctx.fillText(pct + '%', point.x, point.y - 14);
-ctx.restore();
-}
+    const expData = chart.data.datasets[0].data;
+    const candData = chart.data.datasets[1].data;
+    for (let i = 0; i < meta2.data.length; i++) {
+        const point = meta2.data[i];
+        const expVal = expData[i];
+        const candVal = candData[i];
+        const total = expVal + candVal;
+        const pct = total > 0 ? Math.round((expVal / total) * 100) : 0;
+        ctx.save();
+        ctx.fillStyle = '#F9A825';
+        ctx.font = 'bold 10px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(pct, point.x, point.y);
+        ctx.restore();
+    }
 }
 }
 };
@@ -530,11 +524,11 @@ datasets: [
 { label: 'Эксперты', data: exp, backgroundColor: '#556F2E', stack: 'stack', order: 2 },
 { label: 'Кандидаты', data: cand, backgroundColor: '#BDBDBD', stack: 'stack', order: 3 },
 {
-type: 'line', label: '% экспертов', data: exp,
-borderColor: '#F9A825', backgroundColor: '#F9A825',
-borderWidth: 3, pointRadius: 6,
-pointBackgroundColor: '#ffffff', pointBorderColor: '#F9A825', pointBorderWidth: 2.5,
-order: 1, tension: 0.3
+    type: 'line', label: '% экспертов', data: exp,
+    borderColor: '#F9A825', backgroundColor: '#F9A825',
+    borderWidth: 3, pointRadius: 10,
+    pointBackgroundColor: 'rgba(255,255,255,0.8)', pointBorderColor: '#F9A825', pointBorderWidth: 1,
+    order: 1, tension: 0.3
 }
 ]
 },
