@@ -19,7 +19,7 @@
     }
 
     /* ========== ПАЛИТРЫ ТЕМ ========== */
-:root, [data-theme="light"] {
+    :root, [data-theme="light"] {
         /* Градиент фона: тёмная олива сверху → тёплый травяной → кремовый */
         --bg-gradient: linear-gradient(180deg, #3d4a24 0%, #6f8145 26%, #e0e6c0 62%, #f9f4dd 100%);
 
@@ -127,61 +127,6 @@
 
         --toast-bg: #e0e6cc;
         --toast-text: #171b0e;
-
-        --site-link-bg: rgba(225, 170, 78, 0.12);
-        --site-link-border: rgba(225, 170, 78, 0.35);
-        --site-link-text: #e7c07a;
-        --site-link-accent: #e6b45c;
-        --site-link-hover-bg: rgba(225, 170, 78, 0.22);
-    }
-
-    [data-theme="dark"] {
-        --bg-gradient: linear-gradient(180deg, #0e130e 0%, #223425 56%, #414b26 100%);
-
-        --header-text: #e9f2e8;
-        --header-accent: #ffd489;
-
-        --panel-bg: rgba(21, 30, 24, 0.92);
-        --table-bg: rgba(24, 33, 27, 0.96);
-        --input-bg: rgba(255, 255, 255, 0.06);
-
-        --border: #3b5342;
-        --border-soft: #334839;
-
-        --text: #dbe8d9;
-        --text-light: #9fb6a3;
-
-        --primary: #88b592;
-        --primary-strong: #a6cca9;
-        --primary-soft: #274031;
-
-        --accent: #e1aa4e;
-        --accent-strong: #e6b45c;
-        --accent-soft: rgba(225, 170, 78, 0.18);
-
-        --chip-bg: #24382a;
-        --chip-border: #3c5844;
-
-        --badge-bg: #4d3d1c;
-        --badge-text: #e7c07a;
-
-        --mark-bg: #5c481f;
-        --mark-text: #f3e4bb;
-
-        --row-hover: rgba(225, 170, 78, 0.12);
-
-        --btn-bg: #84b48e;
-        --btn-text: #0f1711;
-        --btn-hover: #9cc8a4;
-
-        --link-hover: #e8bd70;
-        --info-strong: #e6b45c;
-
-        --shadow: 0 2px 12px rgba(0, 0, 0, 0.30);
-        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.40);
-
-        --toast-bg: #dbe8d9;
-        --toast-text: #101813;
 
         --site-link-bg: rgba(225, 170, 78, 0.12);
         --site-link-border: rgba(225, 170, 78, 0.35);
@@ -377,7 +322,7 @@
 
     table {
         width: 100%;
-        min-width: 960px;
+        min-width: 900px;
         border-collapse: collapse;
     }
 
@@ -407,10 +352,11 @@
 
     tbody tr:hover { background: var(--row-hover); }
 
+    /* Ширины колонок после удаления «Категории»:
+       освободившиеся 12% распределены между Описанием (+6%) и Ключевыми словами (+6%) */
     .col-name { width: 26%; }
-    .col-category { width: 12%; }
-    .col-desc { width: 30%; }
-    .col-keywords { width: 20%; }
+    .col-desc { width: 36%; }
+    .col-keywords { width: 26%; }
     .col-actions { width: 12%; }
 
     .doc-link {
@@ -443,19 +389,6 @@
         border-radius: 3px;
     }
 
-    .category-badge {
-        display: inline-block;
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        padding: 4px 10px;
-        border-radius: 20px;
-        background: var(--badge-bg);
-        color: var(--badge-text);
-        line-height: 1.35;
-    }
-
     .cell-desc {
         color: var(--text-light);
         line-height: 1.6;
@@ -465,7 +398,6 @@
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
-        max-width: 300px;
     }
 
     .keyword-tag {
@@ -705,8 +637,6 @@
         .doc-link { font-size: 1.05rem; }
         .doc-file { font-size: 0.8rem; }
 
-        .keyword-wrap { max-width: none; }
-
         .keyword-tag {
             padding: 6px 12px;
             font-size: 0.8rem;
@@ -773,7 +703,6 @@
             <thead>
                 <tr>
                     <th class="col-name">Документ</th>
-                    <th class="col-category">Категория</th>
                     <th class="col-desc">Описание</th>
                     <th class="col-keywords">Ключевые слова</th>
                     <th class="col-actions">Действия</th>
@@ -795,7 +724,6 @@
 <script>
 /* ============================================================
    ДАННЫЕ ДОКУМЕНТОВ
-   Только 6 PDF-файлов. Ссылки из файла «БазаЗнаний».
    ============================================================ */
 
 const DOCUMENTS = [
@@ -846,6 +774,14 @@ const DOCUMENTS = [
         description: "Детальная методика фотофиксации: общий вид поля, фото рамки в упор, растение с корневой системой на линейке. Дополнительные фото: проплешины, нарушение агротехники, болезни, вредители. Правила движения эксперта по полю (не ближе 10 м от края, расстояние 5 м между точками). Запрет на рассуждения в Акте.",
         keywords: ["фотофиксация", "рамка", "корневая система", "проплешины", "нарушение агротехники", "болезни", "вредители", "просевы", "Акт осмотра", "движение эксперта"],
         link: "https://disk.360.yandex.ru/i/O6IkvMpVGrFCkQ"
+    },
+    {
+        name: "Образцы отчетных документов",
+        file: "папка с файлами",
+        category: "Обследование посевов",
+        description: "Подборка образцов заполненной отчетной документации по агростраховой экспертизе. Включает: Акт обследования посевов (посадок) с таблицей полей, фаз развития, урожайности на корню и степеней повреждения (кукуруза, Ставропольский край); Акт вскрытия конвертов и обмолота образцов урожая с приложением результатов обмолота и перечнем оборудования (МИНИБАТТ, лабораторные весы); Акт определения урожайности на корню (биологической урожайности) с правилами заполнения граф и шкалой степеней засоренности/повреждения; развернутое Экспертное заключение (ООО «АНЭ «ОцЭкс», 2022): анализ условий договора страхования, результаты обследований ячменя, овса и гороха, расчет урожайности-нетто, утраты (гибели) урожая и потерь по событиям, не предусмотренным договором (Pn1–Pn4), выводы о наличии/отсутствии оснований для страховой выплаты. Может использоваться как шаблоны и примеры оформления отчетных документов.",
+        keywords: ["образцы актов", "акт обследования посевов", "акт вскрытия конвертов", "акт обмолота", "контрольный обмолот", "акт определения урожайности на корню", "биологическая урожайность", "урожайность-нетто", "экспертное заключение", "расчет ущерба", "утрата (гибель) урожая", "кукуруза", "яровой ячмень", "овёс", "горох", "густота стояния", "продуктивные стебли", "степень засоренности", "нарушение агротехники", "норма высева", "МИНИБАТТ", "шаблон акта", "пример заполнения"],
+        link: "https://disk.360.yandex.ru/d/l8b4OnXWPQVKfA"
     }
 ];
 
@@ -883,7 +819,7 @@ function updateToggleIcon(theme) {
 function updateMetaColor(theme) {
     const meta = document.getElementById('metaTheme');
     if (meta) {
-        meta.setAttribute('content', theme === 'dark' ? '#0e130e' : '#2f4f3c');
+        meta.setAttribute('content', theme === 'dark' ? '#12150c' : '#3d4a24');
     }
 }
 
@@ -964,7 +900,7 @@ function renderTable() {
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5">
+                <td colspan="4">
                     <div class="empty-state">
                         <h3>Ничего не найдено</h3>
                         <p>Попробуйте изменить запрос</p>
@@ -987,10 +923,6 @@ function renderTable() {
                     ${highlight(doc.name, searchQuery)}
                 </a>
                 <div class="doc-file">${highlight(doc.file, searchQuery)}</div>
-            </td>
-
-            <td class="col-category" data-label="Категория">
-                <span class="category-badge">${escapeHTML(doc.category)}</span>
             </td>
 
             <td class="col-desc" data-label="Описание">
