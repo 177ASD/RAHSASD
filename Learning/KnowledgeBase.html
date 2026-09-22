@@ -14,64 +14,125 @@
         -webkit-tap-highlight-color: transparent;
     }
 
-    .btn, .filter-chip, .keyword-tag, .theme-toggle, .clear-btn, .site-link {
+    .btn, .keyword-tag, .theme-toggle, .clear-btn, .site-link {
         touch-action: manipulation;
     }
 
     /* ========== ПАЛИТРЫ ТЕМ ========== */
-    :root, [data-theme="light"] {
-        --bg-gradient: linear-gradient(180deg, #2f4f3c 0%, #5e8766 26%, #d8e6c7 62%, #f8f1dd 100%);
+:root, [data-theme="light"] {
+        /* Градиент фона: тёмная олива сверху → тёплый травяной → кремовый */
+        --bg-gradient: linear-gradient(180deg, #3d4a24 0%, #6f8145 26%, #e0e6c0 62%, #f9f4dd 100%);
 
-        --header-text: #fbf8ef;
+        --header-text: #fbf8ec;
         --header-accent: #ffd489;
 
-        --panel-bg: rgba(255, 255, 255, 0.88);
-        --table-bg: rgba(255, 255, 255, 0.92);
+        --panel-bg: rgba(255, 255, 250, 0.88);
+        --table-bg: rgba(255, 255, 250, 0.92);
         --input-bg: rgba(255, 255, 255, 0.72);
 
-        --border: #c8dcc5;
-        --border-soft: #d9e8d5;
+        --border: #d3dcb2;
+        --border-soft: #e1e7c8;
 
-        --text: #2c3a2f;
-        --text-light: #5f7563;
+        --text: #333a24;
+        --text-light: #6c7654;
 
-        --primary: #5d8a6b;
-        --primary-strong: #446b51;
-        --primary-soft: #e3f0e2;
+        --primary: #7c8b52;
+        --primary-strong: #5b6a38;
+        --primary-soft: #ecf0d8;
 
+        /* Оранжевые акценты (оставляем тёплыми) */
         --accent: #d99a33;
         --accent-strong: #b26f0e;
         --accent-soft: #f8e8c8;
 
-        --chip-bg: #e8f2e4;
-        --chip-border: #c9ddc6;
+        --chip-bg: #eff2dc;
+        --chip-border: #d3dcb2;
 
-        --badge-bg: #f4e7c8;
+        --badge-bg: #f2e6c4;
         --badge-text: #8f6a17;
 
-        --mark-bg: #f7e3ae;
-        --mark-text: #5a4310;
+        --mark-bg: #f2e3a8;
+        --mark-text: #55400e;
 
         --row-hover: rgba(217, 154, 51, 0.10);
 
-        --btn-bg: #4e7a5d;
+        /* КНОПКИ: оливковые */
+        --btn-bg: #67764a;
         --btn-text: #ffffff;
-        --btn-hover: #5d8a6b;
+        --btn-hover: #7c8b52;
 
         --link-hover: #a06d14;
         --info-strong: #b26f0e;
 
-        --shadow: 0 2px 12px rgba(49, 82, 63, 0.10);
-        --shadow-hover: 0 8px 24px rgba(49, 82, 63, 0.16);
+        /* Тени с оливковым оттенком */
+        --shadow: 0 2px 12px rgba(61, 74, 36, 0.10);
+        --shadow-hover: 0 8px 24px rgba(61, 74, 36, 0.16);
 
-        --toast-bg: #2c3a2f;
-        --toast-text: #f4f8f2;
+        --toast-bg: #333a24;
+        --toast-text: #f6f3e4;
 
         --site-link-bg: rgba(255, 212, 137, 0.14);
         --site-link-border: rgba(255, 212, 137, 0.45);
         --site-link-text: #fff5dc;
         --site-link-accent: #ffd489;
         --site-link-hover-bg: rgba(255, 212, 137, 0.24);
+    }
+
+    [data-theme="dark"] {
+        /* Тёмная тема: глубокая оливковая ночь */
+        --bg-gradient: linear-gradient(180deg, #12150c 0%, #262e18 56%, #454d24 100%);
+
+        --header-text: #eef2dc;
+        --header-accent: #ffd489;
+
+        --panel-bg: rgba(26, 30, 18, 0.92);
+        --table-bg: rgba(29, 34, 20, 0.96);
+        --input-bg: rgba(255, 255, 255, 0.06);
+
+        --border: #46512c;
+        --border-soft: #3b4526;
+
+        --text: #e0e6cc;
+        --text-light: #a8b28c;
+
+        --primary: #a3b571;
+        --primary-strong: #c0cf94;
+        --primary-soft: #333d1f;
+
+        --accent: #e1aa4e;
+        --accent-strong: #e6b45c;
+        --accent-soft: rgba(225, 170, 78, 0.18);
+
+        --chip-bg: #2b3319;
+        --chip-border: #46512c;
+
+        --badge-bg: #4d3d1c;
+        --badge-text: #e7c07a;
+
+        --mark-bg: #5c481f;
+        --mark-text: #f3e4bb;
+
+        --row-hover: rgba(225, 170, 78, 0.12);
+
+        /* КНОПКИ в тёмной теме: светлая олива */
+        --btn-bg: #9db06a;
+        --btn-text: #14180c;
+        --btn-hover: #b3c47e;
+
+        --link-hover: #e8bd70;
+        --info-strong: #e6b45c;
+
+        --shadow: 0 2px 12px rgba(0, 0, 0, 0.30);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.40);
+
+        --toast-bg: #e0e6cc;
+        --toast-text: #171b0e;
+
+        --site-link-bg: rgba(225, 170, 78, 0.12);
+        --site-link-border: rgba(225, 170, 78, 0.35);
+        --site-link-text: #e7c07a;
+        --site-link-accent: #e6b45c;
+        --site-link-hover-bg: rgba(225, 170, 78, 0.22);
     }
 
     [data-theme="dark"] {
@@ -222,7 +283,7 @@
         transform: rotate(20deg) scale(1.05);
     }
 
-    /* ========== ПАНЕЛЬ ПОИСКА И ФИЛЬТРОВ (КОМПАКТНАЯ) ========== */
+    /* ========== ПАНЕЛЬ ПОИСКА (КОМПАКТНАЯ) ========== */
     .toolbar {
         max-width: 1280px;
         margin: -26px auto 0;
@@ -295,56 +356,6 @@
     }
 
     .search-box .clear-btn.visible { display: block; }
-
-    /* ========== ФИЛЬТРЫ ========== */
-    .filters {
-        margin-top: 12px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .filter-chip {
-        padding: 7px 16px;
-        border-radius: 50px;
-        border: 1.5px solid var(--chip-border);
-        background: var(--chip-bg);
-        color: var(--text);
-        cursor: pointer;
-        font-size: 0.88rem;
-        font-weight: 500;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 7px;
-    }
-
-    .filter-chip:hover {
-        border-color: var(--accent);
-        background: var(--accent-soft);
-    }
-
-    .filter-chip.active {
-        background: var(--primary-strong);
-        color: #ffffff;
-        border-color: var(--primary-strong);
-    }
-
-    [data-theme="dark"] .filter-chip.active {
-        background: var(--primary);
-        color: #101813;
-        border-color: var(--primary);
-    }
-
-    .filter-chip .count {
-        background: rgba(0,0,0,0.08);
-        padding: 1px 8px;
-        border-radius: 20px;
-        font-size: 0.76rem;
-    }
-
-    .filter-chip.active .count { background: rgba(255,255,255,0.25); }
-    [data-theme="dark"] .filter-chip.active .count { background: rgba(0,0,0,0.15); }
 
     /* ========== ТАБЛИЦА (ДЕСКТОП) ========== */
     .table-wrap {
@@ -636,20 +647,6 @@
             padding: 9px 12px;
         }
 
-        .filters {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            margin-top: 10px;
-            scrollbar-width: thin;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .filter-chip {
-            flex: 0 0 auto;
-            padding: 8px 14px;
-        }
-
         .table-card {
             overflow: visible;
             background: transparent;
@@ -759,15 +756,13 @@
     </a>
 </header>
 
-<!-- ПОИСК И ФИЛЬТРЫ -->
+<!-- ПОИСК -->
 <div class="toolbar">
     <div class="toolbar-panel">
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="Поиск: «рамка», «тариф», «ЧС», «260-ФЗ»..." autofocus>
             <button class="clear-btn" id="clearBtn" onclick="clearSearch()">Очистить</button>
         </div>
-
-        <div class="filters" id="filters"></div>
     </div>
 </div>
 
@@ -866,10 +861,7 @@ const LAST_UPDATED = "10 сентября 2026";
    ЛОГИКА РАБОТЫ
    ============================================================ */
 
-let activeFilterIndex = 0;
 let searchQuery = "";
-
-const categories = ["Все документы", ...new Set(DOCUMENTS.map(d => d.category))];
 
 /* ---------- ТЕМА ---------- */
 function initTheme() {
@@ -911,7 +903,6 @@ document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 /* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
 function init() {
     initTheme();
-    renderFilters();
     renderTable();
     initUpdateDate();
 }
@@ -929,33 +920,6 @@ function initUpdateDate() {
         });
     }
 }
-
-/* ---------- ФИЛЬТРЫ ---------- */
-function renderFilters() {
-    const filtersEl = document.getElementById('filters');
-
-    filtersEl.innerHTML = categories.map((cat, index) => {
-        const count = index === 0
-            ? DOCUMENTS.length
-            : DOCUMENTS.filter(d => d.category === cat).length;
-
-        return `
-            <button class="filter-chip ${index === activeFilterIndex ? 'active' : ''}" data-filter-index="${index}">
-                ${escapeHTML(cat)} <span class="count">${count}</span>
-            </button>
-        `;
-    }).join('');
-}
-
-document.getElementById('filters').addEventListener('click', (e) => {
-    const chip = e.target.closest('.filter-chip');
-    if (!chip) return;
-
-    activeFilterIndex = Number(chip.dataset.filterIndex);
-
-    renderFilters();
-    renderTable();
-});
 
 /* ---------- ПОИСК И ПОДСВЕТКА ---------- */
 function escapeHTML(str) {
@@ -995,14 +959,7 @@ function matchesSearch(doc, query) {
 function renderTable() {
     const tbody = document.getElementById('tableBody');
 
-    const activeCategory = activeFilterIndex === 0 ? null : categories[activeFilterIndex];
-
-    let filtered = DOCUMENTS.filter(doc => {
-        const catMatch = !activeCategory || doc.category === activeCategory;
-        const searchMatch = matchesSearch(doc, searchQuery);
-
-        return catMatch && searchMatch;
-    });
+    let filtered = DOCUMENTS.filter(doc => matchesSearch(doc, searchQuery));
 
     if (filtered.length === 0) {
         tbody.innerHTML = `
@@ -1010,8 +967,8 @@ function renderTable() {
                 <td colspan="5">
                     <div class="empty-state">
                         <h3>Ничего не найдено</h3>
-                        <p>Попробуйте изменить запрос или выбрать другую категорию</p>
-                        <button onclick="clearSearch()">Сбросить фильтры</button>
+                        <p>Попробуйте изменить запрос</p>
+                        <button onclick="clearSearch()">Сбросить поиск</button>
                     </div>
                 </td>
             </tr>`;
@@ -1069,16 +1026,6 @@ document.getElementById('tableBody').addEventListener('click', (e) => {
 });
 
 /* ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---------- */
-function plural(n, one, few, many) {
-    const mod10 = n % 10;
-    const mod100 = n % 100;
-
-    if (mod10 === 1 && mod100 !== 11) return one;
-    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
-
-    return many;
-}
-
 function searchByKeyword(keyword) {
     const input = document.getElementById('searchInput');
     input.value = keyword;
@@ -1094,11 +1041,9 @@ function clearSearch() {
     const input = document.getElementById('searchInput');
     input.value = '';
     searchQuery = '';
-    activeFilterIndex = 0;
 
     document.getElementById('clearBtn').classList.remove('visible');
 
-    renderFilters();
     renderTable();
 
     input.focus();
