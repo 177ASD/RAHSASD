@@ -134,30 +134,30 @@
         background: var(--bg-gradient);
         background-attachment: fixed;
         color: var(--text);
-        line-height: 1.6;
+        line-height: 1.5;
         min-height: 100vh;
         transition: background 0.4s ease, color 0.3s ease;
     }
 
-    /* ========== ШАПКА ========== */
+    /* ========== ШАПКА (КОМПАКТНАЯ) ========== */
     .header {
         color: var(--header-text);
-        padding: 48px 20px 64px;
+        padding: 26px 20px 46px;
         text-align: center;
         position: relative;
     }
 
     .header h1 {
-        font-size: 2.1rem;
-        margin-bottom: 10px;
+        font-size: 1.75rem;
+        margin-bottom: 6px;
         font-weight: 700;
         letter-spacing: 0.5px;
     }
 
     .header p {
         opacity: 0.92;
-        font-size: 1.02rem;
-        max-width: 720px;
+        font-size: 0.95rem;
+        max-width: 860px;
         margin: 0 auto;
     }
 
@@ -165,15 +165,15 @@
     .site-link {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        margin-top: 18px;
-        padding: 10px 22px;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 8px 18px;
         background: var(--site-link-bg);
         border: 1px solid var(--site-link-border);
         border-radius: 50px;
         color: var(--site-link-text);
         text-decoration: none;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         font-weight: 500;
         backdrop-filter: blur(8px);
         transition: all 0.25s ease;
@@ -199,15 +199,15 @@
     /* ========== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ========== */
     .theme-toggle {
         position: absolute;
-        top: 24px;
-        right: 24px;
-        width: 46px;
-        height: 46px;
+        top: 18px;
+        right: 20px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         border: 1px solid rgba(255,255,255,0.25);
         background: rgba(255,255,255,0.10);
         color: var(--header-text);
-        font-size: 1.5rem;
+        font-size: 1.35rem;
         line-height: 1;
         cursor: pointer;
         display: flex;
@@ -222,10 +222,10 @@
         transform: rotate(20deg) scale(1.05);
     }
 
-    /* ========== ПАНЕЛЬ ПОИСКА И ФИЛЬТРОВ ========== */
+    /* ========== ПАНЕЛЬ ПОИСКА И ФИЛЬТРОВ (КОМПАКТНАЯ) ========== */
     .toolbar {
         max-width: 1280px;
-        margin: -34px auto 0;
+        margin: -26px auto 0;
         padding: 0 20px;
         position: relative;
         z-index: 10;
@@ -235,18 +235,18 @@
         background: var(--panel-bg);
         border: 1px solid var(--border);
         border-top: 4px solid var(--accent);
-        border-radius: 18px;
+        border-radius: 16px;
         box-shadow: var(--shadow-hover);
-        padding: 18px;
+        padding: 14px 16px;
         backdrop-filter: blur(10px);
         transition: background 0.35s ease, border-color 0.35s ease;
     }
 
     .search-box {
         background: var(--input-bg);
-        border-radius: 14px;
+        border-radius: 12px;
         border: 1px solid var(--border);
-        padding: 6px;
+        padding: 4px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -262,8 +262,8 @@
         flex: 1;
         border: none;
         outline: none;
-        font-size: 1.08rem;
-        padding: 13px 16px;
+        font-size: 1rem;
+        padding: 10px 14px;
         background: transparent;
         color: var(--text);
         min-width: 0;
@@ -277,11 +277,11 @@
     .search-box .clear-btn {
         background: var(--chip-bg);
         border: 1px solid var(--chip-border);
-        border-radius: 10px;
-        padding: 9px 18px;
+        border-radius: 9px;
+        padding: 8px 16px;
         cursor: pointer;
         color: var(--text-light);
-        font-size: 0.92rem;
+        font-size: 0.88rem;
         display: none;
         transition: all 0.2s;
         margin-right: 4px;
@@ -298,20 +298,20 @@
 
     /* ========== ФИЛЬТРЫ ========== */
     .filters {
-        margin-top: 16px;
+        margin-top: 12px;
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
     }
 
     .filter-chip {
-        padding: 8px 18px;
+        padding: 7px 16px;
         border-radius: 50px;
         border: 1.5px solid var(--chip-border);
         background: var(--chip-bg);
         color: var(--text);
         cursor: pointer;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         font-weight: 500;
         transition: all 0.2s;
         display: flex;
@@ -340,24 +340,16 @@
         background: rgba(0,0,0,0.08);
         padding: 1px 8px;
         border-radius: 20px;
-        font-size: 0.78rem;
+        font-size: 0.76rem;
     }
 
     .filter-chip.active .count { background: rgba(255,255,255,0.25); }
     [data-theme="dark"] .filter-chip.active .count { background: rgba(0,0,0,0.15); }
 
-    .results-info {
-        margin-top: 14px;
-        color: var(--text-light);
-        font-size: 0.95rem;
-    }
-
-    .results-info b { color: var(--info-strong); }
-
     /* ========== ТАБЛИЦА (ДЕСКТОП) ========== */
     .table-wrap {
         max-width: 1280px;
-        margin: 24px auto 48px;
+        margin: 18px auto 40px;
         padding: 0 20px;
     }
 
@@ -384,7 +376,7 @@
         z-index: 2;
         background: var(--panel-bg);
         text-align: left;
-        padding: 14px 16px;
+        padding: 12px 16px;
         font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 0.07em;
@@ -562,7 +554,7 @@
     /* ========== ПОДВАЛ ========== */
     .footer {
         text-align: center;
-        padding: 32px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+        padding: 28px 20px calc(28px + env(safe-area-inset-bottom, 0px));
         color: var(--text-light);
         font-size: 0.85rem;
     }
@@ -601,55 +593,61 @@
        ============================================================ */
     @media (max-width: 900px) {
         .header {
-            padding: 40px 16px 56px;
+            padding: 22px 14px 42px;
         }
 
-        .header h1 { font-size: 1.6rem; }
-        .header p { font-size: 0.95rem; }
+        .header h1 { font-size: 1.4rem; }
+        .header p { font-size: 0.9rem; }
 
         .site-link {
-            margin-top: 14px;
-            padding: 9px 18px;
-            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 7px 14px;
+            font-size: 0.85rem;
         }
 
         .theme-toggle {
-            top: 16px;
-            right: 16px;
-            width: 44px;
-            height: 44px;
+            top: 12px;
+            right: 12px;
+            width: 40px;
+            height: 40px;
         }
 
-        .toolbar, .table-wrap {
+        .toolbar {
+            margin-top: -22px;
             padding: 0 12px;
         }
 
+        .table-wrap {
+            padding: 0 12px;
+            margin: 14px auto 32px;
+        }
+
         .toolbar-panel {
-            padding: 14px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 14px;
         }
 
         .search-box input {
             font-size: 16px;
-            padding: 12px 12px;
+            padding: 10px 12px;
         }
 
         .search-box .clear-btn {
-            padding: 10px 14px;
+            padding: 9px 12px;
         }
 
         .filters {
             flex-wrap: nowrap;
             overflow-x: auto;
-            padding-bottom: 8px;
-            margin-top: 14px;
+            padding-bottom: 6px;
+            margin-top: 10px;
             scrollbar-width: thin;
             -webkit-overflow-scrolling: touch;
         }
 
         .filter-chip {
             flex: 0 0 auto;
-            padding: 9px 16px;
+            padding: 8px 14px;
         }
 
         .table-card {
@@ -735,13 +733,13 @@
     }
 
     @media (max-width: 420px) {
-        .header h1 { font-size: 1.4rem; }
-        .toolbar-panel { padding: 12px; }
+        .header h1 { font-size: 1.25rem; }
+        .toolbar-panel { padding: 10px; }
         tbody td { padding: 11px 14px; }
         .actions { flex-direction: column; }
         .site-link {
-            font-size: 0.85rem;
-            padding: 8px 16px;
+            font-size: 0.8rem;
+            padding: 7px 12px;
         }
     }
 </style>
@@ -770,8 +768,6 @@
         </div>
 
         <div class="filters" id="filters"></div>
-
-        <div class="results-info" id="resultsInfo"></div>
     </div>
 </div>
 
@@ -998,7 +994,6 @@ function matchesSearch(doc, query) {
 /* ---------- ОТРИСОВКА ТАБЛИЦЫ ---------- */
 function renderTable() {
     const tbody = document.getElementById('tableBody');
-    const info = document.getElementById('resultsInfo');
 
     const activeCategory = activeFilterIndex === 0 ? null : categories[activeFilterIndex];
 
@@ -1008,14 +1003,6 @@ function renderTable() {
 
         return catMatch && searchMatch;
     });
-
-    if (searchQuery) {
-        info.innerHTML = `Найдено: <b>${filtered.length}</b> ${plural(filtered.length, 'документ', 'документа', 'документов')} по запросу «${escapeHTML(searchQuery)}»`;
-    } else if (activeCategory) {
-        info.innerHTML = `Категория: <b>${escapeHTML(activeCategory)}</b> • ${filtered.length} ${plural(filtered.length, 'документ', 'документа', 'документов')}`;
-    } else {
-        info.innerHTML = `Показаны все документы: <b>${filtered.length}</b>`;
-    }
 
     if (filtered.length === 0) {
         tbody.innerHTML = `
