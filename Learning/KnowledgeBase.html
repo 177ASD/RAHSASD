@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" id="metaTheme" content="#2f4f3c">
+<title>База знаний — Агрострахование</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { -webkit-text-size-adjust: 100%; }
+
+    body {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn, .filter-chip, .keyword-tag, .theme-toggle, .clear-btn, .site-link {
+        touch-action: manipulation;
+    }
+
+    /* ========== ПАЛИТРЫ ТЕМ ========== */
+    :root, [data-theme="light"] {
+        --bg-gradient: linear-gradient(180deg, #2f4f3c 0%, #5e8766 26%, #d8e6c7 62%, #f8f1dd 100%);
+
+        --header-text: #fbf8ef;
+        --header-accent: #ffd489;
+
+        --panel-bg: rgba(255, 255, 255, 0.88);
+        --table-bg: rgba(255, 255, 255, 0.92);
+        --input-bg: rgba(255, 255, 255, 0.72);
+
+        --border: #c8dcc5;
+        --border-soft: #d9e8d5;
+
+        --text: #2c3a2f;
+        --text-light: #5f7563;
+
+        --primary: #5d8a6b;
+        --primary-strong: #446b51;
+        --primary-soft: #e3f0e2;
+
+        --accent: #d99a33;
+        --accent-strong: #b26f0e;
+        --accent-soft: #f8e8c8;
+
+        --chip-bg: #e8f2e4;
+        --chip-border: #c9ddc6;
+
+        --badge-bg: #f4e7c8;
+        --badge-text: #8f6a17;
+
+        --mark-bg: #f7e3ae;
+        --mark-text: #5a4310;
+
+        --row-hover: rgba(217, 154, 51, 0.10);
+
+        --btn-bg: #4e7a5d;
+        --btn-text: #ffffff;
+        --btn-hover: #5d8a6b;
+
+        --link-hover: #a06d14;
+        --info-strong: #b26f0e;
+
+        --shadow: 0 2px 12px rgba(49, 82, 63, 0.10);
+        --shadow-hover: 0 8px 24px rgba(49, 82, 63, 0.16);
+
+        --toast-bg: #2c3a2f;
+        --toast-text: #f4f8f2;
+
+        --site-link-bg: rgba(255, 212, 137, 0.14);
+        --site-link-border: rgba(255, 212, 137, 0.45);
+        --site-link-text: #fff5dc;
+        --site-link-accent: #ffd489;
+        --site-link-hover-bg: rgba(255, 212, 137, 0.24);
+    }
+
+    [data-theme="dark"] {
+        --bg-gradient: linear-gradient(180deg, #0e130e 0%, #223425 56%, #414b26 100%);
+
+        --header-text: #e9f2e8;
+        --header-accent: #ffd489;
+
+        --panel-bg: rgba(21, 30, 24, 0.92);
+        --table-bg: rgba(24, 33, 27, 0.96);
+        --input-bg: rgba(255, 255, 255, 0.06);
+
+        --border: #3b5342;
+        --border-soft: #334839;
+
+        --text: #dbe8d9;
+        --text-light: #9fb6a3;
+
+        --primary: #88b592;
+        --primary-strong: #a6cca9;
+        --primary-soft: #274031;
+
+        --accent: #e1aa4e;
+        --accent-strong: #e6b45c;
+        --accent-soft: rgba(225, 170, 78, 0.18);
+
+        --chip-bg: #24382a;
+        --chip-border: #3c5844;
+
+        --badge-bg: #4d3d1c;
+        --badge-text: #e7c07a;
+
+        --mark-bg: #5c481f;
+        --mark-text: #f3e4bb;
+
+        --row-hover: rgba(225, 170, 78, 0.12);
+
+        --btn-bg: #84b48e;
+        --btn-text: #0f1711;
+        --btn-hover: #9cc8a4;
+
+        --link-hover: #e8bd70;
+        --info-strong: #e6b45c;
+
+        --shadow: 0 2px 12px rgba(0, 0, 0, 0.30);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.40);
+
+        --toast-bg: #dbe8d9;
+        --toast-text: #101813;
+
+        --site-link-bg: rgba(225, 170, 78, 0.12);
+        --site-link-border: rgba(225, 170, 78, 0.35);
+        --site-link-text: #e7c07a;
+        --site-link-accent: #e6b45c;
+        --site-link-hover-bg: rgba(225, 170, 78, 0.22);
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg-gradient);
+        background-attachment: fixed;
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        transition: background 0.4s ease, color 0.3s ease;
+    }
+
+    /* ========== ШАПКА ========== */
+    .header {
+        color: var(--header-text);
+        padding: 48px 20px 64px;
+        text-align: center;
+        position: relative;
+    }
+
+    .header h1 {
+        font-size: 2.1rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .header p {
+        opacity: 0.92;
+        font-size: 1.02rem;
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    /* ========== ССЫЛКА НА САЙТ В ШАПКЕ ========== */
+    .site-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 10px 22px;
+        background: var(--site-link-bg);
+        border: 1px solid var(--site-link-border);
+        border-radius: 50px;
+        color: var(--site-link-text);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        backdrop-filter: blur(8px);
+        transition: all 0.25s ease;
+    }
+
+    .site-link:hover {
+        background: var(--site-link-hover-bg);
+        transform: translateY(-1px);
+        border-color: var(--site-link-accent);
+    }
+
+    .site-link .arrow {
+        display: inline-block;
+        color: var(--site-link-accent);
+        font-weight: 700;
+        transition: transform 0.25s ease;
+    }
+
+    .site-link:hover .arrow {
+        transform: translateX(3px);
+    }
+
+    /* ========== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ========== */
+    .theme-toggle {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.25);
+        background: rgba(255,255,255,0.10);
+        color: var(--header-text);
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.25s ease;
+        backdrop-filter: blur(8px);
+    }
+
+    .theme-toggle:hover {
+        background: rgba(255,255,255,0.22);
+        transform: rotate(20deg) scale(1.05);
+    }
+
+    /* ========== ПАНЕЛЬ ПОИСКА И ФИЛЬТРОВ ========== */
+    .toolbar {
+        max-width: 1280px;
+        margin: -34px auto 0;
+        padding: 0 20px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .toolbar-panel {
+        background: var(--panel-bg);
+        border: 1px solid var(--border);
+        border-top: 4px solid var(--accent);
+        border-radius: 18px;
+        box-shadow: var(--shadow-hover);
+        padding: 18px;
+        backdrop-filter: blur(10px);
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    .search-box {
+        background: var(--input-bg);
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        padding: 6px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.35s ease;
+    }
+
+    .search-box:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .search-box input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 1.08rem;
+        padding: 13px 16px;
+        background: transparent;
+        color: var(--text);
+        min-width: 0;
+    }
+
+    .search-box input::placeholder {
+        color: var(--text-light);
+        opacity: 0.75;
+    }
+
+    .search-box .clear-btn {
+        background: var(--chip-bg);
+        border: 1px solid var(--chip-border);
+        border-radius: 10px;
+        padding: 9px 18px;
+        cursor: pointer;
+        color: var(--text-light);
+        font-size: 0.92rem;
+        display: none;
+        transition: all 0.2s;
+        margin-right: 4px;
+        flex-shrink: 0;
+    }
+
+    .search-box .clear-btn:hover {
+        background: var(--accent-soft);
+        color: var(--text);
+        border-color: var(--accent);
+    }
+
+    .search-box .clear-btn.visible { display: block; }
+
+    /* ========== ФИЛЬТРЫ ========== */
+    .filters {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .filter-chip {
+        padding: 8px 18px;
+        border-radius: 50px;
+        border: 1.5px solid var(--chip-border);
+        background: var(--chip-bg);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .filter-chip:hover {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+    }
+
+    .filter-chip.active {
+        background: var(--primary-strong);
+        color: #ffffff;
+        border-color: var(--primary-strong);
+    }
+
+    [data-theme="dark"] .filter-chip.active {
+        background: var(--primary);
+        color: #101813;
+        border-color: var(--primary);
+    }
+
+    .filter-chip .count {
+        background: rgba(0,0,0,0.08);
+        padding: 1px 8px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+    }
+
+    .filter-chip.active .count { background: rgba(255,255,255,0.25); }
+    [data-theme="dark"] .filter-chip.active .count { background: rgba(0,0,0,0.15); }
+
+    .results-info {
+        margin-top: 14px;
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+
+    .results-info b { color: var(--info-strong); }
+
+    /* ========== ТАБЛИЦА (ДЕСКТОП) ========== */
+    .table-wrap {
+        max-width: 1280px;
+        margin: 24px auto 48px;
+        padding: 0 20px;
+    }
+
+    .table-card {
+        background: var(--table-bg);
+        border: 1px solid var(--border);
+        border-top: 4px solid var(--accent);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        overflow: auto;
+        backdrop-filter: blur(10px);
+        transition: background 0.35s ease, border-color 0.35s ease;
+    }
+
+    table {
+        width: 100%;
+        min-width: 960px;
+        border-collapse: collapse;
+    }
+
+    thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: var(--panel-bg);
+        text-align: left;
+        padding: 14px 16px;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text-light);
+        border-bottom: 2px solid var(--border);
+        white-space: nowrap;
+    }
+
+    tbody td {
+        padding: 16px;
+        border-bottom: 1px solid var(--border-soft);
+        vertical-align: top;
+        font-size: 0.95rem;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:hover { background: var(--row-hover); }
+
+    .col-name { width: 26%; }
+    .col-category { width: 12%; }
+    .col-desc { width: 30%; }
+    .col-keywords { width: 20%; }
+    .col-actions { width: 12%; }
+
+    .doc-link {
+        color: inherit;
+        text-decoration: none;
+        font-weight: 650;
+        border-bottom: 1px solid transparent;
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .doc-link:hover {
+        color: var(--link-hover);
+        border-bottom-color: var(--accent);
+    }
+
+    .doc-file {
+        color: var(--text-light);
+        font-size: 0.84rem;
+        word-break: break-word;
+        margin-top: 5px;
+    }
+
+    .doc-link mark,
+    .doc-file mark,
+    .cell-desc mark,
+    .keyword-tag mark {
+        background: var(--mark-bg);
+        color: var(--mark-text);
+        padding: 1px 3px;
+        border-radius: 3px;
+    }
+
+    .category-badge {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: var(--badge-bg);
+        color: var(--badge-text);
+        line-height: 1.35;
+    }
+
+    .cell-desc {
+        color: var(--text-light);
+        line-height: 1.6;
+    }
+
+    .keyword-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-width: 300px;
+    }
+
+    .keyword-tag {
+        font-size: 0.78rem;
+        background: var(--chip-bg);
+        border: 1px solid var(--chip-border);
+        color: var(--text-light);
+        padding: 4px 11px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+    .keyword-tag:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        color: var(--text);
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 140px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 650;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .btn-primary {
+        background: var(--btn-bg);
+        color: var(--btn-text);
+    }
+
+    .btn-primary:hover {
+        background: var(--btn-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(68, 107, 81, 0.28);
+    }
+
+    .btn-secondary {
+        background: var(--chip-bg);
+        color: var(--text);
+        border: 1px solid var(--chip-border);
+    }
+
+    .btn-secondary:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+    }
+
+    /* ========== ПУСТОЕ СОСТОЯНИЕ ========== */
+    .empty-state {
+        text-align: center;
+        padding: 64px 20px;
+        color: var(--text-light);
+    }
+
+    .empty-state h3 {
+        color: var(--text);
+        margin-bottom: 8px;
+        font-size: 1.2rem;
+    }
+
+    .empty-state button {
+        margin-top: 18px;
+        padding: 11px 26px;
+        border-radius: 10px;
+        border: 1px solid var(--chip-border);
+        background: var(--chip-bg);
+        cursor: pointer;
+        color: var(--text);
+        font-weight: 600;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
+
+    .empty-state button:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+    }
+
+    /* ========== ПОДВАЛ ========== */
+    .footer {
+        text-align: center;
+        padding: 32px 20px calc(32px + env(safe-area-inset-bottom, 0px));
+        color: var(--text-light);
+        font-size: 0.85rem;
+    }
+
+    .footer span {
+        color: var(--info-strong);
+        font-weight: 600;
+    }
+
+    /* ========== УВЕДОМЛЕНИЕ ========== */
+    .toast {
+        position: fixed;
+        bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--toast-bg);
+        color: var(--toast-text);
+        padding: 13px 26px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 100;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        max-width: calc(100vw - 40px);
+        text-align: center;
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+
+    /* ============================================================
+       МОБИЛЬНАЯ ВЕРСИЯ: ТАБЛИЦА ПРЕВРАЩАЕТСЯ В КАРТОЧКИ
+       ============================================================ */
+    @media (max-width: 900px) {
+        .header {
+            padding: 40px 16px 56px;
+        }
+
+        .header h1 { font-size: 1.6rem; }
+        .header p { font-size: 0.95rem; }
+
+        .site-link {
+            margin-top: 14px;
+            padding: 9px 18px;
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle {
+            top: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+        }
+
+        .toolbar, .table-wrap {
+            padding: 0 12px;
+        }
+
+        .toolbar-panel {
+            padding: 14px;
+            border-radius: 16px;
+        }
+
+        .search-box input {
+            font-size: 16px;
+            padding: 12px 12px;
+        }
+
+        .search-box .clear-btn {
+            padding: 10px 14px;
+        }
+
+        .filters {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-top: 14px;
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-chip {
+            flex: 0 0 auto;
+            padding: 9px 16px;
+        }
+
+        .table-card {
+            overflow: visible;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: none;
+            padding: 0;
+        }
+
+        table {
+            min-width: 0;
+            width: 100%;
+            display: block;
+        }
+
+        thead { display: none; }
+
+        tbody { display: block; }
+
+        tbody tr {
+            display: block;
+            background: var(--table-bg);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 16px;
+            margin-bottom: 14px;
+            padding: 4px 0 14px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        tbody tr:hover { background: var(--table-bg); }
+
+        tbody td {
+            display: block;
+            width: 100%;
+            border-bottom: none;
+            padding: 12px 16px;
+        }
+
+        tbody td + td {
+            border-top: 1px dashed var(--border-soft);
+        }
+
+        tbody td[data-label]::before {
+            content: attr(data-label);
+            display: block;
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--text-light);
+            margin-bottom: 6px;
+        }
+
+        .doc-link { font-size: 1.05rem; }
+        .doc-file { font-size: 0.8rem; }
+
+        .keyword-wrap { max-width: none; }
+
+        .keyword-tag {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .actions {
+            flex-direction: row;
+            min-width: 0;
+            gap: 10px;
+            padding: 4px 8px 0;
+        }
+
+        .actions .btn {
+            flex: 1;
+            padding: 13px 10px;
+            font-size: 0.92rem;
+            white-space: normal;
+        }
+
+        .empty-state { padding: 40px 16px; }
+    }
+
+    @media (max-width: 420px) {
+        .header h1 { font-size: 1.4rem; }
+        .toolbar-panel { padding: 12px; }
+        tbody td { padding: 11px 14px; }
+        .actions { flex-direction: column; }
+        .site-link {
+            font-size: 0.85rem;
+            padding: 8px 16px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<!-- ШАПКА -->
+<header class="header">
+    <button id="themeToggle" class="theme-toggle" title="Переключить тему">&#9790;</button>
+    <h1>База знаний</h1>
+    <p>Учебные материалы по агрострахованию: обследование посевов, тарифы, нормативная база и космический мониторинг</p>
+
+    <!-- ССЫЛКА НА САЙТ -->
+    <a class="site-link" href="https://rosah.ru/uslugi/agrostrakhovanie/agrostrakhovaya_ekspertiza/" target="_blank" rel="noopener">
+        Основные нормативные документы вы найдёте на нашем сайте в разделе НОРМАТИВНО-ПРАВОВАЯ БАЗА
+        <span class="arrow">&#8594;</span>
+    </a>
+</header>
+
+<!-- ПОИСК И ФИЛЬТРЫ -->
+<div class="toolbar">
+    <div class="toolbar-panel">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Поиск: «рамка», «тариф», «ЧС», «260-ФЗ»..." autofocus>
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch()">Очистить</button>
+        </div>
+
+        <div class="filters" id="filters"></div>
+
+        <div class="results-info" id="resultsInfo"></div>
+    </div>
+</div>
+
+<!-- ТАБЛИЦА -->
+<main class="table-wrap">
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-name">Документ</th>
+                    <th class="col-category">Категория</th>
+                    <th class="col-desc">Описание</th>
+                    <th class="col-keywords">Ключевые слова</th>
+                    <th class="col-actions">Действия</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- ПОДВАЛ -->
+<footer class="footer">
+    База знаний • Обновлено: <span id="updateDate"></span> • При проблемах с открытием скачайте документ на устройство
+</footer>
+
+<!-- УВЕДОМЛЕНИЕ -->
+<div class="toast" id="toast">Ссылка скопирована</div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ ДОКУМЕНТОВ
+   Только 6 PDF-файлов. Ссылки из файла «БазаЗнаний».
+   ============================================================ */
+
+const DOCUMENTS = [
+    {
+        name: "Методика формирования цены на услуги агростраховой экспертизы",
+        file: "МетодикаФормированияЦеныУслуги.pdf",
+        category: "Тарифы и ценообразование",
+        description: "Прозрачная многоуровневая модель ценообразования. Формула расчёта итоговой цены с учётом базового тарифа, региональных коэффициентов (РК), коэффициента сложности объекта (КС), сезонной премии (СП) и логистической надбавки (ЛН). Содержит примеры расчётов для Ставропольского края.",
+        keywords: ["методика ценообразования", "базовый тариф", "РК", "КС", "СП", "ЛН", "формула расчёта", "коммерческое предложение"],
+        link: "https://disk.360.yandex.ru/i/GeJqV4iHLSGxkA"
+    },
+    {
+        name: "Нормативно-правовая база агрострахования",
+        file: "НормативноПравоваяБаза Агрострахования.pdf",
+        category: "Нормативная база",
+        description: "Презентация НСА от 18.06.2026: ключевые законы и документы (260-ФЗ, Приказы Минсельхоза №87 и №469, Постановление №327). Статистика застрахованных площадей и выплат. Требования к аттестации независимых экспертов (образование, стаж 5 лет).",
+        keywords: ["260-ФЗ", "НСА", "Минсельхоз", "аттестация экспертов", "Приказ 87", "Приказ 469", "Постановление 327", "страховые выплаты", "ЧС в АПК", "господдержка"],
+        link: "https://disk.360.yandex.ru/i/UrgMkjd2_YV3eA"
+    },
+    {
+        name: "Космический мониторинг в агростраховании",
+        file: "Космический мониторинг в агростраховании.pdf",
+        category: "Технологии и мониторинг",
+        description: "Практическое применение спутникового мониторинга: платформы «Вега-Про» и «AgroSmartAssistant», анализ NDVI, метеоданные, снимки Sentinel-2 и Landsat-8. Методика оценки гибели культур через сегментацию, прогнозы заморозков и затоплений. Мобильное приложение «НСА Помощник агрария».",
+        keywords: ["NDVI", "спутниковые снимки", "вегетационный индекс", "метео", "гибель культур", "оценка ущерба", "приложение", "прогноз заморозков"],
+        link: "https://disk.360.yandex.ru/i/RkB4G4OrQXd2GA"
+    },
+    {
+        name: "Обследование посевов по программе мультирискового страхования (базовый курс)",
+        file: "Обучение обследование мультириск.pdf",
+        category: "Обследование посевов",
+        description: "Учебный материал по подготовке к осмотру, видам осмотров, инструментам (рамка 0,24/0,25 м², влагомер, весы). Методика расчёта густоты стояния (коэффициенты 4,167 и 4), отбора проб (15 колосьев в 2 конверта), механизированной уборки. Примеры расчёта урожайности и заполнения Акта обследования.",
+        keywords: ["мультирисковое страхование", "рамка", "густота стояния", "урожай на корню", "отбор проб", "колосья", "конверты", "Акт обследования", "механизированная уборка"],
+        link: "https://disk.360.yandex.ru/i/SeDja13usi9Ktw"
+    },
+    {
+        name: "Обследование посевов и установление гибели урожая по программе ЧС",
+        file: "Обследование_ЧС.pdf",
+        category: "ЧС и гибель урожая",
+        description: "Презентация АО СК «РСХБ-Страхование» (декабрь 2025): образцы Актов ЧС, анализ карт. Определения утраты и нормативных потерь. Формулы расчёта нормативного размера урожайности: un = min(ur; Ym × 0,1) и un = Z/Q. Использование гарантийного письма для выплаты до получения форм статотчётности.",
+        keywords: ["ЧС", "гибель урожая", "утрата урожая", "Акт ЧС", "нормативная урожайность", "РСХБ", "гарантийное письмо", "формула un"],
+        link: "https://disk.360.yandex.ru/i/m75wwvJsi9UTyw"
+    },
+    {
+        name: "Обследование посевов по программе мультирискового страхования (расширенный)",
+        file: "Обследование посевов по программе мультирискового страхования.pdf",
+        category: "Обследование посевов",
+        description: "Детальная методика фотофиксации: общий вид поля, фото рамки в упор, растение с корневой системой на линейке. Дополнительные фото: проплешины, нарушение агротехники, болезни, вредители. Правила движения эксперта по полю (не ближе 10 м от края, расстояние 5 м между точками). Запрет на рассуждения в Акте.",
+        keywords: ["фотофиксация", "рамка", "корневая система", "проплешины", "нарушение агротехники", "болезни", "вредители", "просевы", "Акт осмотра", "движение эксперта"],
+        link: "https://disk.360.yandex.ru/i/O6IkvMpVGrFCkQ"
+    }
+];
+
+/* ============================================================
+   НАСТРОЙКА ДАТЫ ОБНОВЛЕНИЯ
+   Если задать текст вручную, будет показываться он.
+   Если оставить пустую строку "", будет показываться дата
+   открытия страницы в браузере пользователя.
+   ============================================================ */
+const LAST_UPDATED = "10 сентября 2026";
+
+/* ============================================================
+   ЛОГИКА РАБОТЫ
+   ============================================================ */
+
+let activeFilterIndex = 0;
+let searchQuery = "";
+
+const categories = ["Все документы", ...new Set(DOCUMENTS.map(d => d.category))];
+
+/* ---------- ТЕМА ---------- */
+function initTheme() {
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+
+    document.documentElement.setAttribute('data-theme', theme);
+    updateToggleIcon(theme);
+    updateMetaColor(theme);
+}
+
+function updateToggleIcon(theme) {
+    const btn = document.getElementById('themeToggle');
+    btn.innerHTML = theme === 'dark' ? '&#9788;' : '&#9790;';
+    btn.title = theme === 'dark' ? 'Переключить на светлую тему' : 'Переключить на тёмную тему';
+}
+
+function updateMetaColor(theme) {
+    const meta = document.getElementById('metaTheme');
+    if (meta) {
+        meta.setAttribute('content', theme === 'dark' ? '#0e130e' : '#2f4f3c');
+    }
+}
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    updateToggleIcon(next);
+    updateMetaColor(next);
+}
+
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
+function init() {
+    initTheme();
+    renderFilters();
+    renderTable();
+    initUpdateDate();
+}
+
+function initUpdateDate() {
+    const el = document.getElementById('updateDate');
+
+    if (LAST_UPDATED && LAST_UPDATED.trim() !== "") {
+        el.textContent = LAST_UPDATED;
+    } else {
+        el.textContent = new Date().toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+}
+
+/* ---------- ФИЛЬТРЫ ---------- */
+function renderFilters() {
+    const filtersEl = document.getElementById('filters');
+
+    filtersEl.innerHTML = categories.map((cat, index) => {
+        const count = index === 0
+            ? DOCUMENTS.length
+            : DOCUMENTS.filter(d => d.category === cat).length;
+
+        return `
+            <button class="filter-chip ${index === activeFilterIndex ? 'active' : ''}" data-filter-index="${index}">
+                ${escapeHTML(cat)} <span class="count">${count}</span>
+            </button>
+        `;
+    }).join('');
+}
+
+document.getElementById('filters').addEventListener('click', (e) => {
+    const chip = e.target.closest('.filter-chip');
+    if (!chip) return;
+
+    activeFilterIndex = Number(chip.dataset.filterIndex);
+
+    renderFilters();
+    renderTable();
+});
+
+/* ---------- ПОИСК И ПОДСВЕТКА ---------- */
+function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, s => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[s]));
+}
+
+function highlight(text, query) {
+    const escapedText = escapeHTML(text);
+    if (!query) return escapedText;
+
+    const safeQuery = escapeHTML(query);
+    const escapedQuery = safeQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+
+    return escapedText.replace(regex, '<mark>$1</mark>');
+}
+
+function matchesSearch(doc, query) {
+    if (!query) return true;
+
+    const q = query.toLowerCase();
+
+    return doc.name.toLowerCase().includes(q) ||
+           doc.file.toLowerCase().includes(q) ||
+           doc.description.toLowerCase().includes(q) ||
+           doc.keywords.some(k => k.toLowerCase().includes(q)) ||
+           doc.category.toLowerCase().includes(q);
+}
+
+/* ---------- ОТРИСОВКА ТАБЛИЦЫ ---------- */
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    const info = document.getElementById('resultsInfo');
+
+    const activeCategory = activeFilterIndex === 0 ? null : categories[activeFilterIndex];
+
+    let filtered = DOCUMENTS.filter(doc => {
+        const catMatch = !activeCategory || doc.category === activeCategory;
+        const searchMatch = matchesSearch(doc, searchQuery);
+
+        return catMatch && searchMatch;
+    });
+
+    if (searchQuery) {
+        info.innerHTML = `Найдено: <b>${filtered.length}</b> ${plural(filtered.length, 'документ', 'документа', 'документов')} по запросу «${escapeHTML(searchQuery)}»`;
+    } else if (activeCategory) {
+        info.innerHTML = `Категория: <b>${escapeHTML(activeCategory)}</b> • ${filtered.length} ${plural(filtered.length, 'документ', 'документа', 'документов')}`;
+    } else {
+        info.innerHTML = `Показаны все документы: <b>${filtered.length}</b>`;
+    }
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty-state">
+                        <h3>Ничего не найдено</h3>
+                        <p>Попробуйте изменить запрос или выбрать другую категорию</p>
+                        <button onclick="clearSearch()">Сбросить фильтры</button>
+                    </div>
+                </td>
+            </tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(doc => {
+        const keywordsHtml = doc.keywords.slice(0, 8).map(k =>
+            `<span class="keyword-tag" data-keyword="${escapeHTML(k)}">${highlight(k, searchQuery)}</span>`
+        ).join('');
+
+        return `
+        <tr>
+            <td class="col-name">
+                <a class="doc-link" href="${escapeHTML(doc.link)}" target="_blank" rel="noopener">
+                    ${highlight(doc.name, searchQuery)}
+                </a>
+                <div class="doc-file">${highlight(doc.file, searchQuery)}</div>
+            </td>
+
+            <td class="col-category" data-label="Категория">
+                <span class="category-badge">${escapeHTML(doc.category)}</span>
+            </td>
+
+            <td class="col-desc" data-label="Описание">
+                <div class="cell-desc">${highlight(doc.description, searchQuery)}</div>
+            </td>
+
+            <td class="col-keywords" data-label="Ключевые слова">
+                <div class="keyword-wrap">${keywordsHtml}</div>
+            </td>
+
+            <td class="col-actions">
+                <div class="actions">
+                    <a href="${escapeHTML(doc.link)}" target="_blank" rel="noopener" class="btn btn-primary">Открыть</a>
+                    <button class="btn btn-secondary copy-btn" data-link="${escapeHTML(doc.link)}">Ссылка</button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+/* ---------- КЛИКИ ПО ТАБЛИЦЕ ---------- */
+document.getElementById('tableBody').addEventListener('click', (e) => {
+    const tag = e.target.closest('.keyword-tag');
+    if (tag) {
+        searchByKeyword(tag.dataset.keyword);
+        return;
+    }
+
+    const copyBtn = e.target.closest('.copy-btn');
+    if (copyBtn) {
+        copyLink(copyBtn.dataset.link);
+    }
+});
+
+/* ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---------- */
+function plural(n, one, few, many) {
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+
+    if (mod10 === 1 && mod100 !== 11) return one;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
+
+    return many;
+}
+
+function searchByKeyword(keyword) {
+    const input = document.getElementById('searchInput');
+    input.value = keyword;
+    searchQuery = keyword;
+
+    document.getElementById('clearBtn').classList.add('visible');
+
+    renderTable();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function clearSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    searchQuery = '';
+    activeFilterIndex = 0;
+
+    document.getElementById('clearBtn').classList.remove('visible');
+
+    renderFilters();
+    renderTable();
+
+    input.focus();
+}
+
+function copyLink(link) {
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(link)
+            .then(showToast)
+            .catch(() => fallbackCopy(link));
+    } else {
+        fallbackCopy(link);
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+
+    document.body.appendChild(ta);
+    ta.select();
+
+    try {
+        document.execCommand('copy');
+        showToast();
+    } catch (e) {}
+
+    document.body.removeChild(ta);
+}
+
+function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+/* ---------- СЛУШАТЕЛИ ---------- */
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    document.getElementById('clearBtn').classList.toggle('visible', searchQuery.length > 0);
+    renderTable();
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+    }
+
+    if (e.key === 'Escape') {
+        clearSearch();
+    }
+});
+
+init();
+</script>
+</body>
+</html>
