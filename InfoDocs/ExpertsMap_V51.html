@@ -78,7 +78,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:
 <div class="container">
 <div class="sidebar">
 <div class="sidebar-header">
-<div><h1>Филиалы</h1><p>Всего 106 объектов</p></div>
+<div><h1>Филиалы</h1><p id="stats-text">Загрузка...</p></div>
 </div>
 <div class="search-box"><input type="text" id="searchInput" placeholder="Поиск..."></div>
 <div class="filters">
@@ -332,7 +332,30 @@ const foColors = {
 'Северо-Кавказский': '#126F6C',
 'Новые субъекты РФ': '#5d4037'
 };
+// Функция склонения русских слов
+function pluralize(n, one, few, many) {
+    const last2 = n % 100;
+    const last1 = n % 10;
+    if (last2 >= 11 && last2 <= 19) return many;
+    if (last1 === 1) return one;
+    if (last1 >= 2 && last1 <= 4) return few;
+    return many;
+}
 
+// Подсчёт и вывод статистики в шапку
+function updateStats() {
+    const totalFilials = filialsData.length;
+    const filialsWithExperts = Object.keys(expertsMap).length;
+    const totalExperts = Object.values(expertsMap).reduce((sum, arr) => sum + arr.length, 0);
+    
+    const expertWord = pluralize(totalExperts, 'эксперт', 'эксперта', 'экспертов');
+    const filialWord = pluralize(filialsWithExperts, 'филиале', 'филиалах', 'филиалах');
+    
+    document.getElementById('stats-text').textContent = 
+        `Всего ${totalFilials} филиалов, ${totalExperts} ${expertWord} в ${filialsWithExperts} ${filialWord}`;
+}
+
+updateStats();
 const map = L.map('map', { zoomControl: false }).setView([55.7558, 37.6173], 4);
 L.control.zoom({ position: 'bottomleft' }).addTo(map);
 
