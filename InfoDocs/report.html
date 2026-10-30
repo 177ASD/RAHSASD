@@ -229,13 +229,13 @@ font-size: 0.95rem;
 border-radius: 6px;
 }
 .week-dynamics .bar-total {
-position: absolute;
-right: 10px;
-top: 50%;
-transform: translateY(-50%);
-font-weight: 700;
-font-size: 1rem;
-color: var(--text-muted);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin-left: 14px;
+    display: flex;
+    align-items: center;
 }
 .week-dynamics .delta {
 font-size: 1rem;
@@ -325,10 +325,10 @@ font-size: 0.85rem;
 <div class="week-dynamics">
 <div class="label">Динамика за отчетный период</div>
 <div class="bar-wrap">
-<div class="bar-prev" style="width: 96.7%;">148</div>
-<div class="bar-curr" style="width: 96.8%;">150</div>
-<div class="bar-total">155</div>
+    <div class="bar-prev" style="width: 96.7%;">148</div>
+    <div class="bar-curr" style="width: 96.8%;">150</div>
 </div>
+<div class="bar-total">155</div>
 <div class="delta">▲ +2 эксперта</div>
 </div>
 <div class="section-title">ОБЩАЯ ДИНАМИКА АТТЕСТАЦИИ</div>
